@@ -1,0 +1,10 @@
+name: LucaPlugin
+version: '${project.version}'
+main: com.lucaplugin.lucaplugin.LucaPlugin
+api-version: 1.17
+libraries:
+  - com.pusher:pusher-java-client:2.2.6
+  - org.codeartisans:org.json:20161124
+commands:
+  startgame:
+
