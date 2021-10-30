@@ -17,6 +17,7 @@ public class onChatDistributor
 
     public static void finalDistributor(String eventName, Player playerObj, String donorName)
     {
+        System.out.println("Distributed " + eventName + " : " + donorName);
         switch (eventName)
         {
             case "invite":
@@ -36,7 +37,10 @@ public class onChatDistributor
     public static void triggerEventForChat(String jsonString, Player selectedUser, String userName, int userId)
     {
         if (selectedUser == null)
+        {
+            System.out.println("No user set yet for chat");
             return;
+        }
 
         JSONObject obj = new JSONObject(jsonString.replace("{event=onChat, data=", "").replace(", channel=public-channel_" + userId + "}", ""));
 
@@ -51,9 +55,9 @@ public class onChatDistributor
                     message.contains("Ich bin Fan geworden!") ||
                     message.contains("Me he convertido en fan."))
             {
-                if (!newFans.contains(userName))
+                if (!newFans.contains(donorName))
                 {
-                    newFans.add(userName);
+                    newFans.add(donorName);
                     //Trigger here for fan
                     System.out.println("Triggered Fan");
                     finalDistributor("fan", selectedUser.getPlayer(), donorName);
@@ -62,7 +66,6 @@ public class onChatDistributor
             }
 
             //Also removed on subs for comments
-
             if (message.contains("captured a moment of") && jsonArray.getJSONObject(i).has("subscriptionData"))
             {
                 if (Objects.equals(userName, lastMoment))

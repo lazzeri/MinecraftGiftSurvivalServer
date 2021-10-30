@@ -22,8 +22,11 @@ public class onGiftDistributor
 
     public static void triggerEventForGift(String eventInString, Player selectedUser,int userId)
     {
-        if(selectedUser == null)
+        if (selectedUser == null)
+        {
+            System.out.println("No user set yet for gift");
             return;
+        }
 
         JSONObject obj = new JSONObject(eventInString.replace("{event=onGift, data=", "").replace(", channel=public-channel_"+userId+"}", ""));
         JSONArray jsonArray = obj.getJSONObject("message").getJSONArray("stageGifts");
