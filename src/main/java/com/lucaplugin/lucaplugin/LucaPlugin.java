@@ -37,7 +37,8 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
     }
 
-    player joinedPlayer = new player();
+    player selectedUser = new player();
+    eventHandler eventHandlerObj = new eventHandler();
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
@@ -48,14 +49,25 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             {
                 Player player = (Player) sender;
                 player.sendMessage("Starting Game!");
-                joinedPlayer.setPlayer(player);
+                selectedUser.setPlayer(player);
                 return true;
             }
         }
+
+        if (label.equalsIgnoreCase("test1"))
+        {
+            if (sender instanceof Player)
+            {
+                Player player = (Player) sender;
+                eventHandlerObj.itemSnack(player,"TestName");
+                return true;
+            }
+        }
+
         return false;
     }
 
-    public void triggerData(String jsonString)
+    public void triggerEvent(String jsonString)
     {
         JSONObject obj = new JSONObject(jsonString.replace("{event=onGift, data=", "").replace(", channel=public-channel_14443322}", ""));
 
@@ -66,9 +78,19 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             //Trigger here objects for gifts
             String skuName = jsonArray.getJSONObject(i).getString("SKU");
             System.out.println(skuName);
-            if (joinedPlayer.getPlayer() != null)
+
+            switch (skuName)
             {
-                System.out.println("Sending data to " + joinedPlayer.getPlayer().getName());
+                case "50_LIKES_2":
+                    //Here Comes the command then in
+                    break;
+            }
+
+
+            if (selectedUser.getPlayer() != null)
+            {
+                System.out.println("Sending data to " + selectedUser.getPlayer().getName());
+
             }
 
         }
@@ -107,7 +129,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             public void onEvent(PusherEvent event)
             {
                 System.out.println("Received event with data: " + event.toString());
-                triggerData(event.toString());
+                triggerEvent(event.toString());
 
             }
         });
