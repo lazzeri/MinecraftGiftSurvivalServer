@@ -7,4 +7,5 @@ libraries:
   - org.codeartisans:org.json:20161124
 commands:
   startgame:
+  test:
 

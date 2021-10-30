@@ -54,7 +54,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             }
         }
 
-        if (label.equalsIgnoreCase("test1"))
+        if (label.equalsIgnoreCase("test"))
         {
             if (sender instanceof Player)
             {
