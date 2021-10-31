@@ -24,7 +24,10 @@ import java.sql.SQLOutput;
 
 public final class LucaPlugin extends JavaPlugin implements Listener
 {
-    public  static int userId = 54816052;
+    public static int userId = 7746914;
+    player selectedUser = new player();
+    eventHandler eventHandlerObj = new eventHandler();
+
     @Override
     public void onEnable()
     {
@@ -34,11 +37,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     @Override
     public void onDisable()
     {
-
     }
-
-    player selectedUser = new player();
-    eventHandler eventHandlerObj = new eventHandler();
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
@@ -59,14 +58,22 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.itemSnack(player,"TestName");
+                eventHandlerObj.makeChickenCompanion(player, "TestName", this);
                 return true;
             }
         }
 
+        if (label.equalsIgnoreCase("raid"))
+        {
+            if (sender instanceof Player)
+            {
+                Player player = (Player) sender;
+                eventHandlerObj.createVillagerCircle(player, "TestName");
+                return true;
+            }
+        }
         return false;
     }
-
 
 
     public void setupWebsocket()
@@ -101,7 +108,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             public void onEvent(PusherEvent event)
             {
                 System.out.println("Received event with data: " + event.toString());
-                onGiftDistributor.triggerEventForGift(event.toString(), selectedUser.getPlayer(),userId);
+                onGiftDistributor.triggerEventForGift(event.toString(), selectedUser.getPlayer(), userId);
 
             }
         });
@@ -113,12 +120,10 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             public void onEvent(PusherEvent event)
             {
                 System.out.println("Received event with data: " + event.toString());
-                onChatDistributor.triggerEventForChat(event.toString(), selectedUser.getPlayer(),"TestUser",userId);
+                onChatDistributor.triggerEventForChat(event.toString(), selectedUser.getPlayer(), "TestUser", userId);
             }
         });
-        
-        
-        
+
         // Disconnect from the service
         pusher.disconnect();
 
