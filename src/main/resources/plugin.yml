@@ -8,4 +8,5 @@ libraries:
 commands:
   startgame:
   test:
+  raid:
 
