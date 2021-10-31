@@ -30,9 +30,10 @@ public class eventHandler
         //Creates Redstone Particles in blue
 
         //Sets sound
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PILLAGER_AMBIENT, 5.0F, 0.5F);
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PILLAGER_AMBIENT, 5.0F, 0.5F);
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PILLAGER_AMBIENT, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+
 
         //Set Message
         sayText("OH GOD!! ITS A RAID FROM ", donorName, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
@@ -122,7 +123,7 @@ public class eventHandler
                 if (!entity.isValid())
                     cancel();
 
-                entity.teleport(player.getLocation().add(generateRandomInt(0, 5), 0, generateRandomInt(0, 5)));
+                entity.teleport(player.getLocation());
                 entity.setTarget(player);
 
             }
@@ -167,7 +168,7 @@ public class eventHandler
         for (int c = 0; c < 30; c++)
         {
             randomDouble = generateRandomDouble(0.0, 2.5);
-            location = new Location(player.getWorld(),(double)spawnLocation.getX(), (double) spawnLocation.getY() + randomDouble,(double) spawnLocation.getZ());
+            location = new Location(player.getWorld(), (double) spawnLocation.getX(), (double) spawnLocation.getY() + randomDouble, (double) spawnLocation.getZ());
             player.spawnParticle(particle, location, 30, dustOptions);
         }
 
