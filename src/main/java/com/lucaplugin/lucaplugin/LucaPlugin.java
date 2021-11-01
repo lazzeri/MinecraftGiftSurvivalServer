@@ -24,6 +24,7 @@ import java.sql.SQLOutput;
 
 public final class LucaPlugin extends JavaPlugin implements Listener
 {
+    public static boolean gameStarted = false;
     public static int userId = 7746914;
     player selectedUser = new player();
     eventHandler eventHandlerObj = new eventHandler();
@@ -49,9 +50,14 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 Player player = (Player) sender;
                 player.sendMessage("Starting Game!");
                 selectedUser.setPlayer(player);
+                gameStarted = true;
                 return true;
             }
         }
+
+        if (!gameStarted)
+            System.out.println("Game not started yet!");
+
 
         if (label.equalsIgnoreCase("test"))
         {
@@ -69,6 +75,17 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             {
                 Player player = (Player) sender;
                 eventHandlerObj.createVillagerCircle(player, "TestName");
+                return true;
+            }
+        }
+
+
+        if (label.equalsIgnoreCase("tntRain"))
+        {
+            if (sender instanceof Player)
+            {
+                Player player = (Player) sender;
+                eventHandlerObj.tntRain(player, "TestName");
                 return true;
             }
         }
