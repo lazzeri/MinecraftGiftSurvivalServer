@@ -1,0 +1,4 @@
+//For jump
+player.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE,player.getLocation(),20);
+
+//
