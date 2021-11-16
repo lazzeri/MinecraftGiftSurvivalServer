@@ -7,16 +7,22 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
+import xyz.xenondevs.particle.ParticleBuilder;
+import xyz.xenondevs.particle.ParticleEffect;
+import xyz.xenondevs.particle.data.color.NoteColor;
+import xyz.xenondevs.particle.data.color.RegularColor;
 
 public class eventHandler
 {
     //Villager Raid on Raid
-    public void createVillagerCircle(Player player, String donorName)
+    public void createVillagerCircle(Player player, String donorName, int raidAmount)
     {
-        double size = 7;
+        double size = (double) raidAmount;
+        int positions = (int) 360 / raidAmount;
 
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(48, 25, 52), 3.0F);
-        for (int i = 0; i < 360; i += 70)
+        for (int i = 0; i < 360; i += positions)
         {
             double angle = (i * Math.PI / 180);
             double x = size * Math.cos(angle);
@@ -62,16 +68,55 @@ public class eventHandler
         }
     }
 
-    //TNT Rain
-    public void tntRain(Player player, String donorName)
+    //Notes
+    public void magicNotes(Player player, String donorName, Plugin plugin)
     {
-        player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
-        McHelperClass.sayText(donorName, " made it rain TNT!", ChatColor.WHITE, ChatColor.RED);
-        for (int i = 0; i < McHelperClass.generateRandomInt(15, 27); i++)
+
+        new BukkitRunnable()
         {
-            TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-10, 10), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-10, 10)), EntityType.PRIMED_TNT);
-            tnt.setFuseTicks(50);
-            McHelperClass.wait(McHelperClass.generateRandomInt(0, 200));
+            @Override
+            public void run()
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    new ParticleBuilder(ParticleEffect.NOTE, player.getLocation())
+                            .setParticleData(new NoteColor(1))
+                            .setOffset(new Vector(5, 5, 5))
+                            .setAmount(40)
+                            .display();
+                }
+
+            }
+        }.runTaskTimer(plugin, 0L, 5L);
+
+    }
+
+    public void test(Player player, String donorName,Plugin plugin)
+    {
+        McHelperClass.coneEffect(player,plugin,10,3,ParticleEffect.NOTE);
+    }
+
+
+
+    //TNT Rain
+    public void tntRain(Player player, String donorName, Plugin plugin)
+    {
+        McHelperClass.playSoundXTimes(player, Sound.ENTITY_CREEPER_PRIMED, 10F, 20);
+        McHelperClass.sayText(donorName, " made it rain TNT!", ChatColor.WHITE, ChatColor.RED);
+        int randomMax = McHelperClass.generateRandomInt(40, 50);
+        for (int i = 0; i < randomMax; i++)
+        {
+            new BukkitRunnable()
+            {
+                @Override
+                public void run()
+                {
+
+                    TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
+                    ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 220));
+                    McHelperClass.wait(50);
+                }
+            }.runTask(plugin);
         }
     }
 
@@ -89,6 +134,7 @@ public class eventHandler
         int fullExpSum = 0;
         for (int i = 0; i < 10; i++)
         {
+
             int setNewSum = McHelperClass.generateRandomInt(1, 3);
             player.playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 3, 10);
             player.giveExp(setNewSum);
@@ -117,6 +163,8 @@ public class eventHandler
         }
 
         Location chickenPosition = McHelperClass.findNonBlockY(player.getLocation().add(2, 3, 1), player);
+        chickenPosition.add(0, 3, 0);
+
         Chicken chicken = (Chicken) player.getWorld().spawnEntity(chickenPosition, EntityType.CHICKEN);
         chicken.setCustomName(ChatColor.YELLOW + donorName);
         chicken.setBaby();
@@ -125,15 +173,13 @@ public class eventHandler
     }
 
     //Task for teleporting him every x seconds
-    public void chickenPermanentFollower(Player player, Chicken entity, Plugin plugin)
+    public void chickenPermanentFollower(Player player, Animals entity, Plugin plugin)
     {
         BukkitTask task = new BukkitRunnable()
         {
             @Override
             public void run()
             {
-                System.out.println("Triggered");
-
                 if (!entity.isValid())
                     cancel();
 

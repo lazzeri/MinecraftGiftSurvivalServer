@@ -5,9 +5,11 @@ api-version: 1.17
 libraries:
   - com.pusher:pusher-java-client:2.2.6
   - org.codeartisans:org.json:20161124
+  - xyz.xenondevs:particle:1.6.6
 commands:
   startgame:
   test:
   raid:
   tntRain:
+  cancelTasks:
 

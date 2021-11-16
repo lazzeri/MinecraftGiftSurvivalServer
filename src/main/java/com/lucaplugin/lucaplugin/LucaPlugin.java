@@ -8,22 +8,17 @@ import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.sql.SQLOutput;
 
 
 public final class LucaPlugin extends JavaPlugin implements Listener
 {
+
     public static boolean gameStarted = false;
     public static int userId = 7746914;
     player selectedUser = new player();
@@ -32,7 +27,10 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     @Override
     public void onEnable()
     {
-        setupWebsocket();
+        /*setupWebsocket()*/
+        ;
+
+
     }
 
     @Override
@@ -55,6 +53,12 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             }
         }
 
+        if (label.equalsIgnoreCase("cancelTasks"))
+        {
+           McHelperClass.stopTasks(this);
+        }
+
+
         if (!gameStarted)
             System.out.println("Game not started yet!");
 
@@ -64,7 +68,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.makeChickenCompanion(player, "TestName", this);
+                eventHandlerObj.test(player, "TestName",this);
                 return true;
             }
         }
@@ -74,7 +78,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.createVillagerCircle(player, "TestName");
+                eventHandlerObj.createVillagerCircle(player, "TestName", 10);
                 return true;
             }
         }
@@ -85,13 +89,12 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.tntRain(player, "TestName");
+                eventHandlerObj.tntRain(player, "TestName", this);
                 return true;
             }
         }
         return false;
     }
-
 
     public void setupWebsocket()
     {
