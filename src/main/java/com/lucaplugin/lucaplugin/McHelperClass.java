@@ -91,36 +91,31 @@ public class McHelperClass
     }
 
 
-
     //Particle Effects
-    public static void circleEffect(final Player player, Plugin plugin, int timeInSeconds, int interval, ParticleEffect particleEffect)
+    public static void circleEffect(final Player player, Plugin plugin, int timeInSeconds, int interval, ParticleEffect particleEffect, double amount)
     {
+        double size = (double) amount;
+        double positions = (int) 360 / amount;
+
         new BukkitRunnable()
         {
             double time = 0;
 
-            double phi = 0;
-
             public void run()
             {
-                phi = phi + Math.PI / 8;
-                double x, y, z;
-
                 Location location1 = player.getLocation();
-                for (double t = 0; t <= 2 * Math.PI; t = t + Math.PI / 16)
+                for (int i = 0; i < 360; i += positions)
                 {
-                    for (double i = 0; i <= 1; i = i + 1)
-                    {
-                        x = 0.4 * (2 * Math.PI - t) * 0.5 * Math.cos(t + phi + i * Math.PI);
-                        y = 0.5 * t;
-                        z = 0.4 * (2 * Math.PI - t) * 0.5 * Math.sin(t + phi + i * Math.PI);
-                        location1.add(x, y, z);
-                        particleEffect.display(location1);
-                        location1.subtract(x, y, z);
-                    }
-
+                    double angle = (i * Math.PI / 180);
+                    double x = size * Math.cos(angle);
+                    double z = size * Math.sin(angle);
+                    double y = 1;
+                    location1.add(x,y,z);
+                    //Creates spawner with particle and color of set particle
+                    particleEffect.display(location1);
                 }
-                time += (double) interval/20;
+
+                time += (double) interval / 20;
 
                 System.out.println(time);
                 if (time > timeInSeconds)
@@ -159,7 +154,7 @@ public class McHelperClass
                     }
 
                 }
-                time += (double) interval/20;
+                time += (double) interval / 20;
 
                 System.out.println(time);
                 if (time > timeInSeconds)

@@ -93,7 +93,7 @@ public class eventHandler
 
     public void test(Player player, String donorName, Plugin plugin)
     {
-        McHelperClass.coneEffect(player, plugin, 10, 3, ParticleEffect.NOTE);
+        McHelperClass.circleEffect(player,plugin,10, 2, ParticleEffect.NOTE, 10);
     }
 
     //TNT Rain
