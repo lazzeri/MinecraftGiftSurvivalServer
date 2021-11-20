@@ -93,6 +93,43 @@ public class McHelperClass
 
 
     //Particle Effects
+    public static void circleEffect(final Player player, Plugin plugin, int timeInSeconds, int interval, ParticleEffect particleEffect)
+    {
+        new BukkitRunnable()
+        {
+            double time = 0;
+
+            double phi = 0;
+
+            public void run()
+            {
+                phi = phi + Math.PI / 8;
+                double x, y, z;
+
+                Location location1 = player.getLocation();
+                for (double t = 0; t <= 2 * Math.PI; t = t + Math.PI / 16)
+                {
+                    for (double i = 0; i <= 1; i = i + 1)
+                    {
+                        x = 0.4 * (2 * Math.PI - t) * 0.5 * Math.cos(t + phi + i * Math.PI);
+                        y = 0.5 * t;
+                        z = 0.4 * (2 * Math.PI - t) * 0.5 * Math.sin(t + phi + i * Math.PI);
+                        location1.add(x, y, z);
+                        particleEffect.display(location1);
+                        location1.subtract(x, y, z);
+                    }
+
+                }
+                time += (double) interval/20;
+
+                System.out.println(time);
+                if (time > timeInSeconds)
+                    cancel();
+            }
+
+        }.runTaskTimer(plugin, 0, interval);
+
+    }
 
     //Displays Cone Effect on player (interval normaly set to 3)
     public static void coneEffect(final Player player, Plugin plugin, int timeInSeconds, int interval, ParticleEffect particleEffect)
