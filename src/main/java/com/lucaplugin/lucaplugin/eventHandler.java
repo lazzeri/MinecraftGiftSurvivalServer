@@ -91,9 +91,9 @@ public class eventHandler
 
     }
 
-    public void test(Player player, String donorName,Plugin plugin)
+    public void test1(Player player, String donorName, Plugin plugin)
     {
-        McHelperClass.coneEffect(player,plugin,10,3,ParticleEffect.NOTE);
+        McHelperClass.coneEffect(player, plugin, 10, 3, ParticleEffect.NOTE);
     }
 
     //TNT Rain
@@ -188,4 +188,11 @@ public class eventHandler
         }.runTaskTimer(plugin, 10 * 12, 20 * 12);
     }
 
+    public void test(Player player, String donorName, Plugin plugin)
+    {
+        Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(),EntityType.WOLF);
+        wolf.setTamed(true);
+        wolf.setOwner(player);
+        McHelperClass.sayText(donorName, " has spawned your new best friend", ChatColor.RED, ChatColor.BLUE);
+    }
 }
