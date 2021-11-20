@@ -91,31 +91,34 @@ public class eventHandler
 
     }
 
-    public void test(Player player, String donorName,Plugin plugin)
+    public void test(Player player, String donorName, Plugin plugin)
     {
-        McHelperClass.coneEffect(player,plugin,10,3,ParticleEffect.NOTE);
+        McHelperClass.coneEffect(player, plugin, 10, 3, ParticleEffect.NOTE);
     }
 
     //TNT Rain
-    public void tntRain(Player player, String donorName, Plugin plugin)
+    public void tntRain(Player player, String donorName, Plugin plugin, int interval, int timeInSeconds)
     {
         McHelperClass.playSoundXTimes(player, Sound.ENTITY_CREEPER_PRIMED, 10F, 20);
         McHelperClass.sayText(donorName, " made it rain TNT!", ChatColor.WHITE, ChatColor.RED);
-        int randomMax = McHelperClass.generateRandomInt(40, 50);
-        for (int i = 0; i < randomMax; i++)
-        {
-            new BukkitRunnable()
-            {
-                @Override
-                public void run()
-                {
 
-                    TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
-                    ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 220));
-                    McHelperClass.wait(50);
-                }
-            }.runTask(plugin);
-        }
+        new BukkitRunnable()
+        {
+            double time = 0;
+
+            public void run()
+            {
+                TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
+                ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 150));
+
+                time += (double) interval / 20;
+                if (time > timeInSeconds)
+                    cancel();
+
+                McHelperClass.wait(McHelperClass.generateRandomInt(0, 200));
+            }
+
+        }.runTaskTimer(plugin, 0, interval);
     }
 
     //First: Takes item if in hand
