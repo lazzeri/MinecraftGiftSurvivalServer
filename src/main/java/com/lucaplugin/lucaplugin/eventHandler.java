@@ -69,7 +69,7 @@ public class eventHandler
     }
 
     //Notes
-    public void magicNotes(Player player, String donorName, Plugin plugin)
+    public void magicNotes(Player player, String donorName, Plugin plugin, int interval)
     {
 
         new BukkitRunnable()
@@ -87,7 +87,7 @@ public class eventHandler
                 }
 
             }
-        }.runTaskTimer(plugin, 0L, 5L);
+        }.runTaskTimer(plugin, 0L, interval);
 
     }
 
@@ -109,7 +109,6 @@ public class eventHandler
                 @Override
                 public void run()
                 {
-
                     TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
                     ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 220));
                     McHelperClass.wait(50);
@@ -190,9 +189,23 @@ public class eventHandler
 
     public void test(Player player, String donorName, Plugin plugin)
     {
-        Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(),EntityType.WOLF);
+        McHelperClass.spawnParticle(player,10,1,plugin);
+        Boat boat = (Boat) player.getWorld().spawnEntity(player.getLocation(), EntityType.BOAT);
+        Bat bat = (Bat) player.getWorld().spawnEntity(player.getLocation().add(0, 1, 0), EntityType.BAT);
+        bat.addPassenger(boat);
+        bat.setInvisible(true)
+        ;
+
+        /*
+        Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(), EntityType.WOLF);
         wolf.setTamed(true);
+this
+        p
+        McHelperClass.setRandomColor(plugin, player, wolf, 1, "Schwuggi");
+        wolf.setCollarColor(McHelperClass.randomDyeColor());
         wolf.setOwner(player);
-        McHelperClass.sayText(donorName, " has spawned your new best friend", ChatColor.RED, ChatColor.BLUE);
+        McHelperClass.randomDyeColor();
+        McHelperClass.sayText(donorName, " has spawned your new best friend", McHelperClass.randomColor(), McHelperClass.randomColor());
+         */
     }
 }

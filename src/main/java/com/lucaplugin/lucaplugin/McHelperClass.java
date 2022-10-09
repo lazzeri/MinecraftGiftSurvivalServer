@@ -1,16 +1,91 @@
 package com.lucaplugin.lucaplugin;
 
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
+import xyz.xenondevs.particle.data.color.NoteColor;
+import xyz.xenondevs.particle.data.color.RegularColor;
+import xyz.xenondevs.particle.data.texture.BlockTexture;
 
 import java.util.Random;
 
 public class McHelperClass
 {
+    public static void setRandomColor(Plugin plugin, Player player, Wolf wolf, int interval, String donorName)
+    {
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                ChatColor randomColor = randomColor();
+                wolf.setCustomName(randomColor + donorName);
+                wolf.setCollarColor(randomDyeColor());
+            }
+        }.runTaskTimer(plugin, 0, interval);
+    }
+
+
+    public static void spawnParticle(Player player, int amount, int interval, Plugin plugin)
+    {
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                for (int i = 0; i < amount; i++)
+                {
+                    new ParticleBuilder(ParticleEffect.DRIP_LAVA,player.getLocation())
+                            .display();
+                }
+            }
+        }.runTaskTimer(plugin, 0, interval);
+
+    }
+
+    /*
+
+        for (Entity entity : Bukkit.getWorld("world").getEntities()) {
+            if (entity instanceof Player) {
+                Player player = (Player) entity;
+
+     */
+
+    public static ChatColor randomColor()
+    {
+        ChatColor randomColor = null;
+        int randomInt = McHelperClass.generateRandomInt(0, 21);
+        int i = 0;
+        for (ChatColor chatcolor : ChatColor.values())
+        {
+            if (randomInt == i)
+                randomColor = chatcolor;
+            i++;
+        }
+        return randomColor;
+    }
+
+    public static DyeColor randomDyeColor()
+    {
+        DyeColor randomColor = null;
+        int randomInt = McHelperClass.generateRandomInt(0, 15);
+        int i = 0;
+        for (DyeColor dyeColor : DyeColor.values())
+        {
+            if (randomInt == i)
+                randomColor = dyeColor;
+            i++;
+        }
+        return randomColor;
+
+    }
+
+
     public static void sayText(String name, String text2, ChatColor color1, ChatColor color2)
     {
         Bukkit.broadcastMessage(color1 + name + color2 + text2);
@@ -67,7 +142,6 @@ public class McHelperClass
             player.spawnParticle(particle, location, 30, dustOptions);
         }
 
-        player.getWorld().spawnEntity(spawnLocation.add(0, 1, 0), entityType);
     }
 
     public static void playSoundXTimes(Player player, Sound sound, Float volume, int amount)
@@ -89,7 +163,6 @@ public class McHelperClass
         }
         return new Location(player.getWorld(), location.getX(), y, location.getZ());
     }
-
 
 
     //Particle Effects
@@ -120,7 +193,7 @@ public class McHelperClass
                     }
 
                 }
-                time += (double) interval/20;
+                time += (double) interval / 20;
 
                 System.out.println(time);
                 if (time > timeInSeconds)
@@ -159,7 +232,7 @@ public class McHelperClass
                     }
 
                 }
-                time += (double) interval/20;
+                time += (double) interval / 20;
 
                 System.out.println(time);
                 if (time > timeInSeconds)
