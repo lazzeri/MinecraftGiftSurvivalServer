@@ -69,7 +69,7 @@ public class eventHandler
     }
 
     //Notes
-    public void magicNotes(Player player, String donorName, Plugin plugin)
+    public void magicNotes(Player player, String donorName, Plugin plugin, int interval)
     {
 
         new BukkitRunnable()
@@ -87,38 +87,34 @@ public class eventHandler
                 }
 
             }
-        }.runTaskTimer(plugin, 0L, 5L);
+        }.runTaskTimer(plugin, 0L, interval);
 
     }
 
-    public void test(Player player, String donorName, Plugin plugin)
+    public void test1(Player player, String donorName, Plugin plugin)
     {
-        McHelperClass.circleEffect(player,plugin,10, 2, ParticleEffect.NOTE, 10);
+        McHelperClass.coneEffect(player, plugin, 10, 3, ParticleEffect.NOTE);
     }
 
     //TNT Rain
-    public void tntRain(Player player, String donorName, Plugin plugin, int interval, int timeInSeconds)
+    public void tntRain(Player player, String donorName, Plugin plugin)
     {
         McHelperClass.playSoundXTimes(player, Sound.ENTITY_CREEPER_PRIMED, 10F, 20);
         McHelperClass.sayText(donorName, " made it rain TNT!", ChatColor.WHITE, ChatColor.RED);
-
-        new BukkitRunnable()
+        int randomMax = McHelperClass.generateRandomInt(40, 50);
+        for (int i = 0; i < randomMax; i++)
         {
-            double time = 0;
-
-            public void run()
+            new BukkitRunnable()
             {
-                TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
-                ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 150));
-
-                time += (double) interval / 20;
-                if (time > timeInSeconds)
-                    cancel();
-
-                McHelperClass.wait(McHelperClass.generateRandomInt(0, 200));
-            }
-
-        }.runTaskTimer(plugin, 0, interval);
+                @Override
+                public void run()
+                {
+                    TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
+                    ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 220));
+                    McHelperClass.wait(50);
+                }
+            }.runTask(plugin);
+        }
     }
 
     //First: Takes item if in hand
@@ -191,4 +187,25 @@ public class eventHandler
         }.runTaskTimer(plugin, 10 * 12, 20 * 12);
     }
 
+    public void test(Player player, String donorName, Plugin plugin)
+    {
+        McHelperClass.spawnParticle(player,10,1,plugin);
+        Boat boat = (Boat) player.getWorld().spawnEntity(player.getLocation(), EntityType.BOAT);
+        Bat bat = (Bat) player.getWorld().spawnEntity(player.getLocation().add(0, 1, 0), EntityType.BAT);
+        bat.addPassenger(boat);
+        bat.setInvisible(true)
+        ;
+
+        /*
+        Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(), EntityType.WOLF);
+        wolf.setTamed(true);
+this
+        p
+        McHelperClass.setRandomColor(plugin, player, wolf, 1, "Schwuggi");
+        wolf.setCollarColor(McHelperClass.randomDyeColor());
+        wolf.setOwner(player);
+        McHelperClass.randomDyeColor();
+        McHelperClass.sayText(donorName, " has spawned your new best friend", McHelperClass.randomColor(), McHelperClass.randomColor());
+         */
+    }
 }

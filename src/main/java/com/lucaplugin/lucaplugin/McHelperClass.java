@@ -1,16 +1,91 @@
 package com.lucaplugin.lucaplugin;
 
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
+import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
+import xyz.xenondevs.particle.data.color.NoteColor;
+import xyz.xenondevs.particle.data.color.RegularColor;
+import xyz.xenondevs.particle.data.texture.BlockTexture;
 
 import java.util.Random;
 
 public class McHelperClass
 {
+    public static void setRandomColor(Plugin plugin, Player player, Wolf wolf, int interval, String donorName)
+    {
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                ChatColor randomColor = randomColor();
+                wolf.setCustomName(randomColor + donorName);
+                wolf.setCollarColor(randomDyeColor());
+            }
+        }.runTaskTimer(plugin, 0, interval);
+    }
+
+
+    public static void spawnParticle(Player player, int amount, int interval, Plugin plugin)
+    {
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                for (int i = 0; i < amount; i++)
+                {
+                    new ParticleBuilder(ParticleEffect.DRIP_LAVA,player.getLocation())
+                            .display();
+                }
+            }
+        }.runTaskTimer(plugin, 0, interval);
+
+    }
+
+    /*
+
+        for (Entity entity : Bukkit.getWorld("world").getEntities()) {
+            if (entity instanceof Player) {
+                Player player = (Player) entity;
+
+     */
+
+    public static ChatColor randomColor()
+    {
+        ChatColor randomColor = null;
+        int randomInt = McHelperClass.generateRandomInt(0, 21);
+        int i = 0;
+        for (ChatColor chatcolor : ChatColor.values())
+        {
+            if (randomInt == i)
+                randomColor = chatcolor;
+            i++;
+        }
+        return randomColor;
+    }
+
+    public static DyeColor randomDyeColor()
+    {
+        DyeColor randomColor = null;
+        int randomInt = McHelperClass.generateRandomInt(0, 15);
+        int i = 0;
+        for (DyeColor dyeColor : DyeColor.values())
+        {
+            if (randomInt == i)
+                randomColor = dyeColor;
+            i++;
+        }
+        return randomColor;
+
+    }
+
+
     public static void sayText(String name, String text2, ChatColor color1, ChatColor color2)
     {
         Bukkit.broadcastMessage(color1 + name + color2 + text2);
@@ -67,7 +142,6 @@ public class McHelperClass
             player.spawnParticle(particle, location, 30, dustOptions);
         }
 
-        player.getWorld().spawnEntity(spawnLocation.add(0, 1, 0), entityType);
     }
 
     public static void playSoundXTimes(Player player, Sound sound, Float volume, int amount)
@@ -92,30 +166,34 @@ public class McHelperClass
 
 
     //Particle Effects
-    public static void circleEffect(final Player player, Plugin plugin, int timeInSeconds, int interval, ParticleEffect particleEffect, double amount)
+    public static void circleEffect(final Player player, Plugin plugin, int timeInSeconds, int interval, ParticleEffect particleEffect)
     {
-        double size = (double) amount;
-        double positions = (int) 360 / amount;
-
         new BukkitRunnable()
         {
             double time = 0;
 
+            double phi = 0;
+
             public void run()
             {
-                Location location1 = player.getLocation();
-                for (int i = 0; i < 360; i += positions)
-                {
-                    double angle = (i * Math.PI / 180);
-                    double x = size * Math.cos(angle);
-                    double z = size * Math.sin(angle);
-                    double y = 1;
-                    location1.add(x,y,z);
-                    //Creates spawner with particle and color of set particle
-                    particleEffect.display(location1);
-                }
+                phi = phi + Math.PI / 8;
+                double x, y, z;
 
-                time += (double) interval / 20;
+                Location location1 = player.getLocation();
+                for (double t = 0; t <= 2 * Math.PI; t = t + Math.PI / 16)
+                {
+                    for (double i = 0; i <= 1; i = i + 1)
+                    {
+                        x = 0.4 * (2 * Math.PI - t) * 0.5 * Math.cos(t + phi + i * Math.PI);
+                        y = 0.5 * t;
+                        z = 0.4 * (2 * Math.PI - t) * 0.5 * Math.sin(t + phi + i * Math.PI);
+                        location1.add(x, y, z);
+                        particleEffect.display(location1);
+                        location1.subtract(x, y, z);
+                    }
+
+                }
+                time += (double) interval/20;
 
                 System.out.println(time);
                 if (time > timeInSeconds)
