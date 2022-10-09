@@ -89,7 +89,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.tntRain(player, "TestName", this, 8,30);
+                eventHandlerObj.tntRain(player, "TestName", this);
                 return true;
             }
         }

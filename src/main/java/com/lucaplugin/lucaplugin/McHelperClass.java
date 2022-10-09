@@ -1,36 +1,15 @@
 package com.lucaplugin.lucaplugin;
-
 import org.bukkit.*;
 import org.bukkit.entity.*;
-import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
-import xyz.xenondevs.particle.data.color.NoteColor;
-import xyz.xenondevs.particle.data.color.RegularColor;
-import xyz.xenondevs.particle.data.texture.BlockTexture;
 
 import java.util.Random;
 
 public class McHelperClass
 {
-    public static void setRandomColor(Plugin plugin, Player player, Wolf wolf, int interval, String donorName)
-    {
-        new BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                ChatColor randomColor = randomColor();
-                wolf.setCustomName(randomColor + donorName);
-                wolf.setCollarColor(randomDyeColor());
-            }
-        }.runTaskTimer(plugin, 0, interval);
-    }
-
-
     public static void spawnParticle(Player player, int amount, int interval, Plugin plugin)
     {
         new BukkitRunnable()

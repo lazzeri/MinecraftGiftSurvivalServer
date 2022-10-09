@@ -53,12 +53,12 @@ public class eventHandler
             case 0:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 600, 2));
                 McHelperClass.playSoundXTimes(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5F, 1);
-                McHelperClass.sayText("The new Uku Member ", donorName + " gave you Jump power", ChatColor.BLUE, ChatColor.WHITE);
+                McHelperClass.sayText("Jump jump! ", donorName + " gave you Jump power", ChatColor.BLUE, ChatColor.WHITE);
                 break;
             case 1:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 600, 2));
                 McHelperClass.playSoundXTimes(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5F, 8);
-                McHelperClass.sayText("The new Crew Member ", donorName + " gave you a Speed boost!", ChatColor.BLUE, ChatColor.WHITE);
+                McHelperClass.sayText("Wanna see some real speed?? ", donorName + " gave you a Speed boost!", ChatColor.BLUE, ChatColor.WHITE);
                 break;
             case 2:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 2));
@@ -89,11 +89,6 @@ public class eventHandler
             }
         }.runTaskTimer(plugin, 0L, interval);
 
-    }
-
-    public void test1(Player player, String donorName, Plugin plugin)
-    {
-        McHelperClass.coneEffect(player, plugin, 10, 3, ParticleEffect.NOTE);
     }
 
     //TNT Rain
@@ -187,25 +182,20 @@ public class eventHandler
         }.runTaskTimer(plugin, 10 * 12, 20 * 12);
     }
 
-    public void test(Player player, String donorName, Plugin plugin)
+    //Creates a wolf companion
+    public void createWolfCompanion(Player player, String donorName, Plugin plugin)
     {
-        McHelperClass.spawnParticle(player,10,1,plugin);
-        Boat boat = (Boat) player.getWorld().spawnEntity(player.getLocation(), EntityType.BOAT);
-        Bat bat = (Bat) player.getWorld().spawnEntity(player.getLocation().add(0, 1, 0), EntityType.BAT);
-        bat.addPassenger(boat);
-        bat.setInvisible(true)
-        ;
-
-        /*
         Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(), EntityType.WOLF);
         wolf.setTamed(true);
-this
-        p
-        McHelperClass.setRandomColor(plugin, player, wolf, 1, "Schwuggi");
+        wolf.setCustomName(McHelperClass.randomColor() + donorName);
         wolf.setCollarColor(McHelperClass.randomDyeColor());
         wolf.setOwner(player);
-        McHelperClass.randomDyeColor();
         McHelperClass.sayText(donorName, " has spawned your new best friend", McHelperClass.randomColor(), McHelperClass.randomColor());
-         */
+    }
+
+
+    public void test(Player player, String donorName, Plugin plugin)
+    {
+
     }
 }
