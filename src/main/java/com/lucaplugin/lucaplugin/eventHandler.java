@@ -1,6 +1,7 @@
 package com.lucaplugin.lucaplugin;
 
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -15,6 +16,8 @@ import xyz.xenondevs.particle.data.color.RegularColor;
 
 public class eventHandler
 {
+    public static boolean dirtOnFire = false;
+
     //Villager Raid on Raid
     public void createVillagerCircle(Player player, String donorName, int raidAmount)
     {
@@ -95,6 +98,9 @@ public class eventHandler
     public void tntRain(Player player, String donorName, Plugin plugin)
     {
         McHelperClass.playSoundXTimes(player, Sound.ENTITY_CREEPER_PRIMED, 10F, 20);
+
+        McHelperClass.sendBigText(donorName, "made it rain TNT!", "red", "white");
+
         McHelperClass.sayText(donorName, " made it rain TNT!", ChatColor.WHITE, ChatColor.RED);
         int randomMax = McHelperClass.generateRandomInt(40, 50);
         for (int i = 0; i < randomMax; i++)
@@ -193,9 +199,55 @@ public class eventHandler
         McHelperClass.sayText(donorName, " has spawned your new best friend", McHelperClass.randomColor(), McHelperClass.randomColor());
     }
 
+    //Teleport
+    public void randomTeleportPlayer(Player player, String donorName, Plugin plugin)
+    {
+        System.out.println("test2");
+        Location newPosition = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-100, 300), player.getLocation().getY(), player.getLocation().getZ() - McHelperClass.generateRandomInt(-100, 300));
+        newPosition = McHelperClass.findNonBlockY(newPosition, player);
+        player.teleport(newPosition);
+        McHelperClass.sayText(donorName, " teleported you haha!", ChatColor.RED, ChatColor.WHITE);
+    }
+
+    //Make it rain anvils
+    public void anvilRain(Player player, String donorName, Plugin plugin)
+    {
+        int timeInSeconds = 10;
+        int interval = 10;
+
+        McHelperClass.sendBigText(donorName, "Made it rain anvils!", "red", "white");
+
+        new BukkitRunnable()
+        {
+            double time = 0;
+
+            public void run()
+            {
+                Block block = player.getWorld().getBlockAt(player.getLocation().add(McHelperClass.generateRandomInt(-3, 3),
+                        McHelperClass.generateRandomInt(10, 20),
+                        McHelperClass.generateRandomInt(-3, 3)));
+                block.setType(Material.ANVIL);
+
+                time += (double) interval / 20;
+                if (time > timeInSeconds)
+                    cancel();
+
+                McHelperClass.wait(McHelperClass.generateRandomInt(50, 200));
+            }
+
+        }.runTaskTimer(plugin, 0, interval);
+    }
 
     public void test(Player player, String donorName, Plugin plugin)
     {
-
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+            public void run(){
+                McHelperClass.sendBigText(donorName, "set Dirt and Grass blocks on fire!", "red", "white");
+                dirtOnFire = true;
+                McHelperClass.wait(10000);
+                dirtOnFire = false;
+                McHelperClass.sendBigText("", "Dirt and Grass no longer on fire.", "red", "white");
+            }
+        }, 0);
     }
 }

@@ -1,15 +1,23 @@
 package com.lucaplugin.lucaplugin;
+
 import org.bukkit.*;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
 
+import java.lang.reflect.Constructor;
 import java.util.Random;
 
 public class McHelperClass
 {
+    public static void sendConsoleCommand(String command)
+    {
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+    }
+
     public static void spawnParticle(Player player, int amount, int interval, Plugin plugin)
     {
         new BukkitRunnable()
@@ -19,7 +27,7 @@ public class McHelperClass
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    new ParticleBuilder(ParticleEffect.DRIP_LAVA,player.getLocation())
+                    new ParticleBuilder(ParticleEffect.DRIP_LAVA, player.getLocation())
                             .display();
                 }
             }
@@ -137,10 +145,9 @@ public class McHelperClass
         int y = 255;
         while (player.getWorld().getBlockAt((int) location.getX(), y, (int) location.getZ()).getType() == Material.AIR)
         {
-            System.out.println(player.getWorld().getBlockAt((int) location.getX(), y, (int) location.getZ()).getType());
             y--;
         }
-        return new Location(player.getWorld(), location.getX(), y, location.getZ());
+        return new Location(player.getWorld(), location.getX(), y + 1, location.getZ());
     }
 
 
@@ -172,7 +179,7 @@ public class McHelperClass
                     }
 
                 }
-                time += (double) interval/20;
+                time += (double) interval / 20;
 
                 System.out.println(time);
                 if (time > timeInSeconds)
@@ -219,6 +226,20 @@ public class McHelperClass
             }
 
         }.runTaskTimer(plugin, 0, interval);
+
+    }
+
+
+    public static void sendBigText(String title, String subtitle, String titleColor, String subtitleColor)
+    {
+        try
+        {
+            sendConsoleCommand(String.format("title @a title {\"text\":\"%s\", \"bold\":true, \"italic\":true, \"color\":\"%s\"}", title, titleColor));
+            sendConsoleCommand(String.format("title @a subtitle {\"text\":\"%s\", \"bold\":true, \"italic\":true, \"color\":\"%s\"}", subtitle, subtitleColor));
+        } catch (Exception e)
+        {
+            System.out.println(e);
+        }
 
     }
 }

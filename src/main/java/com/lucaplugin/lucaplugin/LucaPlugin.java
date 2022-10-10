@@ -11,26 +11,28 @@ import com.pusher.client.connection.ConnectionStateChange;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import javax.xml.stream.Location;
 
 
 public final class LucaPlugin extends JavaPlugin implements Listener
 {
-
     public static boolean gameStarted = false;
     public static int userId = 7746914;
     player selectedUser = new player();
     eventHandler eventHandlerObj = new eventHandler();
 
+
     @Override
     public void onEnable()
     {
-        /*setupWebsocket()*/
-        ;
-
-
+        /*setupWebsocket();*/
+        getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj), this);
     }
 
     @Override
@@ -55,7 +57,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
         if (label.equalsIgnoreCase("cancelTasks"))
         {
-           McHelperClass.stopTasks(this);
+            McHelperClass.stopTasks(this);
         }
 
 
@@ -68,7 +70,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.test(player, "TestName",this);
+                eventHandlerObj.test(player, "TestName", this);
                 return true;
             }
         }
@@ -89,7 +91,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.tntRain(player, "TestName", this);
+                //eventHandlerObj.tntRain(player, "TestName", this);
                 return true;
             }
         }
