@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,7 +33,24 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     public void onEnable()
     {
         /*setupWebsocket();*/
-        getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj), this);
+        getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj, this), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+    }
+
+    class PlayerJoinListener implements Listener {
+        @EventHandler
+        public void onPlayerJoin(PlayerJoinEvent event) {
+            Player player = event.getPlayer();
+            // Open the question dialog for the player
+            player.setWalkSpeed(0f);
+            player.setFlySpeed(0f);
+            player.sendMessage("Welcome to Event! Will you be a leader? /yes or /no");
+            // Handle the player's response...
+            //
+
+
+
+        }
     }
 
     @Override
@@ -43,6 +61,11 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
+        // /y and /n for a new player
+
+
+
+
         if (label.equalsIgnoreCase("startgame"))
         {
             if (sender instanceof Player)
@@ -91,7 +114,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                //eventHandlerObj.tntRain(player, "TestName", this);
+                eventHandlerObj.tntRain(player, "TestName", this);
                 return true;
             }
         }

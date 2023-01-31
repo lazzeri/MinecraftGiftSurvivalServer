@@ -240,14 +240,17 @@ public class eventHandler
 
     public void test(Player player, String donorName, Plugin plugin)
     {
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
-            public void run(){
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
                 McHelperClass.sendBigText(donorName, "set Dirt and Grass blocks on fire!", "red", "white");
                 dirtOnFire = true;
                 McHelperClass.wait(10000);
                 dirtOnFire = false;
                 McHelperClass.sendBigText("", "Dirt and Grass no longer on fire.", "red", "white");
             }
-        }, 0);
+        }.runTask(plugin);
     }
 }
