@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class YouNowPlayer
 {
+
     private String username;
     private String broadcasterName;
     private String leaderName;
