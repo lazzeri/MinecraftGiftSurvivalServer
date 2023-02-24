@@ -39,7 +39,7 @@ public class ListenerClass implements Listener
                 @Override
                 public void run()
                 {
-                    runCodeExample(e);
+                    //runCodeExample(e);
                 }
             }.runTask(pluginStuff);
         } else
@@ -50,7 +50,6 @@ public class ListenerClass implements Listener
 
     public void runCodeExample(PlayerMoveEvent e)
     {
-        System.out.println(eventHandler.dirtOnFire);
         Location loc = e.getPlayer().getLocation().clone().subtract(0, 1, 0);
         Block b = loc.getBlock();
         if (eventHandler.dirtOnFire)

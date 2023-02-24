@@ -1,13 +1,5 @@
 package com.lucaplugin.lucaplugin;
 
-import com.pusher.client.Pusher;
-import com.pusher.client.PusherOptions;
-import com.pusher.client.channel.Channel;
-import com.pusher.client.channel.PusherEvent;
-import com.pusher.client.channel.SubscriptionEventListener;
-import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionState;
-import com.pusher.client.connection.ConnectionStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,11 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.xml.stream.Location;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +19,7 @@ import java.util.UUID;
 
 public final class LucaPlugin extends JavaPlugin implements Listener
 {
+    public Plugin plugin = this;
     public static boolean gameStarted = false;
     public static int userId = 7746914;
     player selectedUser = new player();
@@ -44,6 +35,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         /*setupWebsocket();*/
         getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj, this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
     }
 
     class PlayerJoinListener implements Listener
@@ -51,28 +43,20 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent event)
         {
+            //TODO Remove later
+            spawnSystemObj.emptyPlayerList();
             Player player = event.getPlayer();
 
             //Check if already registered to tournament, if not, we
             if (!spawnSystemObj.checkIfPlayerInList(player.getName()))
             {
-                // Freeze Player for registration
-                player.setWalkSpeed(0f);
-                player.setFlySpeed(0f);
-
-                //Remove the Player data to create a new one:
-                spawnSystemObj.removePlayerFromList(player);
-
-                //Welcome and ask first Question
+                McHelperClass.teleportPlayer(player, -22, 78, -8,plugin);
                 player.sendMessage("Welcome to Event!");
-                player.sendMessage("Will you be a leader? type /yes or /no in the chat.");
+                askQuestion(player, "What is your team name? ___");
+            } else
+            {
+                player.sendMessage("Welcome Back, good luck!");
             }
-
-
-            // Handle the player's response...
-            //
-
-
         }
     }
 
@@ -84,24 +68,24 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
-        //Check for Register Commands
-        checkForRegisterEvents(label, sender);
         //Check For Event Commands
         testEventCommands(label, sender);
         return false;
     }
 
-
-    @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event)
+    class PlayerChatListener implements Listener
     {
-        Player player = event.getPlayer();
-        UUID playerUUID = player.getUniqueId();
-        //TODO Here we check if we have no broadcaster set and a question missing:
-        if (questions.containsKey(playerUUID))
+        @EventHandler
+        public void onPlayerChat(AsyncPlayerChatEvent event)
         {
-            checkForConnectingToBroadcasterAndConnect(event.getMessage(), player);
-            questions.remove(playerUUID);
+            Player player = event.getPlayer();
+            UUID playerUUID = player.getUniqueId();
+            System.out.println("On Chat triggered");
+            System.out.println(questions);
+            if (questions.containsKey(playerUUID))
+            {
+                checkForNewPlayerAndConnect(event.getMessage(), player);
+            }
         }
     }
 
@@ -111,52 +95,34 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         Bukkit.broadcastMessage(ChatColor.AQUA + question);
     }
 
-    public void checkForConnectingToBroadcasterAndConnect(String message, Player player)
+    public void checkForNewPlayerAndConnect(String message, Player player)
     {
-        //Here we check the state of the broadcaster.
-
-        //If not online: we ask again:
-        askQuestion(player, "This user is not live. Wait till he is live and join!");
-        //If not exisitng we ask again:
-        askQuestion(player, "This user does not exist.. Please enter the Broadcaster Name again.");
-
-        //If online, we add the broadcaster player.
-    }
-
-    public void checkForRegisterEvents(String label, CommandSender sender)
-    {
-        //If the answer is yes no, its the first register question.
-        if (label.equalsIgnoreCase("yes") || label.equalsIgnoreCase("no"))
+        if (!spawnSystemObj.checkIfPlayerInList(player.getName()))
         {
-            if (sender instanceof Player)
+            //If online, we add the broadcaster player.
+            //Check message if its 3 letters
+            if (message.length() != 3)
             {
-                Player player = (Player) sender;
-
-                //If not registered, which is only in the first phase, we register
-
-                if (!spawnSystemObj.checkIfPlayerInList(player.getName()))
-                {
-                    if (label.equalsIgnoreCase("yes"))
-                    {
-                        spawnSystemObj.addPlayerToArrayLists(new YouNowPlayer(player.getName(), "", player.getName()));
-                    }
-
-                    if (label.equalsIgnoreCase("no"))
-                    {
-                        spawnSystemObj.addPlayerToArrayLists(new YouNowPlayer(player.getName(), "", ""));
-                    }
-                    askQuestion(player, "Awesome? What is the broadcasters name where your leader is live while the tournament?");
-                }
+                questions.remove(player.getUniqueId());
+                askQuestion(player, "The answer must be 3 chars long! What is your team name? ___");
+                return;
             }
-        }
-    }
 
+            player.sendMessage("You are registered for the Event, good luck!");
+            spawnSystemObj.addPlayerToArrayLists(message.toUpperCase(), player.getName());
+            questions.remove(player.getUniqueId());
+            McHelperClass.teleportPlayer(player, 100, 100, 100,plugin);
+
+        } else
+        {
+            System.out.println("Player is already in list with broadcast name, not able to finish registering");
+        }
+
+    }
 
     public void testEventCommands(String label, CommandSender sender)
     {
         //Register Commands
-
-
         if (label.equalsIgnoreCase("startgame"))
         {
             if (sender instanceof Player)
@@ -204,60 +170,5 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 eventHandlerObj.tntRain(player, "TestName", this);
             }
         }
-    }
-
-    public void setupWebsocket()
-    {
-        PusherOptions options = new PusherOptions().setCluster("younow");
-        Pusher pusher = new Pusher("d5b7447226fc2cd78dbb", options);
-
-        pusher.connect(new ConnectionEventListener()
-                       {
-                           @Override
-                           public void onConnectionStateChange(ConnectionStateChange change)
-                           {
-                               System.out.println("State changed to " + change.getCurrentState() +
-                                       " from " + change.getPreviousState());
-                           }
-
-                           @Override
-                           public void onError(String message, String code, Exception e)
-                           {
-                               System.out.println("There was a problem connecting!");
-                           }
-                       },
-                ConnectionState.ALL);
-
-        // Subscribe to a channel
-        Channel channel = pusher.subscribe("public-channel_" + userId);
-
-        // Bind to listen for events called "my-event" sent to "my-channel"
-        channel.bind("onGift", new SubscriptionEventListener()
-        {
-            @Override
-            public void onEvent(PusherEvent event)
-            {
-                System.out.println("Received event with data: " + event.toString());
-                onGiftDistributor.triggerEventForGift(event.toString(), selectedUser.getPlayer(), userId);
-
-            }
-        });
-
-        //Bind chat for invite moment and fan events
-        channel.bind("onChat", new SubscriptionEventListener()
-        {
-            @Override
-            public void onEvent(PusherEvent event)
-            {
-                System.out.println("Received event with data: " + event.toString());
-                onChatDistributor.triggerEventForChat(event.toString(), selectedUser.getPlayer(), "TestUser", userId);
-            }
-        });
-
-        // Disconnect from the service
-        pusher.disconnect();
-
-        // Reconnect, with all channel subscriptions and event bindings automatically recreated
-        pusher.connect();
     }
 }

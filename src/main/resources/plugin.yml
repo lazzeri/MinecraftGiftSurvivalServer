@@ -7,9 +7,9 @@ libraries:
   - org.codeartisans:org.json:20161124
   - xyz.xenondevs:particle:1.6.6
 commands:
+  testo2:
   startgame:
   test:
   raid:
   tntRain:
   cancelTasks:
-

@@ -8,8 +8,11 @@ import java.util.Objects;
 public class spawnSystem
 {
     ArrayList<YouNowPlayer> playersList = new ArrayList<YouNowPlayer>();
-    ArrayList<YouNowPlayer> leaderList = new ArrayList<YouNowPlayer>();
 
+    public void emptyPlayerList()
+    {
+        playersList.clear();
+    }
 
     boolean checkIfPlayerInList(String usernameToCheck)
     {
@@ -19,12 +22,8 @@ public class spawnSystem
         {
             if (player.getUsername().equals(usernameToCheck))
             {
-                //This would be if the user is in the register state and loggs out
-                if (!Objects.equals(player.getBroadcasterName(), ""))
-                {
-                    containsUsername = true;
-                    break;
-                }
+                containsUsername = true;
+                break;
             }
         }
         return containsUsername;
@@ -36,17 +35,21 @@ public class spawnSystem
     }
 
 
-    void addPlayerToArrayLists(YouNowPlayer player)
+    void addPlayerToArrayLists(String userName, String teamName)
     {
-        playersList.add(player);
-        if (player.isLeader())
-            leaderList.add(player);
+        YouNowPlayer newPlayer = new YouNowPlayer(userName, teamName);
+        playersList.add(newPlayer);
     }
 
-    void loginUser(String playerName)
+    void setTeamName(String username, String teamName)
     {
-
-
+        for (YouNowPlayer player : playersList)
+        {
+            if (player.getUsername().equals(username))
+            {
+                player.setBroadcasterName(teamName);
+            }
+        }
     }
 }
 

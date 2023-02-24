@@ -6,14 +6,12 @@ public class YouNowPlayer
 {
 
     private String username;
-    private String broadcasterName;
-    private String leaderName;
+    private String teamName;
 
-    public YouNowPlayer(String username, String broadcasterName,String leaderName)
+    public YouNowPlayer(String username, String teamName)
     {
         this.username = username;
-        this.broadcasterName = broadcasterName;
-        this.leaderName = leaderName;
+        this.teamName = teamName;
     }
 
     public String getUsername()
@@ -28,16 +26,13 @@ public class YouNowPlayer
 
     public String getBroadcasterName()
     {
-        return broadcasterName;
+        return teamName;
     }
 
-    public void setBroadcasterName(String broadcasterName)
+    public void setBroadcasterName(String teamName)
     {
-        this.broadcasterName = broadcasterName;
+        this.teamName = teamName;
     }
 
-    public boolean isLeader(){
-        return Objects.equals(this.username, this.leaderName);
-    }
 }
 
