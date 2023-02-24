@@ -18,14 +18,30 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 public final class LucaPlugin extends JavaPlugin implements Listener
 {
+    private List<ChatColor> validColors = new ArrayList<>(Arrays.asList(
+            ChatColor.AQUA,
+            ChatColor.DARK_BLUE,
+            ChatColor.DARK_GRAY,
+            ChatColor.DARK_GREEN,
+            ChatColor.DARK_PURPLE,
+            ChatColor.DARK_RED,
+            ChatColor.GOLD,
+            ChatColor.GRAY,
+            ChatColor.GREEN,
+            ChatColor.LIGHT_PURPLE,
+            ChatColor.RED,
+            ChatColor.WHITE,
+            ChatColor.YELLOW
+    ));
+
     public Plugin plugin = this;
     public static boolean gameStarted = false;
     public static int userId = 7746914;
@@ -34,7 +50,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     spawnSystem spawnSystemObj = new spawnSystem();
     static String[] modNames = {"Luca"};
     private Map<UUID, String> questions = new HashMap<>();
-
+    public Scoreboard scoreboard;
 
     @Override
     public void onEnable()
@@ -44,6 +60,8 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
         getServer().getPluginManager().registerEvents(new onDeathHandler(), this);
+        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
     }
 
     class PlayerJoinListener implements Listener
@@ -58,7 +76,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             //Check if already registered to tournament, if not, we
             if (!spawnSystemObj.checkIfPlayerInList(player.getName()))
             {
-                McHelperClass.teleportPlayer(player, -22, 78, -8,plugin);
+                McHelperClass.teleportPlayer(player, -22, 78, -8, plugin);
                 player.sendMessage("Welcome to Event!");
                 askQuestion(player, "What is your team name? ___");
             } else
@@ -93,6 +111,19 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (questions.containsKey(playerUUID))
             {
                 checkForNewPlayerAndConnect(event.getMessage(), player);
+                return;
+            }
+
+            Team team = scoreboard.getEntryTeam(player.getName());
+            if (team != null)
+            {
+                String teamPrefix = ChatColor.GREEN + team.getPrefix();
+                String message = teamPrefix + "" + player.getName() + ": " + ChatColor.WHITE + event.getMessage();
+                event.setCancelled(true);
+                for (Player recipient : event.getRecipients())
+                {
+                    recipient.sendMessage(message);
+                }
             }
         }
     }
@@ -119,13 +150,47 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             player.sendMessage("You are registered for the Event, good luck!");
             spawnSystemObj.addPlayerToArrayLists(message.toUpperCase(), player.getName());
             questions.remove(player.getUniqueId());
-            McHelperClass.teleportPlayer(player, 100, 100, 100,plugin);
+            addToScoreBoard(player, message.toUpperCase());
+            McHelperClass.teleportPlayer(player, 100, 100, 100, plugin);
 
         } else
         {
             System.out.println("Player is already in list with broadcast name, not able to finish registering");
         }
 
+    }
+
+    public void addToScoreBoard(Player player, String teamName)
+    {
+        System.out.println("Trying to add" + player.getName());
+        Team team = scoreboard.getTeam(teamName);
+
+        if (team == null)
+        {
+            team = scoreboard.registerNewTeam(teamName);
+            team.setColor(getRandomColor());
+        }
+        team.addEntry(player.getName());
+        team.setPrefix(team.getColor() + "[" + teamName + "] ");
+
+        player.setPlayerListHeader(team.getPrefix()); // set player list header
+        player.setPlayerListFooter(""); // clear player list footer
+        player.setCustomName(team.getPrefix() + player.getName()); // set custom name
+        player.setCustomNameVisible(true); // show custom name
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+        {
+            onlinePlayer.setScoreboard(scoreboard);
+        }
+    }
+
+    private ChatColor getRandomColor()
+    {
+        Random random = new Random();
+        int index = random.nextInt(validColors.size());
+        ChatColor color = validColors.get(index);
+        validColors.remove(index);
+        return color;
     }
 
     public void testEventCommands(String label, CommandSender sender)

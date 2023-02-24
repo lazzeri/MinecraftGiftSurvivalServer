@@ -34,5 +34,9 @@ public class YouNowPlayer
         this.teamName = teamName;
     }
 
+    public String getTeamName()
+    {
+        return this.teamName;
+    }
 }
 
