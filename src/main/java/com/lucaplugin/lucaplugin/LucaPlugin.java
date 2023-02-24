@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -64,7 +65,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         public void onPlayerJoin(PlayerJoinEvent event)
         {
             //TODO Remove later
-            spawnSystemObj.emptyPlayerList();
+            //spawnSystemObj.emptyPlayerList();
             Player player = event.getPlayer();
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers())
@@ -131,44 +132,45 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             //Removes User
             if (player.getName().equals("Bruzzelpia"))
             {
-                String[] words = event.getMessage().split(" ");
-                if (!Objects.equals(words[0], "remove") && words.length != 2)
-                {
-                    System.out.println(words.length);
-                    return;
-                }
-
-                Team team2 = scoreboard.getTeam(words[1]);
-
-                //remove the entries
-                assert team2 != null;
-                for (String entry : team2.getEntries())
-                {
-                    Bukkit.getScheduler().runTask(plugin, new Runnable()
-                    {
-                        public void run()
-                        {
-                            Player p = Bukkit.getPlayer(entry);
-                            spawnSystemObj.removePlayerFromList(p);
-                            System.out.println("Player" + p.getName());
-                            Bukkit.getPlayer(entry).kickPlayer("You can now register with a new Team Name!");
-                            scoreboard.resetScores(entry);
-                        }
-                    });
-                }
-
-                team2.unregister();
-
-
-                // Check if the team has no entries
-
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers())
-                {
-                    onlinePlayer.setScoreboard(scoreboard);
-                }
-                event.setCancelled(true);
+                //remove asd
+                checkForRemovingTeam(event);
             }
         }
+    }
+
+    public void checkForRemovingTeam(AsyncPlayerChatEvent event)
+    {
+        String[] words = event.getMessage().split(" ");
+        if (!Objects.equals(words[0], "remove") && words.length != 2)
+        {
+            System.out.println(words.length);
+            return;
+        }
+
+        Team team2 = scoreboard.getTeam(words[1].toUpperCase());
+        //remove the entries
+        assert team2 != null;
+        for (String entry : team2.getEntries())
+        {
+            Bukkit.getScheduler().runTask(plugin, new Runnable()
+            {
+                public void run()
+                {
+                    Player p = Bukkit.getPlayer(entry);
+                    spawnSystemObj.removePlayerFromList(p);
+                    System.out.println("Player" + p.getName());
+                    Bukkit.getPlayer(entry).kickPlayer("You can now register with a new Team Name!");
+                    scoreboard.resetScores(entry);
+                }
+            });
+        }
+        team2.unregister();
+        // Check if the team has no entries
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+        {
+            onlinePlayer.setScoreboard(scoreboard);
+        }
+        event.setCancelled(true);
     }
 
     public void askQuestion(Player player, String question)
