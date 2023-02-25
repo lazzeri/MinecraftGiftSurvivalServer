@@ -8,15 +8,26 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
 import xyz.xenondevs.particle.data.color.NoteColor;
 import xyz.xenondevs.particle.data.color.RegularColor;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 public class eventHandler
 {
     public static boolean dirtOnFire = false;
+
+    public static Location[] teamSpawnPoints = new Location[] {
+            new Location(McHelperClass.getWorld(), 100, 100, 100),
+            new Location(McHelperClass.getWorld(), 200, 200, 200),
+            // ... and so on for each team
+    };
 
     //Villager Raid on Raid
     public void createVillagerCircle(Player player, String donorName, int raidAmount)
@@ -187,6 +198,31 @@ public class eventHandler
             }
         }.runTaskTimer(plugin, 10 * 12, 20 * 12);
     }
+
+    public void teleportTeams(Scoreboard scoreboard,Plugin plugin) {
+        // Get all the teams
+        Collection<Team> teams = scoreboard.getTeams();
+        // Loop through each team
+        int i = 0;
+        System.out.println(teams.size());
+        for (Team team : teams) {
+            // Get the team's spawn point
+            System.out.println(i);
+            Location spawnPoint = teamSpawnPoints[i];
+            // Check if the spawn point exists
+            if (spawnPoint != null) {
+                // Teleport all players in the team to the spawn point
+                for (OfflinePlayer player : team.getPlayers()) {
+                    if (player.isOnline()) {
+                        Player onlinePlayer = player.getPlayer();
+                        McHelperClass.teleportPlayer(onlinePlayer, spawnPoint.getX(),spawnPoint.getY(),spawnPoint.getZ(), plugin);
+                    }
+                }
+            }
+            i++;
+        }
+    }
+
 
     //Creates a wolf companion
     public void createWolfCompanion(Player player, String donorName, Plugin plugin)

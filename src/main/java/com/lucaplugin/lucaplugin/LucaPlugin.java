@@ -2,6 +2,7 @@ package com.lucaplugin.lucaplugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -132,7 +133,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 }
             }
 
-            test(event);
 
             //Removes User
             if (player.getName().equals("Bruzzelpia"))
@@ -148,6 +148,8 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     {
         if (!event.getMessage().equals("test2"))
             return;
+
+        eventHandlerObj.teleportTeams(scoreboard, plugin);
     }
 
     public void checkForRemovingTeam(AsyncPlayerChatEvent event)
@@ -169,7 +171,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 public void run()
                 {
                     Player p = Bukkit.getPlayer(entry);
-                    spawnSystemObj.removePlayerFromList(p);
+                    spawnSystemObj.removePlayerFromList(p.getName());
                     System.out.println("Player" + p.getName());
                     Bukkit.getPlayer(entry).kickPlayer("You can now register with a new Team Name!");
                     scoreboard.resetScores(entry);
@@ -204,8 +206,15 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 return;
             }
 
+            if (spawnSystemObj.getPlayersList().size() > 10)
+            {
+                questions.remove(player.getUniqueId());
+                askQuestion(player, "There is too many Teams registered.");
+                return;
+            }
+
             player.sendMessage("You are registered for the Event, good luck!");
-            spawnSystemObj.addPlayerToArrayLists(message.toUpperCase(), player.getName());
+            spawnSystemObj.addPlayerToArrayLists(player.getName(), message.toUpperCase());
             questions.remove(player.getUniqueId());
             addToScoreBoard(player, message.toUpperCase());
             McHelperClass.teleportPlayer(player, 100, 100, 100, plugin);

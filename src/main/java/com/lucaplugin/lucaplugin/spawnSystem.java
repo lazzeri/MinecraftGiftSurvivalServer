@@ -3,10 +3,16 @@ package com.lucaplugin.lucaplugin;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 public class spawnSystem
 {
+    public ArrayList<YouNowPlayer> getPlayersList()
+    {
+        return playersList;
+    }
+
     ArrayList<YouNowPlayer> playersList = new ArrayList<YouNowPlayer>();
 
     public void emptyPlayerList()
@@ -29,9 +35,17 @@ public class spawnSystem
         return containsUsername;
     }
 
-    void removePlayerFromList(Player player)
+    public void removePlayerFromList(String username)
     {
-        playersList.remove(player);
+        for (Iterator<YouNowPlayer> iterator = playersList.iterator(); iterator.hasNext(); )
+        {
+            YouNowPlayer player = iterator.next();
+            if (player.getUsername().equals(username))
+            {
+                iterator.remove(); // Remove the player from the list
+                break; // Stop searching after the first match
+            }
+        }
     }
 
 

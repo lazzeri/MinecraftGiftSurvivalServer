@@ -41,6 +41,19 @@ public class McHelperClass
 
     }
 
+    public static World getWorld()
+    {
+        List<World> worlds = Bukkit.getWorlds();
+        World foundWorld = null;
+        for (World world : worlds) {
+            String worldName = world.getName();
+            System.out.println("Loaded world: " + worldName);
+            foundWorld = world;
+        }
+
+        return foundWorld;
+    }
+
     /*
 
         for (Entity entity : Bukkit.getWorld("world").getEntities()) {
