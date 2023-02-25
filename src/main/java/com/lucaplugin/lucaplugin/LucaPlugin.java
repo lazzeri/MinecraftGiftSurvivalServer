@@ -8,10 +8,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -54,7 +57,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj, this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
-        getServer().getPluginManager().registerEvents(new onDeathHandler(), this);
+        getServer().getPluginManager().registerEvents(new onDeathHandler(this), this);
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
     }
@@ -129,13 +132,22 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 }
             }
 
+            test(event);
+
             //Removes User
             if (player.getName().equals("Bruzzelpia"))
             {
                 //remove asd
                 checkForRemovingTeam(event);
+                test(event);
             }
         }
+    }
+
+    public void test(AsyncPlayerChatEvent event)
+    {
+        if (!event.getMessage().equals("test2"))
+            return;
     }
 
     public void checkForRemovingTeam(AsyncPlayerChatEvent event)
