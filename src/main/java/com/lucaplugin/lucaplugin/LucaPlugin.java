@@ -3,12 +3,14 @@ package com.lucaplugin.lucaplugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.WorldBorder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -25,12 +27,11 @@ import java.util.*;
 
 public final class LucaPlugin extends JavaPlugin implements Listener
 {
+    public static double xBorderCenter = 0, yBorderCenter = 0;
+
     private List<ChatColor> validColors = new ArrayList<>(Arrays.asList(
             ChatColor.AQUA,
-            ChatColor.DARK_BLUE,
             ChatColor.DARK_GRAY,
-            ChatColor.DARK_GREEN,
-            ChatColor.DARK_PURPLE,
             ChatColor.DARK_RED,
             ChatColor.GOLD,
             ChatColor.GRAY,
@@ -58,6 +59,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj, this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
+        getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
         getServer().getPluginManager().registerEvents(new onDeathHandler(this), this);
         scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
@@ -139,17 +141,37 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             {
                 //remove asd
                 checkForRemovingTeam(event);
-                test(event);
+                teleportTeams(event);
+                triggerBorder(event);
             }
         }
     }
 
-    public void test(AsyncPlayerChatEvent event)
+    //------------- TEAMS TELEPORT
+    public void teleportTeams(AsyncPlayerChatEvent event)
     {
-        if (!event.getMessage().equals("test2"))
+        if (!event.getMessage().equals("teleportTeams"))
             return;
 
         eventHandlerObj.teleportTeams(scoreboard, plugin);
+    }
+
+    //-------------- Border Starter
+    public void triggerBorder(AsyncPlayerChatEvent event)
+    {
+        if (!event.getMessage().equals("triggerBorder"))
+            return;
+
+        WorldBorder border = McHelperClass.getWorld().getWorldBorder(); // Get the world border
+        border.setWarningDistance(0);
+        border.setDamageBuffer(0);
+        border.setDamageAmount(0.5);
+        border.setWarningTime(9999);
+        border.setCenter(xBorderCenter, yBorderCenter);
+        BorderIterator task = new BorderIterator(plugin); //This will go for shrinktime + max_time_to_shrink
+        //Must be Time of Shrink + Time between shrink
+        task.runTaskTimer(plugin, 0, 240);
+        event.setCancelled(true);
     }
 
     public void checkForRemovingTeam(AsyncPlayerChatEvent event)
@@ -191,6 +213,32 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     {
         questions.put(player.getUniqueId(), question);
         Bukkit.broadcastMessage(ChatColor.AQUA + question);
+    }
+
+    class EntityDamageListener implements Listener
+    {
+        //This removes team dmg
+        @EventHandler
+        public void onEntityDamage(EntityDamageByEntityEvent event)
+        {
+            System.out.println(event);
+            System.out.println(event.getDamager() instanceof Player);
+
+            if (event.getDamager() instanceof Player && event.getEntity() instanceof Player)
+            {
+                Player damager = (Player) event.getDamager();
+                Player player = (Player) event.getEntity();
+                System.out.println(damager.getName() + player.getName());
+                // Check if both players are on the same team
+                System.out.println(damager.getScoreboard().getEntryTeam(damager.getName()));
+                System.out.println(damager.getScoreboard().getEntryTeam(player.getName()));
+
+                if (damager.getScoreboard().getEntryTeam(damager.getName()).equals(damager.getScoreboard().getEntryTeam(player.getName())))
+                {
+                    event.setCancelled(true); // Cancel the event to prevent team damage
+                }
+            }
+        }
     }
 
     public void checkForNewPlayerAndConnect(String message, Player player)

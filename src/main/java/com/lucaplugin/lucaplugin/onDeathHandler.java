@@ -33,11 +33,13 @@ public class onDeathHandler implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         // Kick the player from the server with a message
+        /* TODO This will ban player
         String deathMessage = event.getDeathMessage(); // Get the default death message
         player.kickPlayer(ChatColor.RED + "You died! Because: " + deathMessage + ". You fought brave!");
         // Ban the player from rejoining the server
         Bukkit.getBanList(org.bukkit.BanList.Type.NAME).addBan(player.getName(), "You died! Because: " + deathMessage + ". You fought brave!", null, null);
 
+         */
         Player killer = player.getKiller();
 
         if (killer == null)
