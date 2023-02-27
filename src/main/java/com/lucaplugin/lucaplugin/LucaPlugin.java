@@ -127,8 +127,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
             if (team != null)
             {
-                String teamPrefix = ChatColor.GREEN + team.getPrefix();
-                String message = teamPrefix + "" + player.getName() + ": " + ChatColor.WHITE + event.getMessage();
+                String message = team.getPrefix() + ChatColor.WHITE + player.getName() + ": " + ChatColor.WHITE + event.getMessage();
                 event.setCancelled(true);
                 for (Player recipient : event.getRecipients())
                 {
@@ -153,7 +152,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     {
         if (!event.getMessage().equals("teleportTeams"))
             return;
-
+        event.setCancelled(true);
         eventHandlerObj.teleportTeams(scoreboard, plugin);
     }
 
@@ -163,6 +162,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         if (!event.getMessage().equals("triggerBorder"))
             return;
 
+        event.setCancelled(true);
         WorldBorder border = McHelperClass.getWorld().getWorldBorder(); // Get the world border
         border.setWarningDistance(0);
         border.setDamageBuffer(0);
@@ -173,7 +173,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         BorderIterator task = new BorderIterator(plugin); //This will go for shrinktime + max_time_to_shrink
         //Must be Time of Shrink (10s) + Time of Countdown (10s)
         task.runTaskTimer(plugin, 0, 400);
-        event.setCancelled(true);
+
     }
 
     public void checkForRemovingTeam(AsyncPlayerChatEvent event)
@@ -291,7 +291,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
         player.setPlayerListHeader(team.getPrefix()); // set player list header
         player.setPlayerListFooter(""); // clear player list footer
-        player.setCustomName(team.getPrefix() + player.getName()); // set custom name
+        player.setCustomName(team.getPrefix() + ChatColor.WHITE + player.getName()); // set custom name
         player.setCustomNameVisible(true); // show custom name
         System.out.println(teamName);
         for (Player onlinePlayer : Bukkit.getOnlinePlayers())
