@@ -55,6 +55,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     @Override
     public void onEnable()
     {
+        McHelperClass mcClass = new McHelperClass();
         /*setupWebsocket();*/
         getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj, this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
@@ -167,10 +168,11 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         border.setDamageBuffer(0);
         border.setDamageAmount(0.5);
         border.setWarningTime(9999);
+        border.setSize(150);
         border.setCenter(xBorderCenter, yBorderCenter);
         BorderIterator task = new BorderIterator(plugin); //This will go for shrinktime + max_time_to_shrink
-        //Must be Time of Shrink + Time between shrink
-        task.runTaskTimer(plugin, 0, 240);
+        //Must be Time of Shrink (10s) + Time of Countdown (10s)
+        task.runTaskTimer(plugin, 0, 400);
         event.setCancelled(true);
     }
 

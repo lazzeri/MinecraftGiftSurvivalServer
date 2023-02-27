@@ -18,13 +18,12 @@ public class BorderShrinkTask extends BukkitRunnable
     private static final int SHRINK_AMOUNT = 10;
     private static final int SHRINK_TIME = 10;
 
-    public static boolean isIsRunning()
+    public static BossBar getBossBar()
     {
-        return isRunning;
+        return bossBar;
     }
 
-    private static boolean isRunning = false;
-    private BossBar bossBar;
+    private static BossBar bossBar;
 
     public BorderShrinkTask(int timeTillShrink)
     {
@@ -35,6 +34,7 @@ public class BorderShrinkTask extends BukkitRunnable
     @Override
     public void run()
     {
+        System.out.println(timeUntilShrink);
         // Decrement the time until the next shrink every second
         if (timeUntilShrink > 0)
         {
@@ -42,9 +42,10 @@ public class BorderShrinkTask extends BukkitRunnable
             timeUntilShrink--;
         } else
         {
+            System.out.println("Finished Shrinked");
             setBossBar(timeUntilShrink);
             border.setSize(border.getSize() - SHRINK_AMOUNT, SHRINK_TIME);
-            System.out.println("Canceled second step");
+            this.cancel();
         }
     }
 

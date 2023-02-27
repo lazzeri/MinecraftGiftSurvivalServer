@@ -17,10 +17,11 @@ public class BorderIterator extends BukkitRunnable
     @Override
     public void run()
     {
-        int MIN_BORDER_SIZE = 10;
+        int MIN_BORDER_SIZE = 100;
         if (McHelperClass.getWorld().getWorldBorder().getSize() == MIN_BORDER_SIZE)
         { // Check if condition is met
             System.out.println("Found minimimum Size so stop");
+            BorderShrinkTask.getBossBar().setTitle("Border Complete. Time to fight!");
             this.cancel(); // Stop running task
             return;
         }
