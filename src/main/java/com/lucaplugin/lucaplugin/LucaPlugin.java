@@ -101,7 +101,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             }
 
             //New player
-            askQuestion(player, "What is your userId?, type nothing for not joining.");
+            askQuestion(player, "What is your userId?, type 0 for nothing.");
         }
     }
 
@@ -127,6 +127,13 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             UUID playerUUID = player.getUniqueId();
             System.out.println("On Chat triggered");
             System.out.println(questions);
+
+            if (event.getMessage().equals("removeMe"))
+            {
+                // Remove the player from the playerList
+                playersList.removeIf(playerItem -> playerItem.getUsername().equals(player.getName()));
+                return;
+            }
 
             if (questions.containsKey(playerUUID))
                 connectNewPlayerToWebsocket(event.getMessage(), player);
@@ -277,22 +284,18 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 ConnectionState.ALL);
     }
 
+    private static ArrayList<Integer> connectedList = new ArrayList<>();
+
     public void connectWebsocketForUserId(int userId)
     {
         //Check if we already connected to the player
-        boolean alreadyConnected = false;
-        for (YouNowPlayer playerItem : playersList)
+        if (connectedList.contains(userId))
         {
-            if (playerItem.getUserId() == userId)
-            {
-                System.out.println(": Already connected to this userId");
-                alreadyConnected = true;
-            }
+            System.out.println(": Someone is already connected to this userId, which is fine, have fun!");
+            return;
         }
 
-        if (alreadyConnected)
-            return;
-
+        connectedList.add(userId);
         System.out.println(": New connection to userId: " + userId);
         Channel channel = pusher.subscribe("public-channel_" + userId);
 
