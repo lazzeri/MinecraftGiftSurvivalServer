@@ -130,9 +130,9 @@ public class eventHandler
     }
 
     //First: Takes item if in hand
-    public void itemSnack(Player player, String playerName)
+    public void itemSnack(Player player, String donorName)
     {
-        McHelperClass.sayText(playerName, " has send 50 Likes and snaked your item!", ChatColor.GREEN, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send 50 Likes and snaked your item!", ChatColor.GREEN, ChatColor.WHITE);
         player.getInventory().remove(player.getInventory().getItemInMainHand());
     }
 

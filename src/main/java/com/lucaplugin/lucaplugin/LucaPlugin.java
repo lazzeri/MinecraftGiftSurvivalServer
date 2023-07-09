@@ -52,13 +52,15 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
     public Plugin plugin = this;
     public static boolean gameStarted = false;
-    public static int userId = 7746914;
     player selectedUser = new player();
     eventHandler eventHandlerObj = new eventHandler();
     spawnSystem spawnSystemObj = new spawnSystem();
-    static String[] modNames = {"Luca"};
-    private Map<UUID, String> questions = new HashMap<>();
+
+    public static ArrayList<YouNowPlayer> playersList = new ArrayList<YouNowPlayer>();
+
+    private final Map<UUID, String> questions = new HashMap<>();
     public Scoreboard scoreboard;
+    public Pusher pusher;
 
     @Override
     public void onEnable()
@@ -70,8 +72,9 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
         getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
         getServer().getPluginManager().registerEvents(new onDeathHandler(this), this);
-        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
+        startWebsocket();
+        onChatDistributor.setPlayerList(playersList);
+        onGiftDistributor.setPlayerList(playersList);
     }
 
     class PlayerJoinListener implements Listener
@@ -79,25 +82,26 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent event)
         {
-            //TODO Remove later
-            //spawnSystemObj.emptyPlayerList();
             Player player = event.getPlayer();
 
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+            boolean foundPlayer = false;
+            for (YouNowPlayer playerItem : playersList)
             {
-                onlinePlayer.setScoreboard(scoreboard);
+                if (playerItem.getUsername().equals(player.getName()))
+                {
+                    foundPlayer = true;
+                }
             }
 
-            //Check if already registered to tournament, if not, we
-            if (!spawnSystemObj.checkIfPlayerInList(player.getName()))
+            //Already added player:
+            if (foundPlayer)
             {
-                McHelperClass.teleportPlayer(player, -22, 78, -8, plugin);
-                player.sendMessage("Welcome to Event!");
-                askQuestion(player, "What is your team name? ___");
-            } else
-            {
-                player.sendMessage("Welcome Back, good luck!");
+                player.sendMessage("Welcome back to Server!");
+                return;
             }
+
+            //New player
+            askQuestion(player, "What is your userId?, type nothing for not joining.");
         }
     }
 
@@ -120,104 +124,41 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         public void onPlayerChat(AsyncPlayerChatEvent event)
         {
             Player player = event.getPlayer();
-            System.out.println(player.getName());
-
             UUID playerUUID = player.getUniqueId();
             System.out.println("On Chat triggered");
             System.out.println(questions);
+
             if (questions.containsKey(playerUUID))
-            {
-                checkForNewPlayerAndConnect(event.getMessage(), player);
-                return;
-            }
-
-            Team team = scoreboard.getEntryTeam(player.getName());
-
-            if (team != null)
-            {
-                String message = team.getPrefix() + ChatColor.WHITE + player.getName() + ": " + ChatColor.WHITE + event.getMessage();
-                event.setCancelled(true);
-                for (Player recipient : event.getRecipients())
-                {
-                    recipient.sendMessage(message);
-                }
-            }
-
-
-            //Removes User
-            if (player.getName().equals("Bruzzelpia"))
-            {
-                //remove asd
-                checkForRemovingTeam(event);
-                teleportTeams(event);
-                triggerBorder(event);
-            }
+                connectNewPlayerToWebsocket(event.getMessage(), player);
         }
     }
 
-    //------------- TEAMS TELEPORT
-    public void teleportTeams(AsyncPlayerChatEvent event)
+    public void connectNewPlayerToWebsocket(String message, Player player)
     {
-        if (!event.getMessage().equals("teleportTeams"))
-            return;
-        event.setCancelled(true);
-        eventHandlerObj.teleportTeams(scoreboard, plugin);
-    }
-
-    //-------------- Border Starter
-    public void triggerBorder(AsyncPlayerChatEvent event)
-    {
-        if (!event.getMessage().equals("triggerBorder"))
-            return;
-
-        event.setCancelled(true);
-        WorldBorder border = McHelperClass.getWorld().getWorldBorder(); // Get the world border
-        border.setWarningDistance(0);
-        border.setDamageBuffer(0);
-        border.setDamageAmount(0.5);
-        border.setWarningTime(9999);
-        border.setSize(150);
-        border.setCenter(xBorderCenter, yBorderCenter);
-        BorderIterator task = new BorderIterator(plugin); //This will go for shrinktime + max_time_to_shrink
-        //Must be Time of Shrink (10s) + Time of Countdown (10s)
-        task.runTaskTimer(plugin, 0, 400);
-
-    }
-
-    public void checkForRemovingTeam(AsyncPlayerChatEvent event)
-    {
-        String[] words = event.getMessage().split(" ");
-        if (!Objects.equals(words[0], "remove") && words.length != 2)
+        if (message.trim().isEmpty())
         {
-            System.out.println(words.length);
+            questions.remove(player.getUniqueId());
+            player.sendMessage("Didnt enter anything, have fun!");
             return;
         }
 
-        Team team2 = scoreboard.getTeam(words[1].toUpperCase());
-        //remove the entries
-        assert team2 != null;
-        for (String entry : team2.getEntries())
+        //Check if message is an integer, if not, return, if yes, parse to int
+        try
         {
-            Bukkit.getScheduler().runTask(plugin, new Runnable()
-            {
-                public void run()
-                {
-                    Player p = Bukkit.getPlayer(entry);
-                    spawnSystemObj.removePlayerFromList(p.getName());
-                    System.out.println("Player" + p.getName());
-                    Bukkit.getPlayer(entry).kickPlayer("You can now register with a new Team Name!");
-                    scoreboard.resetScores(entry);
-                }
-            });
-        }
-        team2.unregister();
-        // Check if the team has no entries
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers())
+            int userId = Integer.parseInt(message);
+
+            // Setup Websocket for the player
+            connectWebsocketForUserId(userId);
+            // Add player to the players map
+            playersList.add(new YouNowPlayer(player.getName(), player, userId));
+            player.sendMessage("Connected to userId :)");
+            questions.remove(player.getUniqueId());
+        } catch (NumberFormatException e)
         {
-            onlinePlayer.setScoreboard(scoreboard);
+            player.sendMessage("You didn't insert a valid userId sorry. Try again");
         }
-        event.setCancelled(true);
     }
+
 
     public void askQuestion(Player player, String question)
     {
@@ -251,62 +192,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         }
     }
 
-    public void checkForNewPlayerAndConnect(String message, Player player)
-    {
-        if (!spawnSystemObj.checkIfPlayerInList(player.getName()))
-        {
-            //If online, we add the broadcaster player.
-            //Check message if its 3 letters
-            if (message.length() != 3)
-            {
-                questions.remove(player.getUniqueId());
-                askQuestion(player, "The answer must be 3 chars long! What is your team name? ___");
-                return;
-            }
-
-            if (spawnSystemObj.getPlayersList().size() > 10)
-            {
-                questions.remove(player.getUniqueId());
-                askQuestion(player, "There is too many Teams registered.");
-                return;
-            }
-
-            player.sendMessage("You are registered for the Event, good luck!");
-            spawnSystemObj.addPlayerToArrayLists(player.getName(), message.toUpperCase());
-            questions.remove(player.getUniqueId());
-            addToScoreBoard(player, message.toUpperCase());
-            McHelperClass.teleportPlayer(player, 100, 100, 100, plugin);
-
-        } else
-        {
-            System.out.println("Player is already in list with broadcast name, not able to finish registering");
-        }
-
-    }
-
-    public void addToScoreBoard(Player player, String teamName)
-    {
-        System.out.println("Trying to add" + player.getName());
-        Team team = scoreboard.getTeam(teamName);
-
-        if (team == null)
-        {
-            team = scoreboard.registerNewTeam(teamName);
-            team.setColor(getRandomColor());
-        }
-        team.addEntry(player.getName());
-        team.setPrefix(team.getColor() + "[" + teamName + "] ");
-
-        player.setPlayerListHeader(team.getPrefix()); // set player list header
-        player.setPlayerListFooter(""); // clear player list footer
-        player.setCustomName(team.getPrefix() + ChatColor.WHITE + player.getName()); // set custom name
-        player.setCustomNameVisible(true); // show custom name
-        System.out.println(teamName);
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers())
-        {
-            onlinePlayer.setScoreboard(scoreboard);
-        }
-    }
 
     private ChatColor getRandomColor()
     {
@@ -369,29 +254,46 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         }
     }
 
-    public void setupWebsocket(int userId)
+    public void startWebsocket()
     {
         PusherOptions options = new PusherOptions().setCluster("mt1");
-        Pusher pusher = new Pusher("42a54e2785b3c81ee7b3", options);
-
+        pusher = new Pusher("42a54e2785b3c81ee7b3", options);
         pusher.connect(new ConnectionEventListener()
                        {
                            @Override
                            public void onConnectionStateChange(ConnectionStateChange change)
                            {
-                               System.out.println("State changed to " + change.getCurrentState() +
-                                       " from " + change.getPreviousState());
+                               System.out.println("State changed to " + change.getCurrentState() + " from " + change.getPreviousState());
                            }
 
                            @Override
                            public void onError(String message, String code, Exception e)
                            {
+                               System.out.println(message);
+                               System.out.println(code);
                                System.out.println("There was a problem connecting!");
                            }
                        },
                 ConnectionState.ALL);
+    }
 
-        // Subscribe to a channel
+    public void connectWebsocketForUserId(int userId)
+    {
+        //Check if we already connected to the player
+        boolean alreadyConnected = false;
+        for (YouNowPlayer playerItem : playersList)
+        {
+            if (playerItem.getUserId() == userId)
+            {
+                System.out.println(": Already connected to this userId");
+                alreadyConnected = true;
+            }
+        }
+
+        if (alreadyConnected)
+            return;
+
+        System.out.println(": New connection to userId: " + userId);
         Channel channel = pusher.subscribe("public-channel_" + userId);
 
         // Bind to listen for events called "my-event" sent to "my-channel"
@@ -401,7 +303,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             public void onEvent(PusherEvent event)
             {
                 System.out.println("Received event with data: " + event.toString());
-                onGiftDistributor.triggerEventForGift(event.toString(), selectedUser.getPlayer(), userId);
+                onGiftDistributor.triggerEventForGift(event.toString(), userId);
             }
         });
 
@@ -412,12 +314,10 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             public void onEvent(PusherEvent event)
             {
                 System.out.println("Received event with data: " + event.toString());
-                onChatDistributor.triggerEventForChat(event.toString(), selectedUser.getPlayer(), "TestUser", userId);
+                onChatDistributor.triggerEventForChat(event.toString(), userId);
             }
         });
 
-        // Disconnect from the service
-        pusher.disconnect();
 
         // Reconnect, with all channel subscriptions and event bindings automatically recreated
         pusher.connect();
