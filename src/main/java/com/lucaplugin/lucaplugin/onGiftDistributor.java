@@ -24,10 +24,41 @@ public class onGiftDistributor
         for (int i = 0; i < jsonArray.length(); i++)
         {
             //Trigger here objects for gifts
+            System.out.println(jsonArray.getJSONObject(i).toString());
             String skuName = jsonArray.getJSONObject(i).getString("SKU");
             String donorName = jsonArray.getJSONObject(i).getString("name");
-            triggerGiftEvent(skuName, donorName, broadcasterId);
+            String likes = jsonArray.getJSONObject(i).getJSONObject("extraData").getString("likes");
+            triggerGiftEventWithLikes(likes, donorName, broadcasterId);
+        }
+    }
 
+    public static void triggerGiftEventWithLikes(String likes, String donorName, int broadcasterId)
+    {
+        //We trigger the event for each user connected to the userId
+        for (YouNowPlayer playerItem : playersList)
+        {
+            if (playerItem.getUserId() == broadcasterId)
+            {
+                int likesInt = Integer.parseInt(likes);
+
+                if (likesInt < 100) {
+                    // Here comes the command for likes smaller than 100
+                    eventHandlerObj.itemSnack(playerItem.getPlayer(), donorName);
+                } else if (likesInt >= 100 && likesInt < 200) {
+                    // Gifts for likes between 100 and 199
+                    // Add your code here for this case
+                } else if (likesInt >= 200 && likesInt < 500) {
+                    // Gifts for likes between 200 and 499
+                    // Add your code here for this case
+                } else if (likesInt >= 500 && likesInt < 1000) {
+                    // Gifts for likes between 500 and 999
+                    // Add your code here for this case
+                } else if (likesInt >= 1000) {
+                    // Gifts for likes higher than or equal to 1000
+                    // Add your code here for this case
+                }
+
+            }
         }
     }
 
