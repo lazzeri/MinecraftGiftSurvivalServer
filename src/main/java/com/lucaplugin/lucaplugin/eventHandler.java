@@ -180,6 +180,15 @@ public class eventHandler
         McHelperClass.sayText(donorName, " has send " + likes + " likes and gave " + fullExpSum + " experience to you!", ChatColor.GREEN, ChatColor.WHITE);
     }
 
+
+    public void zombieInvasion (Player player, String donorName, Integer likes)
+    {
+        Location loc = player.getLocation();
+
+
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and spawn some unfriendly Guys!", ChatColor.GREEN, ChatColor.WHITE);
+    }
+
     //A Thunder shoots in random position next to player
     public void createThunder(Player player, String donorName)
     {

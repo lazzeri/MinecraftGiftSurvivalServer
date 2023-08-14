@@ -55,6 +55,9 @@ public class McHelperClass
 
      */
 
+
+
+
     public static ChatColor randomColor()
     {
         ChatColor randomColor = null;
@@ -142,6 +145,18 @@ public class McHelperClass
 
 
     }
+
+
+    private static final Random random = new Random();
+    public static EntityType getRandomEntityType(EntityType[] entityTypes) {
+        if (entityTypes.length == 0) {
+            System.out.println("This bat should not be spawning");
+            return EntityType.BAT;
+        }
+        int randomIndex = random.nextInt(entityTypes.length);
+        return entityTypes[randomIndex];
+    }
+
 
     public static void playSoundXTimes(Player player, Sound sound, Float volume, int amount)
     {
