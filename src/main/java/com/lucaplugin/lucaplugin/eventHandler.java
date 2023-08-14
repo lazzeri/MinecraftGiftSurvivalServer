@@ -176,13 +176,74 @@ public class eventHandler {
     }
 
 
-    public void zombieInvasion (Player player, String donorName, Integer likes)
-    {
-        Location loc = player.getLocation();
+    public static void createEntityAttack(Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, ChatColor normalColor, String text, boolean isSuperMessage, String superMessageColor, EntityType[] entityTypes) {
+        double size = (double) 10;
+        int positions = (int) 360 / eventAmount;
+        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(rgb1, rgb2, rgb3), size2);
 
+        Random random = new Random();
 
-        McHelperClass.sayText(donorName, " has send " + likes + " likes and spawn some unfriendly Guys!", ChatColor.GREEN, ChatColor.WHITE);
+        for (int i = 0; i < 360; i += positions) {
+            double angle = (i * Math.PI / 180);
+            double x = size * Math.cos(angle);
+            double z = size * Math.sin(angle);
+
+            EntityType randomEntityType = entityTypes[random.nextInt(entityTypes.length)];
+
+            McHelperClass.spawnEntityWithParticle(player, Particle.REDSTONE, dustOptions, randomEntityType, (int) x, (int) z);
+        }
+
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+
+        String message = donorName + " has sent " + likes + " " + text;
+        if (isSuperMessage) {
+            McHelperClass.sendBigText(donorName, message, superMessageColor, "white");
+        } else {
+            McHelperClass.sayText(donorName, message, normalColor, ChatColor.WHITE);
+        }
     }
+
+    public void netherAttack(Player player, String donorName, int likes){
+        player.getWorld().setTime(1300);
+        EntityType[] entityTypes = { EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE,EntityType.SKELETON};
+        createEntityAttack(
+                player,
+                donorName,
+                likes,
+                20,
+                255,
+                0,
+                0,
+                3.0F,
+                ChatColor.GOLD,
+                "spawned the living HELL!",
+                true,
+                "gold",
+                entityTypes
+        );
+    }
+
+    public static void farmTime(Player player, String donorName, int likes){
+        EntityType[] entityTypes = { EntityType.COW, EntityType.CHICKEN, EntityType.HORSE,EntityType.PIG, EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA};
+        createEntityAttack(
+                player,
+                donorName,
+                likes,
+                25,
+                220,
+                170,
+                255,
+                3.0F,
+                ChatColor.LIGHT_PURPLE,
+                "spawned some friendly guys!",
+                false,
+                "gold",
+                entityTypes
+        );
+    }
+
 
     //A Thunder shoots in random position next to player
     public void createThunder(Player player, String donorName)

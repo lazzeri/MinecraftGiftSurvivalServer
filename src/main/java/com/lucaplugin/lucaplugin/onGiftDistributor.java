@@ -75,6 +75,7 @@ public class onGiftDistributor
         if (likes >= 4500) {
             return;
         } else if (likes >= 1100) {
+            eventHandlerObj.netherAttack(player,donorName,likes);
             eventHandlerObj.tntRain(player, donorName, plugin, likes);
             return;
         } else if (likes >= 400) {
@@ -82,6 +83,7 @@ public class onGiftDistributor
             eventHandler.createVillagerCircle(player,donorName,15,likes);
             return;
         } else if (likes >= 50) {
+            eventHandler.farmTime(player,donorName,likes);
             return;
         } else {
             eventHandlerObj.throwExpBottles(player, donorName,likes);

@@ -11,6 +11,7 @@ import com.pusher.client.connection.ConnectionStateChange;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -28,6 +29,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.w3c.dom.ls.LSOutput;
 
+import java.sql.Array;
 import java.util.*;
 
 
@@ -251,11 +253,23 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             if (sender instanceof Player)
             {
-                Player player = (Player) sender;
-                //eventHandlerObj.tntRain(player, "TestName", this, 123);
-                eventHandler.givePotionEffect(player, "Test", "made you gain 100 pounds", ChatColor.GREEN, 123,PotionEffectType.SLOW, 600, 2);
-                player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
-                player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
+
+                EntityType[] entityTypes = { EntityType.COW, EntityType.CHICKEN, EntityType.HORSE,EntityType.PIG, EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA};
+                eventHandlerObj.createEntityAttack(
+                        ((Player) sender).getPlayer(),
+                        "text",
+                        123,
+                        25,
+                        220,
+                        170,
+                        255,
+                        3.0F,
+                        ChatColor.LIGHT_PURPLE,
+                        "spawned some friendly guys!",
+                        false,
+                        "gold",
+                        entityTypes
+                );
             }
         }
     }
