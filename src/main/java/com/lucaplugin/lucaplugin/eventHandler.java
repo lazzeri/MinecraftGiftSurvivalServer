@@ -22,8 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
-public class eventHandler
-{
+public class eventHandler {
     public static boolean dirtOnFire = false;
 
     public static Location[] teamSpawnPoints = new Location[]{
@@ -111,21 +110,17 @@ public class eventHandler
     }
 
     //TNT Rain
-    public void tntRain(Player player, String donorName, Plugin plugin)
-    {
+    public void tntRain(Player player, String donorName, Plugin plugin, Integer likes) {
         McHelperClass.playSoundXTimes(player, Sound.ENTITY_CREEPER_PRIMED, 10F, 20);
 
-        McHelperClass.sendBigText(donorName, "made it rain TNT!", "red", "white");
+        McHelperClass.sendBigText(donorName, "made it rain TNT!", "yellow", "white");
 
-        McHelperClass.sayText(donorName, " made it rain TNT!", ChatColor.WHITE, ChatColor.RED);
+        McHelperClass.sayText(donorName, " has send " + likes + " and made it rain TNT!", ChatColor.GOLD, ChatColor.WHITE);
         int randomMax = McHelperClass.generateRandomInt(40, 50);
-        for (int i = 0; i < randomMax; i++)
-        {
-            new BukkitRunnable()
-            {
+        for (int i = 0; i < randomMax; i++) {
+            new BukkitRunnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
                     ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 220));
                     McHelperClass.wait(50);
@@ -266,16 +261,20 @@ public class eventHandler
         }
     }
 
+    //Gives speed potion effect
+    public static void givePotionEffect(Player player, String donorName, String text, ChatColor chatColor, Integer likes, PotionEffectType potionEffect, Integer duration, Integer amplifier) {
+        player.addPotionEffect(new PotionEffect(potionEffect, duration, amplifier));
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and " + text, chatColor, ChatColor.WHITE);
+    }
 
     //Creates a wolf companion
-    public void createWolfCompanion(Player player, String donorName, Plugin plugin)
-    {
+    public void createWolfCompanion(Player player, String donorName, Plugin plugin) {
         Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(), EntityType.WOLF);
         wolf.setTamed(true);
         wolf.setCustomName(McHelperClass.randomColor() + donorName);
         wolf.setCollarColor(McHelperClass.randomDyeColor());
         wolf.setOwner(player);
-        McHelperClass.sayText(donorName, " has spawned your new best friend", McHelperClass.randomColor(), McHelperClass.randomColor());
+        McHelperClass.sayText(donorName, " has spawned your new best friend", ChatColor.GOLD, McHelperClass.randomColor());
     }
 
     //Teleport
@@ -288,21 +287,18 @@ public class eventHandler
     }
 
     //Make it rain anvils
-    public void anvilRain(Player player, String donorName, Plugin plugin)
-    {
+    public void anvilRain(Player player, String donorName, Plugin plugin, Integer likes) {
         int timeInSeconds = 10;
         int interval = 10;
 
-        McHelperClass.sendBigText(donorName, "Made it rain anvils!", "red", "white");
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and made it rain anvils", ChatColor.LIGHT_PURPLE, ChatColor.WHITE);
 
-        new BukkitRunnable()
-        {
+        new BukkitRunnable() {
             double time = 0;
 
-            public void run()
-            {
+            public void run() {
                 Block block = player.getWorld().getBlockAt(player.getLocation().add(McHelperClass.generateRandomInt(-3, 3),
-                        McHelperClass.generateRandomInt(10, 20),
+                        McHelperClass.generateRandomInt(3, 5),
                         McHelperClass.generateRandomInt(-3, 3)));
                 block.setType(Material.ANVIL);
 
@@ -316,23 +312,7 @@ public class eventHandler
         }.runTaskTimer(plugin, 0, interval);
     }
 
-    public void test(Player player, String donorName, Plugin plugin)
-    {
-        new BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                World world = player.getWorld();
-                Location location = player.getLocation().add(2, 0, 1);
-                Chicken chicken = world.spawn(location, Chicken.class);
-                chicken.setCustomName("Agitated Chicken");
-                chicken.setCustomNameVisible(true);
-                chicken.setBaby();
-                chicken.setGlowing(true);
-                chicken.setHealth(4.0);  // Set health as needed
-                player.damage(0.5, chicken);
-            }
-        }.runTask(plugin);
+    public void test(Player player, String donorName, Plugin plugin) {
+
     }
 }

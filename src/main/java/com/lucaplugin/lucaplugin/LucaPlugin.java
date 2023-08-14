@@ -8,10 +8,7 @@ import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.WorldBorder;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -29,6 +26,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.*;
 
@@ -250,12 +248,15 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         }
 
         if (label.equalsIgnoreCase("tntRain"))
-        {  if (sender instanceof Player)
         {
-            Player player = (Player) sender;
-            eventHandlerObj.createThunder(player, "TestName");
-        }
-
+            if (sender instanceof Player)
+            {
+                Player player = (Player) sender;
+                //eventHandlerObj.tntRain(player, "TestName", this, 123);
+                eventHandler.givePotionEffect(player, "Test", "made you gain 100 pounds", ChatColor.GREEN, 123,PotionEffectType.SLOW, 600, 2);
+                player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
+                player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
+            }
         }
     }
 

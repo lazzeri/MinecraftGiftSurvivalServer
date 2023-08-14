@@ -63,19 +63,22 @@ public class onGiftDistributor
             return;
         }
         if(likes == -2){
+            eventHandlerObj.createWolfCompanion(player, donorName, plugin);
             return;
         }
-        
+
         if(likes == -1){
             eventHandlerObj.createThunder(player, donorName);
-            return; 
+            return;
         }
 
         if (likes >= 4500) {
             return;
         } else if (likes >= 1100) {
+            eventHandlerObj.tntRain(player, donorName, plugin, likes);
             return;
         } else if (likes >= 400) {
+            eventHandlerObj.anvilRain(player, donorName, plugin, likes);
             eventHandler.createVillagerCircle(player,donorName,15,likes);
             return;
         } else if (likes >= 50) {
@@ -88,8 +91,8 @@ public class onGiftDistributor
             return;
         }
     }
-    
-    
+
+
     public static void triggerGiftEvent(String skuName, String donorName, int broadcasterId)
     {
         //We trigger the event for each user connected to the userId
