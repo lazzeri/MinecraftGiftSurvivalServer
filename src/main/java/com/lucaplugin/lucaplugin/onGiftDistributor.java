@@ -1,6 +1,7 @@
 package com.lucaplugin.lucaplugin;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -10,6 +11,14 @@ public class onGiftDistributor
 {
     private static ArrayList<YouNowPlayer> playersList;
     private static final eventHandler eventHandlerObj = new eventHandler();
+
+
+    public static void setPlugin(Plugin plugin)
+    {
+        onGiftDistributor.plugin = plugin;
+    }
+
+    public static Plugin plugin;
 
     public static void setPlayerList(ArrayList<YouNowPlayer> playerList)
     {
@@ -40,28 +49,47 @@ public class onGiftDistributor
             if (playerItem.getUserId() == broadcasterId)
             {
                 int likesInt = Integer.parseInt(likes);
-
-                if (likesInt < 100) {
-                    // Here comes the command for likes smaller than 100
-                    eventHandlerObj.itemSnack(playerItem.getPlayer(), donorName);
-                } else if (likesInt >= 100 && likesInt < 200) {
-                    // Gifts for likes between 100 and 199
-                    // Add your code here for this case
-                } else if (likesInt >= 200 && likesInt < 500) {
-                    // Gifts for likes between 200 and 499
-                    // Add your code here for this case
-                } else if (likesInt >= 500 && likesInt < 1000) {
-                    // Gifts for likes between 500 and 999
-                    // Add your code here for this case
-                } else if (likesInt >= 1000) {
-                    // Gifts for likes higher than or equal to 1000
-                    // Add your code here for this case
-                }
-
+                triggerEvents(likesInt, playerItem.getPlayer(),donorName);
             }
         }
     }
 
+
+    public static void triggerEvents(int likes, Player player, String donorName) {
+
+
+        if(likes == -3){
+            eventHandlerObj.makeChickenCompanion(player, donorName, plugin);
+            return;
+        }
+        if(likes == -2){
+            return;
+        }
+        
+        if(likes == -1){
+            eventHandlerObj.createThunder(player, donorName);
+            return; 
+        }
+
+        if (likes >= 4500) {
+            return;
+        } else if (likes >= 1100) {
+            return;
+        } else if (likes >= 400) {
+            eventHandler.createVillagerCircle(player,donorName,15,likes);
+            return;
+        } else if (likes >= 50) {
+            return;
+        } else {
+            eventHandlerObj.throwExpBottles(player, donorName,likes);
+            eventHandlerObj.randomTeleportPlayer(player,donorName,likes);
+            eventHandler.itemSnack(player,donorName,likes);
+
+            return;
+        }
+    }
+    
+    
     public static void triggerGiftEvent(String skuName, String donorName, int broadcasterId)
     {
         //We trigger the event for each user connected to the userId
@@ -73,7 +101,6 @@ public class onGiftDistributor
                 {
                     case "50_LIKES_2":
                         //Here Comes the command then in
-                        eventHandlerObj.itemSnack(playerItem.getPlayer(), donorName);
                         break;
                 }
             }

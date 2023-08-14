@@ -40,8 +40,6 @@ public class onChatDistributor
                 switch (message)
                 {
                     case "test":
-                        System.out.println("Here comes the action");
-                        eventHandlerObj.itemSnack(playerItem.getPlayer(), donorName);
                         break;
                 }
             }

@@ -3,6 +3,8 @@ package com.lucaplugin.lucaplugin;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -18,19 +20,20 @@ import xyz.xenondevs.particle.data.color.RegularColor;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 public class eventHandler
 {
     public static boolean dirtOnFire = false;
 
-    public static Location[] teamSpawnPoints = new Location[] {
+    public static Location[] teamSpawnPoints = new Location[]{
             new Location(McHelperClass.getWorld(), 100, 100, 100),
             new Location(McHelperClass.getWorld(), 200, 200, 200),
             // ... and so on for each team
     };
 
     //Villager Raid on Raid
-    public void createVillagerCircle(Player player, String donorName, int raidAmount)
+    public static void createVillagerCircle(Player player, String donorName, int raidAmount, int likes)
     {
         double size = (double) raidAmount;
         int positions = (int) 360 / raidAmount;
@@ -54,11 +57,13 @@ public class eventHandler
 
 
         //Set Message
-        McHelperClass.sayText("OH GOD!! ITS A RAID FROM ", donorName, ChatColor.DARK_PURPLE, ChatColor.LIGHT_PURPLE);
+        McHelperClass.sayText(" has send " + likes + " likes, and spawned a Pillager Raid!", donorName, ChatColor.RED, ChatColor.WHITE);
     }
 
+
+
     //Adrenalin Rush = Health Regen + Jump | Speed | Blindness
-    public void adrenalinRush(Player player, String donorName)
+    public static void adrenalinRush(Player player, String donorName, int likes)
     {
         player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 1));
 
@@ -67,17 +72,17 @@ public class eventHandler
             case 0:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 600, 2));
                 McHelperClass.playSoundXTimes(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5F, 1);
-                McHelperClass.sayText("Jump jump! ", donorName + " gave you Jump power", ChatColor.BLUE, ChatColor.WHITE);
+                McHelperClass.sayText("Jump jump! ", donorName + " has send " + likes + " likes and gave you Jump power", ChatColor.BLUE, ChatColor.WHITE);
                 break;
             case 1:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 600, 2));
                 McHelperClass.playSoundXTimes(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5F, 8);
-                McHelperClass.sayText("Wanna see some real speed?? ", donorName + " gave you a Speed boost!", ChatColor.BLUE, ChatColor.WHITE);
+                McHelperClass.sayText("Wanna see some real speed?? ", donorName + " has send " + likes + " likes and gave you a Speed boost!", ChatColor.BLUE, ChatColor.WHITE);
                 break;
             case 2:
                 player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 2));
                 McHelperClass.playSoundXTimes(player, Sound.BLOCK_SAND_HIT, 5F, 15);
-                McHelperClass.sayText("The little troll ", donorName + " threw some sand in your eyes.. HA HA!", ChatColor.RED, ChatColor.RED);
+                McHelperClass.sayText("The little troll ", donorName + " has send " + likes + " likes and threw some sand in your eyes.. HA HA!", ChatColor.RED, ChatColor.RED);
                 break;
         }
     }
@@ -130,14 +135,35 @@ public class eventHandler
     }
 
     //First: Takes item if in hand
-    public void itemSnack(Player player, String donorName)
+    public static void itemSnack(Player player, String donorName, Integer likes)
     {
-        McHelperClass.sayText(donorName, " has send 50 Likes and snaked your item!", ChatColor.GREEN, ChatColor.WHITE);
-        player.getInventory().remove(player.getInventory().getItemInMainHand());
+        Inventory inventory = player.getInventory();
+        ItemStack[] toolbarItems = new ItemStack[9]; // Assuming the first 9 slots are the toolbar
+
+        for (int i = 0; i < 9; i++)
+        {
+            toolbarItems[i] = inventory.getItem(i);
+        }
+
+        boolean found = false;
+        for(int i = 0; i < 9; i++){
+            // Check if the slot contains an item before removing it
+            if (toolbarItems[i] != null && toolbarItems[i].getType() != Material.AIR)
+            {
+                found = true;
+                inventory.setItem(i, new ItemStack(Material.AIR));
+                McHelperClass.sayText(donorName,  " has send " + likes + " likes and stole an item from your ToolBar!", ChatColor.GREEN, ChatColor.WHITE);
+                return;
+            }
+        }
+
+            McHelperClass.sayText(donorName,  " has send " + likes + " likes and saw that your toolbar is empty, here have a cookie!", ChatColor.GREEN, ChatColor.WHITE);
+            inventory.setItem(0, new ItemStack(Material.COOKIE));
     }
 
+
     //Throws Exp Bottles on player
-    public void throwExpBottles(Player player, String playerName)
+    public void throwExpBottles(Player player, String donorName, Integer likes)
     {
         Location loc = player.getLocation();
         int fullExpSum = 0;
@@ -151,15 +177,16 @@ public class eventHandler
             McHelperClass.wait(McHelperClass.generateRandomInt(50, 150));
             fullExpSum += setNewSum;
         }
-        McHelperClass.sayText(playerName, " has send an invite with " + fullExpSum + " experience for you!", ChatColor.BLUE, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and gave " + fullExpSum + " experience to you!", ChatColor.GREEN, ChatColor.WHITE);
     }
 
     //A Thunder shoots in random position next to player
-    public void createThunder(Player player, String playerName)
+    public void createThunder(Player player, String donorName)
     {
-        Location test = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-15, 15), player.getLocation().getY() + McHelperClass.generateRandomInt(-15, 15), player.getLocation().getZ());
-        player.getWorld().strikeLightning(test);
-        McHelperClass.sayText(playerName, " has captured a moment and brought thunder! ", ChatColor.RED, ChatColor.WHITE);
+        Location location = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-10, 10), player.getLocation().getY() + McHelperClass.generateRandomInt(-10, 10), player.getLocation().getZ());
+        Location fixedYLocation = McHelperClass.findNonBlockY(location, player);
+        player.getWorld().strikeLightning(fixedYLocation);
+        McHelperClass.sayText(donorName, " has invited his fans and brought a thunder! ", ChatColor.GREEN, ChatColor.WHITE);
     }
 
     //Create a chicken companion
@@ -175,9 +202,11 @@ public class eventHandler
         chickenPosition.add(0, 3, 0);
 
         Chicken chicken = (Chicken) player.getWorld().spawnEntity(chickenPosition, EntityType.CHICKEN);
-        chicken.setCustomName(ChatColor.YELLOW + donorName);
+        chicken.setCustomName(McHelperClass.randomColor() + donorName);
         chicken.setBaby();
         player.getWorld().playEffect(chicken.getLocation(), Effect.ANVIL_BREAK, 20);
+        McHelperClass.sayText(donorName, " became a fan! And is now a chicken!", ChatColor.BLUE, ChatColor.WHITE);
+
         chickenPermanentFollower(player, chicken, plugin);
     }
 
@@ -199,23 +228,28 @@ public class eventHandler
         }.runTaskTimer(plugin, 10 * 12, 20 * 12);
     }
 
-    public void teleportTeams(Scoreboard scoreboard,Plugin plugin) {
+    public void teleportTeams(Scoreboard scoreboard, Plugin plugin)
+    {
         // Get all the teams
         Collection<Team> teams = scoreboard.getTeams();
         // Loop through each team
         int i = 0;
         System.out.println(teams.size());
-        for (Team team : teams) {
+        for (Team team : teams)
+        {
             // Get the team's spawn point
             System.out.println(i);
             Location spawnPoint = teamSpawnPoints[i];
             // Check if the spawn point exists
-            if (spawnPoint != null) {
+            if (spawnPoint != null)
+            {
                 // Teleport all players in the team to the spawn point
-                for (OfflinePlayer player : team.getPlayers()) {
-                    if (player.isOnline()) {
+                for (OfflinePlayer player : team.getPlayers())
+                {
+                    if (player.isOnline())
+                    {
                         Player onlinePlayer = player.getPlayer();
-                        McHelperClass.teleportPlayer(onlinePlayer, spawnPoint.getX(),spawnPoint.getY(),spawnPoint.getZ(), plugin);
+                        McHelperClass.teleportPlayer(onlinePlayer, spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ(), plugin);
                     }
                 }
             }
@@ -236,13 +270,12 @@ public class eventHandler
     }
 
     //Teleport
-    public void randomTeleportPlayer(Player player, String donorName, Plugin plugin)
+    public void randomTeleportPlayer(Player player, String donorName, Integer likes)
     {
-        System.out.println("test2");
         Location newPosition = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-100, 300), player.getLocation().getY(), player.getLocation().getZ() - McHelperClass.generateRandomInt(-100, 300));
         newPosition = McHelperClass.findNonBlockY(newPosition, player);
         player.teleport(newPosition);
-        McHelperClass.sayText(donorName, " teleported you haha!", ChatColor.RED, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes teleported you haha!", ChatColor.GREEN, ChatColor.WHITE);
     }
 
     //Make it rain anvils
@@ -281,11 +314,15 @@ public class eventHandler
             @Override
             public void run()
             {
-                McHelperClass.sendBigText(donorName, "set Dirt and Grass blocks on fire!", "red", "white");
-                dirtOnFire = true;
-                McHelperClass.wait(10000);
-                dirtOnFire = false;
-                McHelperClass.sendBigText("", "Dirt and Grass no longer on fire.", "red", "white");
+                World world = player.getWorld();
+                Location location = player.getLocation().add(2, 0, 1);
+                Chicken chicken = world.spawn(location, Chicken.class);
+                chicken.setCustomName("Agitated Chicken");
+                chicken.setCustomNameVisible(true);
+                chicken.setBaby();
+                chicken.setGlowing(true);
+                chicken.setHealth(4.0);  // Set health as needed
+                player.damage(0.5, chicken);
             }
         }.runTask(plugin);
     }

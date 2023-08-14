@@ -62,6 +62,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     public Scoreboard scoreboard;
     public Pusher pusher;
 
+
     @Override
     public void onEnable()
     {
@@ -74,7 +75,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(new onDeathHandler(this), this);
         startWebsocket();
         onChatDistributor.setPlayerList(playersList);
-        onGiftDistributor.setPlayerList(playersList);
+        onGiftDistributor.setPlugin(this);
     }
 
     class PlayerJoinListener implements Listener
@@ -229,9 +230,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         }
 
 
-        if (!gameStarted)
-            System.out.println("Game not started yet!");
-
 
         if (label.equalsIgnoreCase("test"))
         {
@@ -247,17 +245,17 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.createVillagerCircle(player, "TestName", 10);
+                eventHandler.adrenalinRush(player,"TEEST",15);
             }
         }
 
         if (label.equalsIgnoreCase("tntRain"))
+        {  if (sender instanceof Player)
         {
-            if (sender instanceof Player)
-            {
-                Player player = (Player) sender;
-                eventHandlerObj.tntRain(player, "TestName", this);
-            }
+            Player player = (Player) sender;
+            eventHandlerObj.createThunder(player, "TestName");
+        }
+
         }
     }
 
