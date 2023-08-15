@@ -289,7 +289,9 @@ public class eventHandler {
         player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
         player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
         String message = donorName + " has sent " + likes + " likes and spawned the 4 Horsemen! Or a couple more...";
-        McHelperClass.sendBigText(donorName, message, "yellow", "white");
+        McHelperClass.sayText(message, donorName, ChatColor.RED, ChatColor.WHITE);
+
+        McHelperClass.sendBigText(donorName, "spawned the 4 Horsemen!", "yellow", "white");
     }
 
     public void netherAttack(Player player, String donorName, int likes){
@@ -311,6 +313,40 @@ public class eventHandler {
                 entityTypes
         );
     }
+
+
+
+    public static void loadedCreeperAttack(Player player, String donorName, int likes) {
+        double size = 10.0; // Using decimal to indicate a double value
+        int eventAmount = 25;
+        int positions = 360 / eventAmount;
+
+        Random random = new Random();
+
+        for (int i = 0; i < 360; i += positions) {
+            double angle = i * Math.PI / 180.0;
+            double x = size * Math.cos(angle);
+            double z = size * Math.sin(angle);
+
+            Location spawnLocation = player.getLocation().clone().add(x, 0, z);
+            Creeper creeper = (Creeper) player.getWorld().spawnEntity(spawnLocation, EntityType.CREEPER);
+
+            if (random.nextBoolean()) {
+                creeper.setPowered(true);
+            }
+
+            player.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, spawnLocation, 50);
+        }
+
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
+
+        String message =  " has sent " + likes + " likes and spawned Creepers!";
+        McHelperClass.sayText(donorName,message , ChatColor.RED, ChatColor.WHITE);
+        McHelperClass.sendBigText(donorName, "spawned Creepers!", "yellow", "white");
+    }
+
 
     public static void zombieInvasion(Player player, String donorName, int likes){
         player.getWorld().setTime(12000);

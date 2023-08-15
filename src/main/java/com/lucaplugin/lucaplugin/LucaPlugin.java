@@ -256,7 +256,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             if (sender instanceof Player)
             {
-                eventHandler.spawnWithers(((Player) sender).getPlayer(),"Donorname",123);
+                eventHandler.loadedCreeperAttack(((Player) sender).getPlayer(),"Donorname",123);
             }
         }
     }
