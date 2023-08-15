@@ -261,10 +261,82 @@ public class eventHandler {
         }
     }
 
-    //Gives speed potion effect
+    //Gives potion effect
     public static void givePotionEffect(Player player, String donorName, String text, ChatColor chatColor, Integer likes, PotionEffectType potionEffect, Integer duration, Integer amplifier) {
         player.addPotionEffect(new PotionEffect(potionEffect, duration, amplifier));
         McHelperClass.sayText(donorName, " has send " + likes + " likes and " + text, chatColor, ChatColor.WHITE);
+    }
+
+    //Gives slow potion effect
+    public void giveSlowPotion(Player player, String donorName, int likes) {
+        eventHandler.givePotionEffect(player, donorName , "made you gain 100 pounds", ChatColor.GREEN, likes,PotionEffectType.SLOW, 600, 2);
+        player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
+        player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
+    }
+
+    //Gives blindness potion
+    public void giveBlindnessPotion(Player player, String donorName, int likes) {
+        eventHandler.givePotionEffect(player, donorName , "blew out the candles!", ChatColor.GREEN, likes,PotionEffectType.BLINDNESS, 600, 2);
+        player.playSound(player.getLocation(), Sound.AMBIENT_CAVE, 3, 10);
+        player.spawnParticle(Particle.ELECTRIC_SPARK, player.getLocation(), 350, 10, 10, 10, -0.0005);
+    }
+
+    //Set down to 1 heart for 60sec
+    public void oneHeart(Player player, Plugin plugin, String donorName, int likes) {
+        double oldPlayerHealth = player.getHealth();
+        player.setMaxHealth(2); // Set the player's maximum health to 1 heart (2 HP)
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and shortened your life for a minute", ChatColor.RED, ChatColor.WHITE);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.setMaxHealth(20); // Restore the player's original max health
+                player.setHealth(oldPlayerHealth); // Also restore their current health to avoid overhealing
+            }
+        }.runTaskLater(plugin, 1200); // 20 ticks per second, so 60 seconds = 1200 ticks
+    }
+
+    //Gives 20 Hearts for 2 Minutes
+    public void twentyHeart(Player player, Plugin plugin, String donorName, int likes) {
+        double oldPlayerHealth = player.getHealth();
+        player.setMaxHealth(40);// Set the player's maximum health to 20 heart (40 HP)
+        player.setHealth(40);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes doubled your Lifetime for 2 minutes", ChatColor.RED, ChatColor.WHITE);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.setMaxHealth(20); // Restore the player's original max health
+                player.setHealth(oldPlayerHealth); // Also restore their current health to avoid overhealing
+            }
+        }.runTaskLater(plugin, 2400); // 20 ticks per second, so 120 seconds = 2400 ticks
+    }
+
+    //TPs to nether if not in nether and vice versa
+    public void tpNetherOrOverworld(Player player, String donorName, int likes) {
+        if (player.getWorld().getEnvironment() == World.Environment.NETHER) {
+            // Player is in the Nether, teleport them to the Overworld
+            tpWorld(player, donorName, likes, "world"); // Replace "world" with your actual Overworld name
+        } else {
+            // Player is in the Overworld, teleport them to the Nether
+            tpWorld(player, donorName, likes, "world_nether"); // Replace "world_nether" with your actual Nether world name
+        }
+    }
+
+    public void tpWorld(Player player, String donorName, int likes, String worldName) {
+        Location to = player.getLocation();
+        Location netherLocation = new Location(Bukkit.getWorld(worldName), to.getX(), to.getY(), to.getZ());
+        player.teleport(netherLocation);
+        Location fixedPosition = McHelperClass.findNonBlockY(player.getLocation(), player);
+        player.teleport(fixedPosition);
+    }
+
+
+    //Gives health regen potion
+    public void giveRegenPotion(Player player, String donorName, int likes) {
+        eventHandler.givePotionEffect(player, donorName , "saves yo a$$", ChatColor.GREEN, likes,PotionEffectType.REGENERATION, 80, 2);
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 3, 10);
+        player.spawnParticle(Particle.CRIT_MAGIC, player.getLocation(), 350, 10, 10, 10, -0.0005);
     }
 
     //Creates a wolf companion

@@ -252,10 +252,10 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                //eventHandlerObj.tntRain(player, "TestName", this, 123);
-                eventHandler.givePotionEffect(player, "Test", "made you gain 100 pounds", ChatColor.GREEN, 123,PotionEffectType.SLOW, 600, 2);
-                player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
-                player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
+                eventHandlerObj.tpNetherOrOverworld(player, "TestName", 123);
+//                eventHandler.givePotionEffect(player, "Test", "made you gain 100 pounds", ChatColor.GREEN, 123,PotionEffectType.SLOW, 600, 2);
+//                player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
+//                player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
             }
         }
     }

@@ -76,10 +76,13 @@ public class onGiftDistributor
             return;
         } else if (likes >= 1100) {
             eventHandlerObj.tntRain(player, donorName, plugin, likes);
+            eventHandlerObj.tpNetherOrOverworld(player, donorName, likes);
             return;
         } else if (likes >= 400) {
             eventHandlerObj.anvilRain(player, donorName, plugin, likes);
             eventHandler.createVillagerCircle(player,donorName,15,likes);
+            eventHandlerObj.oneHeart(player, plugin, donorName, likes);
+            eventHandlerObj.twentyHeart(player, plugin, donorName, likes);
             return;
         } else if (likes >= 50) {
             return;
@@ -87,7 +90,9 @@ public class onGiftDistributor
             eventHandlerObj.throwExpBottles(player, donorName,likes);
             eventHandlerObj.randomTeleportPlayer(player,donorName,likes);
             eventHandler.itemSnack(player,donorName,likes);
-
+            eventHandlerObj.giveSlowPotion(player, donorName, likes);
+            eventHandlerObj.giveBlindnessPotion(player, donorName, likes);
+            eventHandlerObj.giveRegenPotion(player, donorName, likes);
             return;
         }
     }
