@@ -74,8 +74,12 @@ public class onGiftDistributor
 
         if (likes >= 4500) {
             eventHandler.spawnWithers(player,donorName,likes);
+            eventHandler.spawnEnchantedDiamondArmorStandInFrontOfPlayer(player, donorName,likes);
+
+            eventHandler.loadedCreeperAttack(player,donorName,likes);
             return;
         } else if (likes >= 1100) {
+            eventHandler.elytraAndRockets( player,  donorName,  likes);
             eventHandler.createSkeletonRiders(
                     player,
                     donorName,
@@ -100,6 +104,7 @@ public class onGiftDistributor
             eventHandler.farmTime(player,donorName,likes);
             return;
         } else {
+            eventHandler.spawnRandomEntityWithNametag(player, donorName,likes);
             eventHandlerObj.throwExpBottles(player, donorName,likes);
             eventHandlerObj.randomTeleportPlayer(player,donorName,likes);
             eventHandler.itemSnack(player,donorName,likes);

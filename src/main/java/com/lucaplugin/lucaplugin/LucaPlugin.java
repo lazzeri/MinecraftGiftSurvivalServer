@@ -183,9 +183,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         @EventHandler
         public void onEntityDamage(EntityDamageByEntityEvent event)
         {
-            System.out.println(event);
-            System.out.println(event.getDamager() instanceof Player);
-
             if (event.getDamager() instanceof Player && event.getEntity() instanceof Player)
             {
                 Player damager = (Player) event.getDamager();
@@ -256,7 +253,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             if (sender instanceof Player)
             {
-                eventHandler.loadedCreeperAttack(((Player) sender).getPlayer(),"Donorname",123);
+                eventHandler.spawnRandomEntityWithNametag(((Player) sender).getPlayer(), "testName",123);
             }
         }
     }

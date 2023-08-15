@@ -34,7 +34,6 @@ public class BorderShrinkTask extends BukkitRunnable
     @Override
     public void run()
     {
-        System.out.println(timeUntilShrink);
         // Decrement the time until the next shrink every second
         if (timeUntilShrink > 0)
         {

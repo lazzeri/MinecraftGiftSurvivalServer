@@ -2,9 +2,11 @@ package com.lucaplugin.lucaplugin;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
@@ -203,6 +205,168 @@ public class eventHandler {
         }
         McHelperClass.sayText(donorName, " has send " + likes + " likes and gave " + fullExpSum + " experience to you!", ChatColor.GREEN, ChatColor.WHITE);
     }
+
+    public static void spawnEnchantedDiamondArmorStandInFrontOfPlayer(Player player, String donorName, int likes) {
+        Location playerLocation = player.getLocation();
+        Location spawnLocation = playerLocation.add(playerLocation.getDirection().multiply(2)); // Adjust the distance as needed
+        spawnLocation.setY(spawnLocation.getY()+1);
+
+        ArmorStand armorStand = (ArmorStand) spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.ARMOR_STAND);
+        armorStand.setVisible(false);
+        armorStand.setSmall(true);
+        armorStand.setInvulnerable(true);
+        armorStand.setBasePlate(false);
+
+        ItemStack helmet = new ItemStack(Material.DIAMOND_HELMET);
+        helmet.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        helmet.addUnsafeEnchantment(Enchantment.WATER_WORKER, 1);
+        helmet.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
+        ItemMeta helmetMeta = helmet.getItemMeta();
+        helmetMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Helmet");
+        helmet.setItemMeta(helmetMeta);
+
+        ItemStack chestplate = new ItemStack(Material.DIAMOND_CHESTPLATE);
+        chestplate.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        ItemMeta chestplateMeta = chestplate.getItemMeta();
+        chestplateMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Chestplate");
+        chestplate.setItemMeta(chestplateMeta);
+
+        ItemStack leggings = new ItemStack(Material.DIAMOND_LEGGINGS);
+        leggings.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        ItemMeta leggingsMeta = leggings.getItemMeta();
+        leggingsMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Leggings");
+        leggings.setItemMeta(leggingsMeta);
+
+        ItemStack boots = new ItemStack(Material.DIAMOND_BOOTS);
+        boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
+        boots.addUnsafeEnchantment(Enchantment.PROTECTION_PROJECTILE, 4);
+        ItemMeta bootsMeta = boots.getItemMeta();
+        bootsMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Boots");
+        boots.setItemMeta(bootsMeta);
+
+        armorStand.getEquipment().setHelmet(helmet);
+        armorStand.getEquipment().setChestplate(chestplate);
+        armorStand.getEquipment().setLeggings(leggings);
+        armorStand.getEquipment().setBoots(boots);
+
+        player.spawnParticle(Particle.EXPLOSION_NORMAL, spawnLocation, 50, 0, 0, 0, 0);
+        player.playSound(spawnLocation, Sound.BLOCK_SMITHING_TABLE_USE, 3, 10);
+
+        String message =  " has sent " + likes + " likes and gifted full Diamond Armor!";
+        McHelperClass.sayText(donorName, message, ChatColor.GOLD, ChatColor.WHITE);
+        McHelperClass.sendBigText(donorName, "gifted full Diamond Armor!", "gold", "white");
+
+    }
+
+    public static void spawnRandomEntityWithNametag(Player player, String donorName, int likes) {
+        EntityType[] mobTypes =
+                {
+                EntityType.BAT,
+                EntityType.BLAZE,
+                EntityType.CAT,
+                EntityType.CAVE_SPIDER,
+                EntityType.CHICKEN,
+                EntityType.COD,
+                EntityType.COW,
+                EntityType.CREEPER,
+                EntityType.DOLPHIN,
+                EntityType.DONKEY,
+                EntityType.DROWNED,
+                EntityType.ELDER_GUARDIAN,
+                EntityType.ENDERMAN,
+                EntityType.ENDERMITE,
+                EntityType.EVOKER,
+                EntityType.FOX,
+                EntityType.GHAST,
+                EntityType.GIANT,
+                EntityType.GUARDIAN,
+                EntityType.HOGLIN,
+                EntityType.HORSE,
+                EntityType.HUSK,
+                EntityType.ILLUSIONER,
+                EntityType.IRON_GOLEM,
+                EntityType.LLAMA,
+                EntityType.MAGMA_CUBE,
+                EntityType.MULE,
+                EntityType.OCELOT,
+                EntityType.PANDA,
+                EntityType.PARROT,
+                EntityType.PHANTOM,
+                EntityType.PIG,
+                EntityType.PIGLIN,
+                EntityType.PIGLIN_BRUTE,
+                EntityType.PILLAGER,
+                EntityType.POLAR_BEAR,
+                EntityType.PUFFERFISH,
+                EntityType.RABBIT,
+                EntityType.RAVAGER,
+                EntityType.SALMON,
+                EntityType.SHEEP,
+                EntityType.SHULKER,
+                EntityType.SILVERFISH,
+                EntityType.SKELETON,
+                EntityType.SKELETON_HORSE,
+                EntityType.SLIME,
+                EntityType.SNOWMAN,
+                EntityType.SPIDER,
+                EntityType.SQUID,
+                EntityType.STRAY,
+                EntityType.STRIDER,
+                EntityType.TRADER_LLAMA,
+                EntityType.TROPICAL_FISH,
+                EntityType.TURTLE,
+                EntityType.VEX,
+                EntityType.VILLAGER,
+                EntityType.VINDICATOR,
+                EntityType.WANDERING_TRADER,
+                EntityType.WITCH,
+                EntityType.WITHER,
+                EntityType.WITHER_SKELETON,
+                EntityType.WOLF,
+                EntityType.ZOGLIN,
+                EntityType.ZOMBIE,
+                EntityType.ZOMBIE_HORSE,
+                EntityType.ZOMBIE_VILLAGER,
+                EntityType.ZOMBIFIED_PIGLIN
+        };
+
+
+        Location spawnLocation = player.getLocation().add(player.getLocation().getDirection().multiply(2));
+        spawnLocation.setY(spawnLocation.getY()+2);
+        EntityType randomEntityType = mobTypes[new Random().nextInt(mobTypes.length)];
+        Entity spawnedEntity = player.getWorld().spawnEntity(spawnLocation, randomEntityType);
+
+        String message =  " has sent " + likes + " likes and spawned " +  spawnedEntity.getName() +"!";
+        McHelperClass.sayText(donorName, message, ChatColor.GREEN, ChatColor.WHITE);
+        // Set custom name tag
+        if (spawnedEntity instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) spawnedEntity;
+            livingEntity.setCustomNameVisible(true);
+            livingEntity.setCustomName(McHelperClass.randomColor() + donorName);
+        }
+    }
+
+
+    public static void elytraAndRockets(Player player, String donorName, int likes) {
+        ItemStack elytra = new ItemStack(Material.ELYTRA);
+        ItemStack rockets = new ItemStack(Material.FIREWORK_ROCKET, 64);
+
+        Location dropLocation = player.getLocation().add(player.getLocation().getDirection().multiply(2)); // Adjust the distance as needed
+        dropLocation.setY(dropLocation.getY()+1);
+        player.getWorld().dropItemNaturally(dropLocation, elytra);
+        player.getWorld().dropItemNaturally(dropLocation, rockets);
+
+        player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1.0F, 1.0F);
+
+        player.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, dropLocation, 50);
+
+        String message =  " has sent " + likes + " likes and gifted Elytra with Rockets!";
+        McHelperClass.sayText(donorName, message, ChatColor.GOLD, ChatColor.WHITE);
+        McHelperClass.sendBigText(donorName, "gifted Elytra with Rockets!", "gold", "white");
+    }
+
+
 
 
     public static void createEntityAttack(Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, ChatColor normalColor, String text, boolean isSuperMessage, String superMessageColor, EntityType[] entityTypes) {
