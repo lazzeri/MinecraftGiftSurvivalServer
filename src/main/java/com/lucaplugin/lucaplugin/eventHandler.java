@@ -5,6 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -18,9 +19,7 @@ import xyz.xenondevs.particle.ParticleEffect;
 import xyz.xenondevs.particle.data.color.NoteColor;
 import xyz.xenondevs.particle.data.color.RegularColor;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class eventHandler {
     public static boolean dirtOnFire = false;
@@ -30,6 +29,36 @@ public class eventHandler {
             new Location(McHelperClass.getWorld(), 200, 200, 200),
             // ... and so on for each team
     };
+
+    public static void spawnWithers(Player player, String donorName, int likes) {
+        World world = player.getWorld();
+        Random random = new Random();
+
+        Location playerLocation = player.getLocation();
+        Vector direction = playerLocation.getDirection().normalize();
+
+        for (int i = 0; i < 3; i++) {
+            double xOffset = direction.getX() * (i + 1) * 3;
+            double yOffset = 1.5; // Adjust the height as needed
+            double zOffset = direction.getZ() * (i + 1) * 3;
+
+            Location spawnLocation = playerLocation.clone().add(xOffset, yOffset, zOffset);
+            Wither wither = (Wither) world.spawnEntity(spawnLocation, EntityType.WITHER);
+
+            // Add lightning particle where the wither spawns
+            world.strikeLightningEffect(spawnLocation);
+
+            ChatColor randomColor = ChatColor.values()[random.nextInt(ChatColor.values().length)];
+            wither.setCustomName(randomColor + donorName);
+            wither.setCustomNameVisible(true);
+        }
+
+        McHelperClass.sendBigText(donorName, "spawned WITHERS!", "yellow", "white");
+        player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
+        McHelperClass.sayText(donorName, " has send " + likes + " and spawned WITHERS!", ChatColor.YELLOW, ChatColor.WHITE);
+
+    }
+
 
     //Villager Raid on Raid
     public static void createVillagerCircle(Player player, String donorName, int raidAmount, int likes)
@@ -205,8 +234,66 @@ public class eventHandler {
         }
     }
 
+    static void startValuableItemRain(Player player, String donorName, int likes,Plugin plugin) {
+        Location location = player.getLocation();
+        location.setY(location.getY() + 5);
+        McHelperClass.sayText(" has send " + likes + " likes, made it rain ores!", donorName, ChatColor.RED, ChatColor.WHITE);
+
+        new BukkitRunnable() {
+            final List<Material> valuableItems = Arrays.asList(
+                    Material.DIAMOND,
+                    Material.EMERALD,
+                    Material.IRON_INGOT,
+                    Material.COAL,
+                    Material.GOLD_INGOT
+            );
+            int remainingDrops = 100; // Number of valuable items to drop
+            Random random = new Random();
+
+            World world = player.getWorld();
+
+            @Override
+            public void run() {
+                if (remainingDrops > 0) {
+
+                    Material randomItem = valuableItems.get(random.nextInt(valuableItems.size()));
+                    ItemStack itemStack = new ItemStack(randomItem);
+                    double xOffset = random.nextDouble() * 2 - 1; // Randomize x by +/- 1
+                    double zOffset = random.nextDouble() * 2 - 1; // Randomize y by +/- 1
+                    world.spawnParticle(Particle.CLOUD, location, 10, xOffset, 0, zOffset, 0);
+
+                    world.dropItem(location, itemStack);
+                    remainingDrops--;
+                } else {
+                    this.cancel(); // Stop the task when all items are dropped
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1L); // Delay and interval between drops
+    }
+
+    public static void createSkeletonRiders (Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, Plugin plugin) {
+        double size = (double) 10;
+        int positions = (int) 360 / eventAmount;
+        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(rgb1, rgb2, rgb3), size2);
+
+        for (int i = 0; i < 360; i += positions) {
+            double angle = (i * Math.PI / 180);
+            double x = size * Math.cos(angle);
+            double z = size * Math.sin(angle);
+            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "summon skeleton_horse "+ x + " "+player.getLocation().getY()+ " " + z+" "+ "{SkeletonTrap:1}");
+        }
+
+        player.getWorld().setTime(12000);
+        player.getWorld().setStorm(true);
+        player.getWorld().setThundering(false);
+        player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
+        String message = donorName + " has sent " + likes + " likes and spawned the 4 Horsemen! Or a couple more...";
+        McHelperClass.sendBigText(donorName, message, "yellow", "white");
+    }
+
     public void netherAttack(Player player, String donorName, int likes){
-        player.getWorld().setTime(1300);
+        player.getWorld().setTime(12000);
         EntityType[] entityTypes = { EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE,EntityType.SKELETON};
         createEntityAttack(
                 player,
@@ -219,6 +306,26 @@ public class eventHandler {
                 3.0F,
                 ChatColor.GOLD,
                 "spawned the living HELL!",
+                true,
+                "gold",
+                entityTypes
+        );
+    }
+
+    public static void zombieInvasion(Player player, String donorName, int likes){
+        player.getWorld().setTime(12000);
+        EntityType[] entityTypes = { EntityType.GIANT, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER,EntityType.ZOMBIE_HORSE};
+        createEntityAttack(
+                player,
+                donorName,
+                likes,
+                40,
+                255,
+                0,
+                0,
+                3.0F,
+                ChatColor.GOLD,
+                "spawned a Zombie Wave!",
                 true,
                 "gold",
                 entityTypes

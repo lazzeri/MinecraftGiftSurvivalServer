@@ -9,6 +9,7 @@ import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -20,10 +21,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -253,26 +256,12 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             if (sender instanceof Player)
             {
-
-                EntityType[] entityTypes = { EntityType.COW, EntityType.CHICKEN, EntityType.HORSE,EntityType.PIG, EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA};
-                eventHandlerObj.createEntityAttack(
-                        ((Player) sender).getPlayer(),
-                        "text",
-                        123,
-                        25,
-                        220,
-                        170,
-                        255,
-                        3.0F,
-                        ChatColor.LIGHT_PURPLE,
-                        "spawned some friendly guys!",
-                        false,
-                        "gold",
-                        entityTypes
-                );
+                eventHandler.spawnWithers(((Player) sender).getPlayer(),"Donorname",123);
             }
         }
     }
+
+
 
     public void startWebsocket()
     {

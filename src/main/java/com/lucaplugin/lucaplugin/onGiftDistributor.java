@@ -73,14 +73,28 @@ public class onGiftDistributor
         }
 
         if (likes >= 4500) {
+            eventHandler.spawnWithers(player,donorName,likes);
             return;
         } else if (likes >= 1100) {
+            eventHandler.createSkeletonRiders(
+                    player,
+                    donorName,
+                    likes,
+                    10,
+                    220,
+                    170,
+                    255,
+                    3.0F,
+                    plugin
+            );
+
             eventHandlerObj.netherAttack(player,donorName,likes);
             eventHandlerObj.tntRain(player, donorName, plugin, likes);
             return;
         } else if (likes >= 400) {
             eventHandlerObj.anvilRain(player, donorName, plugin, likes);
             eventHandler.createVillagerCircle(player,donorName,15,likes);
+            eventHandler.startValuableItemRain(player,donorName,likes,plugin);
             return;
         } else if (likes >= 50) {
             eventHandler.farmTime(player,donorName,likes);

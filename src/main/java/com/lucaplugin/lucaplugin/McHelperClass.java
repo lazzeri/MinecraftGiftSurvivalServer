@@ -169,12 +169,17 @@ public class McHelperClass
     {
 
         int y = (int) Math.round(player.getLocation().getY());
-        while (player.getWorld().getBlockAt((int) location.getX(), y, (int) location.getZ()).getType() == Material.AIR)
+        while ((player.getWorld().getBlockAt((int) location.getX(), y, (int) location.getZ()).getType() == Material.AIR))
+        {
+            y--;
+        }
+        while ((player.getWorld().getBlockAt((int) location.getX(), y, (int) location.getZ()).getType() == Material.LAVA))
         {
             y--;
         }
         return new Location(player.getWorld(), location.getX(), y + 1, location.getZ());
     }
+
 
 
     //Particle Effects
