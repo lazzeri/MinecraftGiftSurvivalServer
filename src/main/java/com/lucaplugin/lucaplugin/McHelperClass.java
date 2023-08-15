@@ -136,12 +136,10 @@ public class McHelperClass
         double randomDouble;
         Location spawnLocation = findNonBlockY(player.getLocation().add(x, 1, z), player);
         Location location;
-
-
-            randomDouble = generateRandomDouble(0.0, 2.5);
-            location = new Location(player.getWorld(), (double) spawnLocation.getX(), (double) spawnLocation.getY() + randomDouble, (double) spawnLocation.getZ());
-            player.spawnParticle(particle, location, 30, dustOptions);
-            player.getWorld().spawnEntity(location, entityType);
+        randomDouble = generateRandomDouble(0.0, 2.5);
+        location = new Location(player.getWorld(), (double) spawnLocation.getX(), (double) spawnLocation.getY() + randomDouble, (double) spawnLocation.getZ());
+        player.spawnParticle(particle, location, 30, dustOptions);
+        player.getWorld().spawnEntity(location, entityType);
 
 
     }

@@ -73,21 +73,42 @@ public class onGiftDistributor
         }
 
         if (likes >= 4500) {
+            eventHandler.spawnWithers(player,donorName,likes);
+            eventHandler.spawnEnchantedDiamondArmorStandInFrontOfPlayer(player, donorName,likes);
+
+            eventHandler.loadedCreeperAttack(player,donorName,likes);
             eventHandlerObj.opSword(player, donorName, likes);
             return;
         } else if (likes >= 1100) {
+            eventHandler.elytraAndRockets( player,  donorName,  likes);
+            eventHandler.createSkeletonRiders(
+                    player,
+                    donorName,
+                    likes,
+                    10,
+                    220,
+                    170,
+                    255,
+                    3.0F,
+                    plugin
+            );
+
+            eventHandlerObj.netherAttack(player,donorName,likes);
             eventHandlerObj.tntRain(player, donorName, plugin, likes);
             eventHandlerObj.tpNetherOrOverworld(player, donorName, likes);
             return;
         } else if (likes >= 400) {
             eventHandlerObj.anvilRain(player, donorName, plugin, likes);
             eventHandler.createVillagerCircle(player,donorName,15,likes);
+            eventHandler.startValuableItemRain(player,donorName,likes,plugin);
             eventHandlerObj.oneHeart(player, plugin, donorName, likes);
             eventHandlerObj.twentyHeart(player, plugin, donorName, likes);
             return;
         } else if (likes >= 50) {
+            eventHandler.farmTime(player,donorName,likes);
             return;
         } else {
+            eventHandler.spawnRandomEntityWithNametag(player, donorName,likes);
             eventHandlerObj.throwExpBottles(player, donorName,likes);
             eventHandlerObj.randomTeleportPlayer(player,donorName,likes);
             eventHandler.itemSnack(player,donorName,likes);

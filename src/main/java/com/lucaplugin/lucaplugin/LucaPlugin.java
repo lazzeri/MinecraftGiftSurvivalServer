@@ -9,8 +9,10 @@ import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -19,15 +21,18 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.w3c.dom.ls.LSOutput;
 
+import java.sql.Array;
 import java.util.*;
 
 
@@ -178,9 +183,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         @EventHandler
         public void onEntityDamage(EntityDamageByEntityEvent event)
         {
-            System.out.println(event);
-            System.out.println(event.getDamager() instanceof Player);
-
             if (event.getDamager() instanceof Player && event.getEntity() instanceof Player)
             {
                 Player damager = (Player) event.getDamager();
@@ -251,14 +253,12 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             if (sender instanceof Player)
             {
-                Player player = (Player) sender;
-                eventHandlerObj.opSword(player, "TestName", 123);
-//                eventHandler.givePotionEffect(player, "Test", "made you gain 100 pounds", ChatColor.GREEN, 123,PotionEffectType.SLOW, 600, 2);
-//                player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
-//                player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
+                eventHandler.spawnRandomEntityWithNametag(((Player) sender).getPlayer(), "testName",123);
             }
         }
     }
+
+
 
     public void startWebsocket()
     {

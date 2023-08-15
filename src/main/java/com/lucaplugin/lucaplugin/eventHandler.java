@@ -7,6 +7,7 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -20,9 +21,7 @@ import xyz.xenondevs.particle.ParticleEffect;
 import xyz.xenondevs.particle.data.color.NoteColor;
 import xyz.xenondevs.particle.data.color.RegularColor;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class eventHandler {
     public static boolean dirtOnFire = false;
@@ -32,6 +31,36 @@ public class eventHandler {
             new Location(McHelperClass.getWorld(), 200, 200, 200),
             // ... and so on for each team
     };
+
+    public static void spawnWithers(Player player, String donorName, int likes) {
+        World world = player.getWorld();
+        Random random = new Random();
+
+        Location playerLocation = player.getLocation();
+        Vector direction = playerLocation.getDirection().normalize();
+
+        for (int i = 0; i < 3; i++) {
+            double xOffset = direction.getX() * (i + 1) * 3;
+            double yOffset = 1.5; // Adjust the height as needed
+            double zOffset = direction.getZ() * (i + 1) * 3;
+
+            Location spawnLocation = playerLocation.clone().add(xOffset, yOffset, zOffset);
+            Wither wither = (Wither) world.spawnEntity(spawnLocation, EntityType.WITHER);
+
+            // Add lightning particle where the wither spawns
+            world.strikeLightningEffect(spawnLocation);
+
+            ChatColor randomColor = ChatColor.values()[random.nextInt(ChatColor.values().length)];
+            wither.setCustomName(randomColor + donorName);
+            wither.setCustomNameVisible(true);
+        }
+
+        McHelperClass.sendBigText(donorName, "spawned WITHERS!", "yellow", "white");
+        player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
+        McHelperClass.sayText(donorName, " has send " + likes + " and spawned WITHERS!", ChatColor.YELLOW, ChatColor.WHITE);
+
+    }
+
 
     //Villager Raid on Raid
     public static void createVillagerCircle(Player player, String donorName, int raidAmount, int likes)
@@ -177,14 +206,351 @@ public class eventHandler {
         McHelperClass.sayText(donorName, " has send " + likes + " likes and gave " + fullExpSum + " experience to you!", ChatColor.GREEN, ChatColor.WHITE);
     }
 
+    public static void spawnEnchantedDiamondArmorStandInFrontOfPlayer(Player player, String donorName, int likes) {
+        Location playerLocation = player.getLocation();
+        Location spawnLocation = playerLocation.add(playerLocation.getDirection().multiply(2)); // Adjust the distance as needed
+        spawnLocation.setY(spawnLocation.getY()+1);
 
-    public void zombieInvasion (Player player, String donorName, Integer likes)
-    {
-        Location loc = player.getLocation();
+        ArmorStand armorStand = (ArmorStand) spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.ARMOR_STAND);
+        armorStand.setVisible(false);
+        armorStand.setSmall(true);
+        armorStand.setInvulnerable(true);
+        armorStand.setBasePlate(false);
 
+        ItemStack helmet = new ItemStack(Material.DIAMOND_HELMET);
+        helmet.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        helmet.addUnsafeEnchantment(Enchantment.WATER_WORKER, 1);
+        helmet.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
+        ItemMeta helmetMeta = helmet.getItemMeta();
+        helmetMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Helmet");
+        helmet.setItemMeta(helmetMeta);
 
-        McHelperClass.sayText(donorName, " has send " + likes + " likes and spawn some unfriendly Guys!", ChatColor.GREEN, ChatColor.WHITE);
+        ItemStack chestplate = new ItemStack(Material.DIAMOND_CHESTPLATE);
+        chestplate.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        ItemMeta chestplateMeta = chestplate.getItemMeta();
+        chestplateMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Chestplate");
+        chestplate.setItemMeta(chestplateMeta);
+
+        ItemStack leggings = new ItemStack(Material.DIAMOND_LEGGINGS);
+        leggings.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        ItemMeta leggingsMeta = leggings.getItemMeta();
+        leggingsMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Leggings");
+        leggings.setItemMeta(leggingsMeta);
+
+        ItemStack boots = new ItemStack(Material.DIAMOND_BOOTS);
+        boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
+        boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
+        boots.addUnsafeEnchantment(Enchantment.PROTECTION_PROJECTILE, 4);
+        ItemMeta bootsMeta = boots.getItemMeta();
+        bootsMeta.setDisplayName(ChatColor.GOLD + donorName + "'s Boots");
+        boots.setItemMeta(bootsMeta);
+
+        armorStand.getEquipment().setHelmet(helmet);
+        armorStand.getEquipment().setChestplate(chestplate);
+        armorStand.getEquipment().setLeggings(leggings);
+        armorStand.getEquipment().setBoots(boots);
+
+        player.spawnParticle(Particle.EXPLOSION_NORMAL, spawnLocation, 50, 0, 0, 0, 0);
+        player.playSound(spawnLocation, Sound.BLOCK_SMITHING_TABLE_USE, 3, 10);
+
+        String message =  " has sent " + likes + " likes and gifted full Diamond Armor!";
+        McHelperClass.sayText(donorName, message, ChatColor.GOLD, ChatColor.WHITE);
+        McHelperClass.sendBigText(donorName, "gifted full Diamond Armor!", "gold", "white");
+
     }
+
+    public static void spawnRandomEntityWithNametag(Player player, String donorName, int likes) {
+        EntityType[] mobTypes =
+                {
+                EntityType.BAT,
+                EntityType.BLAZE,
+                EntityType.CAT,
+                EntityType.CAVE_SPIDER,
+                EntityType.CHICKEN,
+                EntityType.COD,
+                EntityType.COW,
+                EntityType.CREEPER,
+                EntityType.DOLPHIN,
+                EntityType.DONKEY,
+                EntityType.DROWNED,
+                EntityType.ELDER_GUARDIAN,
+                EntityType.ENDERMAN,
+                EntityType.ENDERMITE,
+                EntityType.EVOKER,
+                EntityType.FOX,
+                EntityType.GHAST,
+                EntityType.GIANT,
+                EntityType.GUARDIAN,
+                EntityType.HOGLIN,
+                EntityType.HORSE,
+                EntityType.HUSK,
+                EntityType.ILLUSIONER,
+                EntityType.IRON_GOLEM,
+                EntityType.LLAMA,
+                EntityType.MAGMA_CUBE,
+                EntityType.MULE,
+                EntityType.OCELOT,
+                EntityType.PANDA,
+                EntityType.PARROT,
+                EntityType.PHANTOM,
+                EntityType.PIG,
+                EntityType.PIGLIN,
+                EntityType.PIGLIN_BRUTE,
+                EntityType.PILLAGER,
+                EntityType.POLAR_BEAR,
+                EntityType.PUFFERFISH,
+                EntityType.RABBIT,
+                EntityType.RAVAGER,
+                EntityType.SALMON,
+                EntityType.SHEEP,
+                EntityType.SHULKER,
+                EntityType.SILVERFISH,
+                EntityType.SKELETON,
+                EntityType.SKELETON_HORSE,
+                EntityType.SLIME,
+                EntityType.SNOWMAN,
+                EntityType.SPIDER,
+                EntityType.SQUID,
+                EntityType.STRAY,
+                EntityType.STRIDER,
+                EntityType.TRADER_LLAMA,
+                EntityType.TROPICAL_FISH,
+                EntityType.TURTLE,
+                EntityType.VEX,
+                EntityType.VILLAGER,
+                EntityType.VINDICATOR,
+                EntityType.WANDERING_TRADER,
+                EntityType.WITCH,
+                EntityType.WITHER,
+                EntityType.WITHER_SKELETON,
+                EntityType.WOLF,
+                EntityType.ZOGLIN,
+                EntityType.ZOMBIE,
+                EntityType.ZOMBIE_HORSE,
+                EntityType.ZOMBIE_VILLAGER,
+                EntityType.ZOMBIFIED_PIGLIN
+        };
+
+
+        Location spawnLocation = player.getLocation().add(player.getLocation().getDirection().multiply(2));
+        spawnLocation.setY(spawnLocation.getY()+2);
+        EntityType randomEntityType = mobTypes[new Random().nextInt(mobTypes.length)];
+        Entity spawnedEntity = player.getWorld().spawnEntity(spawnLocation, randomEntityType);
+
+        String message =  " has sent " + likes + " likes and spawned " +  spawnedEntity.getName() +"!";
+        McHelperClass.sayText(donorName, message, ChatColor.GREEN, ChatColor.WHITE);
+        // Set custom name tag
+        if (spawnedEntity instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) spawnedEntity;
+            livingEntity.setCustomNameVisible(true);
+            livingEntity.setCustomName(McHelperClass.randomColor() + donorName);
+        }
+    }
+
+
+    public static void elytraAndRockets(Player player, String donorName, int likes) {
+        ItemStack elytra = new ItemStack(Material.ELYTRA);
+        ItemStack rockets = new ItemStack(Material.FIREWORK_ROCKET, 64);
+
+        Location dropLocation = player.getLocation().add(player.getLocation().getDirection().multiply(2)); // Adjust the distance as needed
+        dropLocation.setY(dropLocation.getY()+1);
+        player.getWorld().dropItemNaturally(dropLocation, elytra);
+        player.getWorld().dropItemNaturally(dropLocation, rockets);
+
+        player.playSound(player.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1.0F, 1.0F);
+
+        player.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, dropLocation, 50);
+
+        String message =  " has sent " + likes + " likes and gifted Elytra with Rockets!";
+        McHelperClass.sayText(donorName, message, ChatColor.GOLD, ChatColor.WHITE);
+        McHelperClass.sendBigText(donorName, "gifted Elytra with Rockets!", "gold", "white");
+    }
+
+
+
+
+    public static void createEntityAttack(Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, ChatColor normalColor, String text, boolean isSuperMessage, String superMessageColor, EntityType[] entityTypes) {
+        double size = (double) 10;
+        int positions = (int) 360 / eventAmount;
+        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(rgb1, rgb2, rgb3), size2);
+
+        Random random = new Random();
+
+        for (int i = 0; i < 360; i += positions) {
+            double angle = (i * Math.PI / 180);
+            double x = size * Math.cos(angle);
+            double z = size * Math.sin(angle);
+
+            EntityType randomEntityType = entityTypes[random.nextInt(entityTypes.length)];
+
+            McHelperClass.spawnEntityWithParticle(player, Particle.REDSTONE, dustOptions, randomEntityType, (int) x, (int) z);
+        }
+
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
+
+        String message = donorName + " has sent " + likes + " " + text;
+        if (isSuperMessage) {
+            McHelperClass.sendBigText(donorName, message, superMessageColor, "white");
+        } else {
+            McHelperClass.sayText(donorName, message, normalColor, ChatColor.WHITE);
+        }
+    }
+
+    static void startValuableItemRain(Player player, String donorName, int likes,Plugin plugin) {
+        Location location = player.getLocation();
+        location.setY(location.getY() + 5);
+        McHelperClass.sayText(" has send " + likes + " likes, made it rain ores!", donorName, ChatColor.RED, ChatColor.WHITE);
+
+        new BukkitRunnable() {
+            final List<Material> valuableItems = Arrays.asList(
+                    Material.DIAMOND,
+                    Material.EMERALD,
+                    Material.IRON_INGOT,
+                    Material.COAL,
+                    Material.GOLD_INGOT
+            );
+            int remainingDrops = 100; // Number of valuable items to drop
+            Random random = new Random();
+
+            World world = player.getWorld();
+
+            @Override
+            public void run() {
+                if (remainingDrops > 0) {
+
+                    Material randomItem = valuableItems.get(random.nextInt(valuableItems.size()));
+                    ItemStack itemStack = new ItemStack(randomItem);
+                    double xOffset = random.nextDouble() * 2 - 1; // Randomize x by +/- 1
+                    double zOffset = random.nextDouble() * 2 - 1; // Randomize y by +/- 1
+                    world.spawnParticle(Particle.CLOUD, location, 10, xOffset, 0, zOffset, 0);
+
+                    world.dropItem(location, itemStack);
+                    remainingDrops--;
+                } else {
+                    this.cancel(); // Stop the task when all items are dropped
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1L); // Delay and interval between drops
+    }
+
+    public static void createSkeletonRiders (Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, Plugin plugin) {
+        double size = (double) 10;
+        int positions = (int) 360 / eventAmount;
+        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(rgb1, rgb2, rgb3), size2);
+
+        for (int i = 0; i < 360; i += positions) {
+            double angle = (i * Math.PI / 180);
+            double x = size * Math.cos(angle);
+            double z = size * Math.sin(angle);
+            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "summon skeleton_horse "+ x + " "+player.getLocation().getY()+ " " + z+" "+ "{SkeletonTrap:1}");
+        }
+
+        player.getWorld().setTime(12000);
+        player.getWorld().setStorm(true);
+        player.getWorld().setThundering(false);
+        player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
+        String message = donorName + " has sent " + likes + " likes and spawned the 4 Horsemen! Or a couple more...";
+        McHelperClass.sayText(message, donorName, ChatColor.RED, ChatColor.WHITE);
+
+        McHelperClass.sendBigText(donorName, "spawned the 4 Horsemen!", "yellow", "white");
+    }
+
+    public void netherAttack(Player player, String donorName, int likes){
+        player.getWorld().setTime(12000);
+        EntityType[] entityTypes = { EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE,EntityType.SKELETON};
+        createEntityAttack(
+                player,
+                donorName,
+                likes,
+                20,
+                255,
+                0,
+                0,
+                3.0F,
+                ChatColor.GOLD,
+                "spawned the living HELL!",
+                true,
+                "gold",
+                entityTypes
+        );
+    }
+
+
+
+    public static void loadedCreeperAttack(Player player, String donorName, int likes) {
+        double size = 10.0; // Using decimal to indicate a double value
+        int eventAmount = 25;
+        int positions = 360 / eventAmount;
+
+        Random random = new Random();
+
+        for (int i = 0; i < 360; i += positions) {
+            double angle = i * Math.PI / 180.0;
+            double x = size * Math.cos(angle);
+            double z = size * Math.sin(angle);
+
+            Location spawnLocation = player.getLocation().clone().add(x, 0, z);
+            Creeper creeper = (Creeper) player.getWorld().spawnEntity(spawnLocation, EntityType.CREEPER);
+
+            if (random.nextBoolean()) {
+                creeper.setPowered(true);
+            }
+
+            player.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, spawnLocation, 50);
+        }
+
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
+
+        String message =  " has sent " + likes + " likes and spawned Creepers!";
+        McHelperClass.sayText(donorName,message , ChatColor.RED, ChatColor.WHITE);
+        McHelperClass.sendBigText(donorName, "spawned Creepers!", "yellow", "white");
+    }
+
+
+    public static void zombieInvasion(Player player, String donorName, int likes){
+        player.getWorld().setTime(12000);
+        EntityType[] entityTypes = { EntityType.GIANT, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER,EntityType.ZOMBIE_HORSE};
+        createEntityAttack(
+                player,
+                donorName,
+                likes,
+                40,
+                255,
+                0,
+                0,
+                3.0F,
+                ChatColor.GOLD,
+                "spawned a Zombie Wave!",
+                true,
+                "gold",
+                entityTypes
+        );
+    }
+
+    public static void farmTime(Player player, String donorName, int likes){
+        EntityType[] entityTypes = { EntityType.COW, EntityType.CHICKEN, EntityType.HORSE,EntityType.PIG, EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA};
+        createEntityAttack(
+                player,
+                donorName,
+                likes,
+                25,
+                220,
+                170,
+                255,
+                3.0F,
+                ChatColor.LIGHT_PURPLE,
+                "spawned some friendly guys!",
+                false,
+                "gold",
+                entityTypes
+        );
+    }
+
 
     //A Thunder shoots in random position next to player
     public void createThunder(Player player, String donorName)
