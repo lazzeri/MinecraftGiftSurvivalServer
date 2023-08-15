@@ -2,9 +2,11 @@ package com.lucaplugin.lucaplugin;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -317,9 +319,12 @@ public class eventHandler {
         if (player.getWorld().getEnvironment() == World.Environment.NETHER) {
             // Player is in the Nether, teleport them to the Overworld
             tpWorld(player, donorName, likes, "world"); // Replace "world" with your actual Overworld name
+            McHelperClass.sayText(donorName, " has send " + likes + " likes sent you back to the Overworld", ChatColor.RED, ChatColor.WHITE);
         } else {
             // Player is in the Overworld, teleport them to the Nether
             tpWorld(player, donorName, likes, "world_nether"); // Replace "world_nether" with your actual Nether world name
+            McHelperClass.sayText(donorName, " has send " + likes + " likes sent you to Hell", ChatColor.RED, ChatColor.WHITE);
+
         }
     }
 
@@ -329,6 +334,33 @@ public class eventHandler {
         player.teleport(netherLocation);
         Location fixedPosition = McHelperClass.findNonBlockY(player.getLocation(), player);
         player.teleport(fixedPosition);
+    }
+
+    public void opSword(Player player, String donorName, int likes) {
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and sent you the sword of a thousand truths", ChatColor.BLUE, ChatColor.WHITE);
+        ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);
+        ItemMeta meta = sword.getItemMeta();
+        meta.setDisplayName("§c§l"+donorName); // Red and bold display name
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 10, true); // Sharpness 10
+        meta.addEnchant(Enchantment.FIRE_ASPECT, 5, true); // Fire Aspect 5
+        meta.addEnchant(Enchantment.LOOT_BONUS_MOBS, 5, true); // Looting 5
+        meta.addEnchant(Enchantment.SWEEPING_EDGE, 5, true); // Sweeping Edge 5
+        meta.addEnchant(Enchantment.KNOCKBACK, 3, true); // Knockback 3
+        meta.addEnchant(Enchantment.DURABILITY, 3, true); // Unbreaking 3
+        meta.addEnchant(Enchantment.MENDING, 1, true); // Mending 1
+
+        sword.setItemMeta(meta);
+
+        // Drop the sword two blocks in front of the player
+        Location dropLocation = player.getLocation().add(player.getEyeLocation().getDirection().multiply(2));
+        dropLocation.setY(dropLocation.getY() +1);
+        player.getWorld().dropItemNaturally(dropLocation, sword);
+
+        // Add particle effects
+        player.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, dropLocation, 100);
+
+        // Play a fitting sound
+        player.getWorld().playSound(dropLocation, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
     }
 
 

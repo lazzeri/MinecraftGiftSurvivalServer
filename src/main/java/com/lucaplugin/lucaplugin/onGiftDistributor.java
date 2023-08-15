@@ -73,6 +73,7 @@ public class onGiftDistributor
         }
 
         if (likes >= 4500) {
+            eventHandlerObj.opSword(player, donorName, likes);
             return;
         } else if (likes >= 1100) {
             eventHandlerObj.tntRain(player, donorName, plugin, likes);
