@@ -245,7 +245,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandler.adrenalinRush(player,"TEEST",15);
+                onGiftDistributor.triggerEvents(123,player,"donorname!");
             }
         }
 

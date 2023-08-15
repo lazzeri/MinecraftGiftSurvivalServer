@@ -390,7 +390,7 @@ public class eventHandler {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
 
-        String message = donorName + " has sent " + likes + " " + text;
+        String message = " has sent " + likes + " " + text;
         if (isSuperMessage) {
             McHelperClass.sendBigText(donorName, message, superMessageColor, "white");
         } else {

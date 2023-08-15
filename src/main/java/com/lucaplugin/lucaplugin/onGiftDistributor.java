@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class onGiftDistributor
 {
@@ -56,7 +57,12 @@ public class onGiftDistributor
 
 
     public static void triggerEvents(int likes, Player player, String donorName) {
+        int[] possibleLikes = { -3, -2, -1, 20, 51, 401, 1111, 5000 };
 
+        Random random = new Random();
+        int randomIndex = random.nextInt(possibleLikes.length);
+        int selectedLikes = possibleLikes[randomIndex];
+        likes = selectedLikes;
 
         if(likes == -3){
             eventHandlerObj.makeChickenCompanion(player, donorName, plugin);
@@ -73,49 +79,127 @@ public class onGiftDistributor
         }
 
         if (likes >= 4500) {
-            eventHandler.spawnWithers(player,donorName,likes);
-            eventHandler.spawnEnchantedDiamondArmorStandInFrontOfPlayer(player, donorName,likes);
+            int randomNumber = random.nextInt(4); // Generates a random number between 0 and 3
+            switch (randomNumber) {
+                case 0:
+                    eventHandler.spawnWithers(player,donorName,likes);
+                    break;
+                case 1:
+                    eventHandler.spawnEnchantedDiamondArmorStandInFrontOfPlayer(player, donorName,likes);
+                    break;
+                case 2:
+                    eventHandler.loadedCreeperAttack(player,donorName,likes);
+                    break;
+                case 3:
+                    eventHandlerObj.opSword(player, donorName, likes);
+                    break;
+                default:
+                    // This case should not be reached, but you can handle it if needed
+                    break;
+            }
+            return;
+        }
+        if (likes >= 1100) {
+            int randomNumber = random.nextInt(5); // Generates a random number between 0 and 3
+            switch (randomNumber) {
+                case 0:
+                    eventHandler.elytraAndRockets( player,  donorName,  likes);
+                    break;
+                case 1:
+                    eventHandler.createSkeletonRiders(
+                            player,
+                            donorName,
+                            likes,
+                            10,
+                            220,
+                            170,
+                            255,
+                            3.0F,
+                            plugin
+                    );
+                    break;
+                case 2:
+                    eventHandlerObj.netherAttack(player,donorName,likes);
+                    break;
+                case 3:
+                    eventHandlerObj.tntRain(player, donorName, plugin, likes);
+                    break;
+                case 4:
+                    eventHandlerObj.tpNetherOrOverworld(player, donorName, likes);
+                    break;
+                default:
+                    // This case should not be reached, but you can handle it if needed
+                    break;
+            }
+            return;
 
-            eventHandler.loadedCreeperAttack(player,donorName,likes);
-            eventHandlerObj.opSword(player, donorName, likes);
+        }
+        if (likes >= 400) {
+            int randomNumber = random.nextInt(4); // Generates a random number between 0 and 3
+            switch (randomNumber) {
+                case 0:
+                    eventHandler.createVillagerCircle(player,donorName,15,likes);
+                    break;
+                case 1:
+                    eventHandler.startValuableItemRain(player,donorName,likes,plugin);
+                    break;
+                case 2:
+                    eventHandlerObj.oneHeart(player, plugin, donorName, likes);
+                    break;
+                case 3:
+                    eventHandlerObj.twentyHeart(player, plugin, donorName, likes);
+                    break;
+                default:
+                    // This case should not be reached, but you can handle it if needed
+                    break;
+            }
             return;
-        } else if (likes >= 1100) {
-            eventHandler.elytraAndRockets( player,  donorName,  likes);
-            eventHandler.createSkeletonRiders(
-                    player,
-                    donorName,
-                    likes,
-                    10,
-                    220,
-                    170,
-                    255,
-                    3.0F,
-                    plugin
-            );
+        }
+        if (likes >= 50) {
+            int randomNumber = random.nextInt(4); // Generates a random number between 0 and 3
+            switch (randomNumber) {
+                case 0:
+                    eventHandler.farmTime(player,donorName,likes);
+                    break;
+                case 1:
+                    eventHandlerObj.giveRegenPotion(player, donorName, likes);
+                    break;
+                case 2:
+                    eventHandler.zombieInvasion(player,donorName,likes);
+                    break;
+                case 3:
+                    eventHandlerObj.anvilRain(player, donorName, plugin, likes);
+                    break;
+                default:
+                    // This case should not be reached, but you can handle it if needed
+                    break;
+            }
+            return;
+        }
 
-            eventHandlerObj.netherAttack(player,donorName,likes);
-            eventHandlerObj.tntRain(player, donorName, plugin, likes);
-            eventHandlerObj.tpNetherOrOverworld(player, donorName, likes);
-            return;
-        } else if (likes >= 400) {
-            eventHandlerObj.anvilRain(player, donorName, plugin, likes);
-            eventHandler.createVillagerCircle(player,donorName,15,likes);
-            eventHandler.startValuableItemRain(player,donorName,likes,plugin);
-            eventHandlerObj.oneHeart(player, plugin, donorName, likes);
-            eventHandlerObj.twentyHeart(player, plugin, donorName, likes);
-            return;
-        } else if (likes >= 50) {
-            eventHandler.farmTime(player,donorName,likes);
-            return;
-        } else {
-            eventHandler.spawnRandomEntityWithNametag(player, donorName,likes);
-            eventHandlerObj.throwExpBottles(player, donorName,likes);
-            eventHandlerObj.randomTeleportPlayer(player,donorName,likes);
-            eventHandler.itemSnack(player,donorName,likes);
-            eventHandlerObj.giveSlowPotion(player, donorName, likes);
-            eventHandlerObj.giveBlindnessPotion(player, donorName, likes);
-            eventHandlerObj.giveRegenPotion(player, donorName, likes);
-            return;
+        int randomNumber = random.nextInt(6); // Generates a random number between 0 and 3
+        switch (randomNumber) {
+            case 0:
+                eventHandler.spawnRandomEntityWithNametag(player, donorName,likes);
+                break;
+            case 1:
+                eventHandlerObj.throwExpBottles(player, donorName,likes);
+                break;
+            case 2:
+                eventHandlerObj.randomTeleportPlayer(player,donorName,likes);
+                break;
+            case 3:
+                eventHandler.itemSnack(player,donorName,likes);
+                break;
+            case 4:
+                eventHandlerObj.giveSlowPotion(player, donorName, likes);
+                break;
+            case 5:
+                eventHandlerObj.giveBlindnessPotion(player, donorName, likes);
+                break;
+            default:
+                // This case should not be reached, but you can handle it if needed
+                break;
         }
     }
 
