@@ -23,7 +23,8 @@ import xyz.xenondevs.particle.data.color.RegularColor;
 
 import java.util.*;
 
-public class eventHandler {
+public class eventHandler
+{
     public static boolean dirtOnFire = false;
 
     public static Location[] teamSpawnPoints = new Location[]{
@@ -32,14 +33,16 @@ public class eventHandler {
             // ... and so on for each team
     };
 
-    public static void spawnWithers(Player player, String donorName, int likes) {
+    public static void spawnWithers(Player player, String donorName, int likes)
+    {
         World world = player.getWorld();
         Random random = new Random();
 
         Location playerLocation = player.getLocation();
         Vector direction = playerLocation.getDirection().normalize();
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++)
+        {
             double xOffset = direction.getX() * (i + 1) * 3;
             double yOffset = 1.5; // Adjust the height as needed
             double zOffset = direction.getZ() * (i + 1) * 3;
@@ -57,7 +60,7 @@ public class eventHandler {
 
         McHelperClass.sendBigText(donorName, "spawned WITHERS!", "yellow", "white");
         player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
-        McHelperClass.sayText(donorName, " has send " + likes + " and spawned WITHERS!", ChatColor.YELLOW, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and spawned WITHERS!", ChatColor.YELLOW, ChatColor.WHITE);
 
     }
 
@@ -87,9 +90,8 @@ public class eventHandler {
 
 
         //Set Message
-        McHelperClass.sayText(" has send " + likes + " likes, and spawned a Pillager Raid!", donorName, ChatColor.RED, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and spawned a Pillager Raid!", ChatColor.RED, ChatColor.WHITE);
     }
-
 
 
     //Adrenalin Rush = Health Regen + Jump | Speed | Blindness
@@ -141,17 +143,21 @@ public class eventHandler {
     }
 
     //TNT Rain
-    public void tntRain(Player player, String donorName, Plugin plugin, Integer likes) {
+    public void tntRain(Player player, String donorName, Plugin plugin, Integer likes)
+    {
         McHelperClass.playSoundXTimes(player, Sound.ENTITY_CREEPER_PRIMED, 10F, 20);
 
         McHelperClass.sendBigText(donorName, "made it rain TNT!", "yellow", "white");
 
-        McHelperClass.sayText(donorName, " has send " + likes + " and made it rain TNT!", ChatColor.GOLD, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and made it rain TNT!", ChatColor.GOLD, ChatColor.WHITE);
         int randomMax = McHelperClass.generateRandomInt(40, 50);
-        for (int i = 0; i < randomMax; i++) {
-            new BukkitRunnable() {
+        for (int i = 0; i < randomMax; i++)
+        {
+            new BukkitRunnable()
+            {
                 @Override
-                public void run() {
+                public void run()
+                {
                     TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
                     ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 220));
                     McHelperClass.wait(50);
@@ -172,19 +178,20 @@ public class eventHandler {
         }
 
         boolean found = false;
-        for(int i = 0; i < 9; i++){
+        for (int i = 0; i < 9; i++)
+        {
             // Check if the slot contains an item before removing it
             if (toolbarItems[i] != null && toolbarItems[i].getType() != Material.AIR)
             {
                 found = true;
                 inventory.setItem(i, new ItemStack(Material.AIR));
-                McHelperClass.sayText(donorName,  " has send " + likes + " likes and stole an item from your ToolBar!", ChatColor.GREEN, ChatColor.WHITE);
+                McHelperClass.sayText(donorName, " has send " + likes + " likes and stole an item from your ToolBar!", ChatColor.GREEN, ChatColor.WHITE);
                 return;
             }
         }
 
-            McHelperClass.sayText(donorName,  " has send " + likes + " likes and saw that your toolbar is empty, here have a cookie!", ChatColor.GREEN, ChatColor.WHITE);
-            inventory.setItem(0, new ItemStack(Material.COOKIE));
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and saw that your toolbar is empty, here have a cookie!", ChatColor.GREEN, ChatColor.WHITE);
+        inventory.setItem(0, new ItemStack(Material.COOKIE));
     }
 
 
@@ -206,10 +213,11 @@ public class eventHandler {
         McHelperClass.sayText(donorName, " has send " + likes + " likes and gave " + fullExpSum + " experience to you!", ChatColor.GREEN, ChatColor.WHITE);
     }
 
-    public static void spawnEnchantedDiamondArmorStandInFrontOfPlayer(Player player, String donorName, int likes) {
+    public static void spawnEnchantedDiamondArmorStandInFrontOfPlayer(Player player, String donorName, int likes)
+    {
         Location playerLocation = player.getLocation();
         Location spawnLocation = playerLocation.add(playerLocation.getDirection().multiply(2)); // Adjust the distance as needed
-        spawnLocation.setY(spawnLocation.getY()+1);
+        spawnLocation.setY(spawnLocation.getY() + 1);
 
         ArmorStand armorStand = (ArmorStand) spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.ARMOR_STAND);
         armorStand.setVisible(false);
@@ -253,94 +261,96 @@ public class eventHandler {
         player.spawnParticle(Particle.EXPLOSION_NORMAL, spawnLocation, 50, 0, 0, 0, 0);
         player.playSound(spawnLocation, Sound.BLOCK_SMITHING_TABLE_USE, 3, 10);
 
-        String message =  " has sent " + likes + " likes and gifted full Diamond Armor!";
+        String message = " has sent " + likes + " likes and gifted full Diamond Armor!";
         McHelperClass.sayText(donorName, message, ChatColor.GOLD, ChatColor.WHITE);
         McHelperClass.sendBigText(donorName, "gifted full Diamond Armor!", "gold", "white");
 
     }
 
-    public static void spawnRandomEntityWithNametag(Player player, String donorName, int likes) {
+    public static void spawnRandomEntityWithNametag(Player player, String donorName, int likes)
+    {
         EntityType[] mobTypes =
                 {
-                EntityType.BAT,
-                EntityType.BLAZE,
-                EntityType.CAT,
-                EntityType.CAVE_SPIDER,
-                EntityType.CHICKEN,
-                EntityType.COD,
-                EntityType.COW,
-                EntityType.CREEPER,
-                EntityType.DOLPHIN,
-                EntityType.DONKEY,
-                EntityType.DROWNED,
-                EntityType.ELDER_GUARDIAN,
-                EntityType.ENDERMAN,
-                EntityType.ENDERMITE,
-                EntityType.EVOKER,
-                EntityType.FOX,
-                EntityType.GHAST,
-                EntityType.GIANT,
-                EntityType.GUARDIAN,
-                EntityType.HOGLIN,
-                EntityType.HORSE,
-                EntityType.HUSK,
-                EntityType.ILLUSIONER,
-                EntityType.IRON_GOLEM,
-                EntityType.LLAMA,
-                EntityType.MAGMA_CUBE,
-                EntityType.MULE,
-                EntityType.OCELOT,
-                EntityType.PANDA,
-                EntityType.PARROT,
-                EntityType.PHANTOM,
-                EntityType.PIG,
-                EntityType.PIGLIN,
-                EntityType.PIGLIN_BRUTE,
-                EntityType.PILLAGER,
-                EntityType.POLAR_BEAR,
-                EntityType.PUFFERFISH,
-                EntityType.RABBIT,
-                EntityType.RAVAGER,
-                EntityType.SALMON,
-                EntityType.SHEEP,
-                EntityType.SHULKER,
-                EntityType.SILVERFISH,
-                EntityType.SKELETON,
-                EntityType.SKELETON_HORSE,
-                EntityType.SLIME,
-                EntityType.SNOWMAN,
-                EntityType.SPIDER,
-                EntityType.SQUID,
-                EntityType.STRAY,
-                EntityType.STRIDER,
-                EntityType.TRADER_LLAMA,
-                EntityType.TROPICAL_FISH,
-                EntityType.TURTLE,
-                EntityType.VEX,
-                EntityType.VILLAGER,
-                EntityType.VINDICATOR,
-                EntityType.WANDERING_TRADER,
-                EntityType.WITCH,
-                EntityType.WITHER,
-                EntityType.WITHER_SKELETON,
-                EntityType.WOLF,
-                EntityType.ZOGLIN,
-                EntityType.ZOMBIE,
-                EntityType.ZOMBIE_HORSE,
-                EntityType.ZOMBIE_VILLAGER,
-                EntityType.ZOMBIFIED_PIGLIN
-        };
+                        EntityType.BAT,
+                        EntityType.BLAZE,
+                        EntityType.CAT,
+                        EntityType.CAVE_SPIDER,
+                        EntityType.CHICKEN,
+                        EntityType.COD,
+                        EntityType.COW,
+                        EntityType.CREEPER,
+                        EntityType.DOLPHIN,
+                        EntityType.DONKEY,
+                        EntityType.DROWNED,
+                        EntityType.ELDER_GUARDIAN,
+                        EntityType.ENDERMAN,
+                        EntityType.ENDERMITE,
+                        EntityType.EVOKER,
+                        EntityType.FOX,
+                        EntityType.GHAST,
+                        EntityType.GIANT,
+                        EntityType.GUARDIAN,
+                        EntityType.HOGLIN,
+                        EntityType.HORSE,
+                        EntityType.HUSK,
+                        EntityType.ILLUSIONER,
+                        EntityType.IRON_GOLEM,
+                        EntityType.LLAMA,
+                        EntityType.MAGMA_CUBE,
+                        EntityType.MULE,
+                        EntityType.OCELOT,
+                        EntityType.PANDA,
+                        EntityType.PARROT,
+                        EntityType.PHANTOM,
+                        EntityType.PIG,
+                        EntityType.PIGLIN,
+                        EntityType.PIGLIN_BRUTE,
+                        EntityType.PILLAGER,
+                        EntityType.POLAR_BEAR,
+                        EntityType.PUFFERFISH,
+                        EntityType.RABBIT,
+                        EntityType.RAVAGER,
+                        EntityType.SALMON,
+                        EntityType.SHEEP,
+                        EntityType.SHULKER,
+                        EntityType.SILVERFISH,
+                        EntityType.SKELETON,
+                        EntityType.SKELETON_HORSE,
+                        EntityType.SLIME,
+                        EntityType.SNOWMAN,
+                        EntityType.SPIDER,
+                        EntityType.SQUID,
+                        EntityType.STRAY,
+                        EntityType.STRIDER,
+                        EntityType.TRADER_LLAMA,
+                        EntityType.TROPICAL_FISH,
+                        EntityType.TURTLE,
+                        EntityType.VEX,
+                        EntityType.VILLAGER,
+                        EntityType.VINDICATOR,
+                        EntityType.WANDERING_TRADER,
+                        EntityType.WITCH,
+                        EntityType.WITHER,
+                        EntityType.WITHER_SKELETON,
+                        EntityType.WOLF,
+                        EntityType.ZOGLIN,
+                        EntityType.ZOMBIE,
+                        EntityType.ZOMBIE_HORSE,
+                        EntityType.ZOMBIE_VILLAGER,
+                        EntityType.ZOMBIFIED_PIGLIN
+                };
 
 
         Location spawnLocation = player.getLocation().add(player.getLocation().getDirection().multiply(2));
-        spawnLocation.setY(spawnLocation.getY()+2);
+        spawnLocation.setY(spawnLocation.getY() + 2);
         EntityType randomEntityType = mobTypes[new Random().nextInt(mobTypes.length)];
         Entity spawnedEntity = player.getWorld().spawnEntity(spawnLocation, randomEntityType);
 
-        String message =  " has sent " + likes + " likes and spawned " +  spawnedEntity.getName() +"!";
+        String message = " has sent " + likes + " likes and spawned " + spawnedEntity.getName() + "!";
         McHelperClass.sayText(donorName, message, ChatColor.GREEN, ChatColor.WHITE);
         // Set custom name tag
-        if (spawnedEntity instanceof LivingEntity) {
+        if (spawnedEntity instanceof LivingEntity)
+        {
             LivingEntity livingEntity = (LivingEntity) spawnedEntity;
             livingEntity.setCustomNameVisible(true);
             livingEntity.setCustomName(McHelperClass.randomColor() + donorName);
@@ -348,12 +358,13 @@ public class eventHandler {
     }
 
 
-    public static void elytraAndRockets(Player player, String donorName, int likes) {
+    public static void elytraAndRockets(Player player, String donorName, int likes)
+    {
         ItemStack elytra = new ItemStack(Material.ELYTRA);
         ItemStack rockets = new ItemStack(Material.FIREWORK_ROCKET, 64);
 
         Location dropLocation = player.getLocation().add(player.getLocation().getDirection().multiply(2)); // Adjust the distance as needed
-        dropLocation.setY(dropLocation.getY()+1);
+        dropLocation.setY(dropLocation.getY() + 1);
         player.getWorld().dropItemNaturally(dropLocation, elytra);
         player.getWorld().dropItemNaturally(dropLocation, rockets);
 
@@ -361,22 +372,22 @@ public class eventHandler {
 
         player.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, dropLocation, 50);
 
-        String message =  " has sent " + likes + " likes and gifted Elytra with Rockets!";
+        String message = " has sent " + likes + " likes and gifted Elytra with Rockets!";
         McHelperClass.sayText(donorName, message, ChatColor.GOLD, ChatColor.WHITE);
         McHelperClass.sendBigText(donorName, "gifted Elytra with Rockets!", "gold", "white");
     }
 
 
-
-
-    public static void createEntityAttack(Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, ChatColor normalColor, String text, boolean isSuperMessage, String superMessageColor, EntityType[] entityTypes) {
+    public static void createEntityAttack(Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, ChatColor normalColor, String text, boolean isSuperMessage, String superMessageColor, EntityType[] entityTypes)
+    {
         double size = (double) 10;
         int positions = (int) 360 / eventAmount;
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(rgb1, rgb2, rgb3), size2);
 
         Random random = new Random();
 
-        for (int i = 0; i < 360; i += positions) {
+        for (int i = 0; i < 360; i += positions)
+        {
             double angle = (i * Math.PI / 180);
             double x = size * Math.cos(angle);
             double z = size * Math.sin(angle);
@@ -390,20 +401,24 @@ public class eventHandler {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
 
-        String message = " has sent " + likes + " " + text;
-        if (isSuperMessage) {
-            McHelperClass.sendBigText(donorName, message, superMessageColor, "white");
-        } else {
-            McHelperClass.sayText(donorName, message, normalColor, ChatColor.WHITE);
+        String message = " has sent " + likes + " likes and " + text;
+        if (isSuperMessage)
+        {
+            McHelperClass.sendBigText(donorName, text, superMessageColor, "white");
         }
+
+        McHelperClass.sayText(donorName, message, normalColor, ChatColor.WHITE);
+
     }
 
-    static void startValuableItemRain(Player player, String donorName, int likes,Plugin plugin) {
+    static void startValuableItemRain(Player player, String donorName, int likes, Plugin plugin)
+    {
         Location location = player.getLocation();
         location.setY(location.getY() + 5);
-        McHelperClass.sayText(" has send " + likes + " likes, made it rain ores!", donorName, ChatColor.RED, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and made it rain ores!", ChatColor.RED, ChatColor.WHITE);
 
-        new BukkitRunnable() {
+        new BukkitRunnable()
+        {
             final List<Material> valuableItems = Arrays.asList(
                     Material.DIAMOND,
                     Material.EMERALD,
@@ -417,8 +432,10 @@ public class eventHandler {
             World world = player.getWorld();
 
             @Override
-            public void run() {
-                if (remainingDrops > 0) {
+            public void run()
+            {
+                if (remainingDrops > 0)
+                {
 
                     Material randomItem = valuableItems.get(random.nextInt(valuableItems.size()));
                     ItemStack itemStack = new ItemStack(randomItem);
@@ -428,23 +445,26 @@ public class eventHandler {
 
                     world.dropItem(location, itemStack);
                     remainingDrops--;
-                } else {
+                } else
+                {
                     this.cancel(); // Stop the task when all items are dropped
                 }
             }
         }.runTaskTimer(plugin, 0L, 1L); // Delay and interval between drops
     }
 
-    public static void createSkeletonRiders (Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, Plugin plugin) {
+    public static void createSkeletonRiders(Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, Plugin plugin)
+    {
         double size = (double) 10;
         int positions = (int) 360 / eventAmount;
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(rgb1, rgb2, rgb3), size2);
 
-        for (int i = 0; i < 360; i += positions) {
+        for (int i = 0; i < 360; i += positions)
+        {
             double angle = (i * Math.PI / 180);
             double x = size * Math.cos(angle);
             double z = size * Math.sin(angle);
-            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "summon skeleton_horse "+ x + " "+player.getLocation().getY()+ " " + z+" "+ "{SkeletonTrap:1}");
+            plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "summon skeleton_horse " + x + " " + player.getLocation().getY() + " " + z + " " + "{SkeletonTrap:1}");
         }
 
         player.getWorld().setTime(12000);
@@ -458,9 +478,10 @@ public class eventHandler {
         McHelperClass.sendBigText(donorName, "spawned the 4 Horsemen!", "yellow", "white");
     }
 
-    public void netherAttack(Player player, String donorName, int likes){
+    public void netherAttack(Player player, String donorName, int likes)
+    {
         player.getWorld().setTime(12000);
-        EntityType[] entityTypes = { EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE,EntityType.SKELETON};
+        EntityType[] entityTypes = {EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE, EntityType.SKELETON};
         createEntityAttack(
                 player,
                 donorName,
@@ -479,15 +500,16 @@ public class eventHandler {
     }
 
 
-
-    public static void loadedCreeperAttack(Player player, String donorName, int likes) {
+    public static void loadedCreeperAttack(Player player, String donorName, int likes)
+    {
         double size = 10.0; // Using decimal to indicate a double value
         int eventAmount = 25;
         int positions = 360 / eventAmount;
 
         Random random = new Random();
 
-        for (int i = 0; i < 360; i += positions) {
+        for (int i = 0; i < 360; i += positions)
+        {
             double angle = i * Math.PI / 180.0;
             double x = size * Math.cos(angle);
             double z = size * Math.sin(angle);
@@ -495,7 +517,8 @@ public class eventHandler {
             Location spawnLocation = player.getLocation().clone().add(x, 0, z);
             Creeper creeper = (Creeper) player.getWorld().spawnEntity(spawnLocation, EntityType.CREEPER);
 
-            if (random.nextBoolean()) {
+            if (random.nextBoolean())
+            {
                 creeper.setPowered(true);
             }
 
@@ -506,15 +529,16 @@ public class eventHandler {
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
 
-        String message =  " has sent " + likes + " likes and spawned Creepers!";
-        McHelperClass.sayText(donorName,message , ChatColor.RED, ChatColor.WHITE);
+        String message = " has sent " + likes + " likes and spawned Creepers!";
+        McHelperClass.sayText(donorName, message, ChatColor.RED, ChatColor.WHITE);
         McHelperClass.sendBigText(donorName, "spawned Creepers!", "yellow", "white");
     }
 
 
-    public static void zombieInvasion(Player player, String donorName, int likes){
+    public static void zombieInvasion(Player player, String donorName, int likes)
+    {
         player.getWorld().setTime(12000);
-        EntityType[] entityTypes = { EntityType.GIANT, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER,EntityType.ZOMBIE_HORSE};
+        EntityType[] entityTypes = {EntityType.GIANT, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER, EntityType.ZOMBIE_HORSE};
         createEntityAttack(
                 player,
                 donorName,
@@ -532,8 +556,9 @@ public class eventHandler {
         );
     }
 
-    public static void farmTime(Player player, String donorName, int likes){
-        EntityType[] entityTypes = { EntityType.COW, EntityType.CHICKEN, EntityType.HORSE,EntityType.PIG, EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA};
+    public static void farmTime(Player player, String donorName, int likes)
+    {
+        EntityType[] entityTypes = {EntityType.COW, EntityType.CHICKEN, EntityType.HORSE, EntityType.PIG, EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA};
         createEntityAttack(
                 player,
                 donorName,
@@ -630,71 +655,82 @@ public class eventHandler {
     }
 
     //Gives potion effect
-    public static void givePotionEffect(Player player, String donorName, String text, ChatColor chatColor, Integer likes, PotionEffectType potionEffect, Integer duration, Integer amplifier) {
+    public static void givePotionEffect(Player player, String donorName, String text, ChatColor chatColor, Integer likes, PotionEffectType potionEffect, Integer duration, Integer amplifier)
+    {
         player.addPotionEffect(new PotionEffect(potionEffect, duration, amplifier));
         McHelperClass.sayText(donorName, " has send " + likes + " likes and " + text, chatColor, ChatColor.WHITE);
     }
 
     //Gives slow potion effect
-    public void giveSlowPotion(Player player, String donorName, int likes) {
-        eventHandler.givePotionEffect(player, donorName , "made you gain 100 pounds", ChatColor.GREEN, likes,PotionEffectType.SLOW, 600, 2);
+    public void giveSlowPotion(Player player, String donorName, int likes)
+    {
+        eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and made you gain 100 pounds", ChatColor.GREEN, likes, PotionEffectType.SLOW, 600, 2);
         player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
         player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
     }
 
     //Gives blindness potion
-    public void giveBlindnessPotion(Player player, String donorName, int likes) {
-        eventHandler.givePotionEffect(player, donorName , "blew out the candles!", ChatColor.GREEN, likes,PotionEffectType.BLINDNESS, 600, 2);
+    public void giveBlindnessPotion(Player player, String donorName, int likes)
+    {
+        eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and blew out the candles!", ChatColor.GREEN, likes, PotionEffectType.BLINDNESS, 600, 2);
         player.playSound(player.getLocation(), Sound.AMBIENT_CAVE, 3, 10);
         player.spawnParticle(Particle.ELECTRIC_SPARK, player.getLocation(), 350, 10, 10, 10, -0.0005);
     }
 
     //Set down to 1 heart for 60sec
-    public void oneHeart(Player player, Plugin plugin, String donorName, int likes) {
-        double oldPlayerHealth = player.getHealth();
+    public void oneHeart(Player player, Plugin plugin, String donorName, int likes)
+    {
         player.setMaxHealth(2); // Set the player's maximum health to 1 heart (2 HP)
-        McHelperClass.sayText(donorName, " has send " + likes + " likes and shortened your life for a minute", ChatColor.RED, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and put you on 1 heart for a minute!", ChatColor.RED, ChatColor.WHITE);
 
-        new BukkitRunnable() {
+        new BukkitRunnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 player.setMaxHealth(20); // Restore the player's original max health
-                player.setHealth(oldPlayerHealth); // Also restore their current health to avoid overhealing
+                player.setHealth(20); // Also restore their current health to avoid overhealing
             }
         }.runTaskLater(plugin, 1200); // 20 ticks per second, so 60 seconds = 1200 ticks
     }
 
     //Gives 20 Hearts for 2 Minutes
-    public void twentyHeart(Player player, Plugin plugin, String donorName, int likes) {
-        double oldPlayerHealth = player.getHealth();
+    public void twentyHeart(Player player, Plugin plugin, String donorName, int likes)
+    {
         player.setMaxHealth(40);// Set the player's maximum health to 20 heart (40 HP)
         player.setHealth(40);
-        McHelperClass.sayText(donorName, " has send " + likes + " likes doubled your Lifetime for 2 minutes", ChatColor.RED, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and gave you 20 hearts for 2 minutes", ChatColor.RED, ChatColor.WHITE);
 
-        new BukkitRunnable() {
+        new BukkitRunnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 player.setMaxHealth(20); // Restore the player's original max health
-                player.setHealth(oldPlayerHealth); // Also restore their current health to avoid overhealing
+                player.setHealth(20); // Also restore their current health to avoid overhealing
             }
         }.runTaskLater(plugin, 2400); // 20 ticks per second, so 120 seconds = 2400 ticks
     }
 
-    //TPs to nether if not in nether and vice versa
-    public void tpNetherOrOverworld(Player player, String donorName, int likes) {
-        if (player.getWorld().getEnvironment() == World.Environment.NETHER) {
+    //TPs to nether if< not in nether and vice versa
+    public void tpNetherOrOverworld(Player player, String donorName, int likes)
+    {
+        if (player.getWorld().getEnvironment() == World.Environment.NETHER)
+        {
             // Player is in the Nether, teleport them to the Overworld
             tpWorld(player, donorName, likes, "world"); // Replace "world" with your actual Overworld name
-            McHelperClass.sayText(donorName, " has send " + likes + " likes sent you back to the Overworld", ChatColor.RED, ChatColor.WHITE);
-        } else {
+            McHelperClass.sayText(donorName, " has send " + likes + " likes and sent you back to the Overworld", ChatColor.RED, ChatColor.WHITE);
+        } else
+        {
             // Player is in the Overworld, teleport them to the Nether
             tpWorld(player, donorName, likes, "world_nether"); // Replace "world_nether" with your actual Nether world name
-            McHelperClass.sayText(donorName, " has send " + likes + " likes sent you to Hell", ChatColor.RED, ChatColor.WHITE);
+            McHelperClass.sayText(donorName, " has send " + likes + " likes and sent you to Hell", ChatColor.RED, ChatColor.WHITE);
 
         }
     }
 
-    public void tpWorld(Player player, String donorName, int likes, String worldName) {
+    public void tpWorld(Player player, String donorName, int likes, String worldName)
+    {
         Location to = player.getLocation();
         Location netherLocation = new Location(Bukkit.getWorld(worldName), to.getX(), to.getY(), to.getZ());
         player.teleport(netherLocation);
@@ -702,11 +738,12 @@ public class eventHandler {
         player.teleport(fixedPosition);
     }
 
-    public void opSword(Player player, String donorName, int likes) {
+    public void opSword(Player player, String donorName, int likes)
+    {
         McHelperClass.sayText(donorName, " has send " + likes + " likes and sent you the sword of a thousand truths", ChatColor.BLUE, ChatColor.WHITE);
         ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);
         ItemMeta meta = sword.getItemMeta();
-        meta.setDisplayName("§c§l"+donorName); // Red and bold display name
+        meta.setDisplayName("§c§l" + donorName); // Red and bold display name
         meta.addEnchant(Enchantment.DAMAGE_ALL, 10, true); // Sharpness 10
         meta.addEnchant(Enchantment.FIRE_ASPECT, 5, true); // Fire Aspect 5
         meta.addEnchant(Enchantment.LOOT_BONUS_MOBS, 5, true); // Looting 5
@@ -719,7 +756,7 @@ public class eventHandler {
 
         // Drop the sword two blocks in front of the player
         Location dropLocation = player.getLocation().add(player.getEyeLocation().getDirection().multiply(2));
-        dropLocation.setY(dropLocation.getY() +1);
+        dropLocation.setY(dropLocation.getY() + 1);
         player.getWorld().dropItemNaturally(dropLocation, sword);
 
         // Add particle effects
@@ -731,20 +768,22 @@ public class eventHandler {
 
 
     //Gives health regen potion
-    public void giveRegenPotion(Player player, String donorName, int likes) {
-        eventHandler.givePotionEffect(player, donorName , "saves yo a$$", ChatColor.GREEN, likes,PotionEffectType.REGENERATION, 80, 2);
+    public void giveRegenPotion(Player player, String donorName, int likes)
+    {
+        eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and regens your health!", ChatColor.GREEN, likes, PotionEffectType.REGENERATION, 120, 2);
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 3, 10);
         player.spawnParticle(Particle.CRIT_MAGIC, player.getLocation(), 350, 10, 10, 10, -0.0005);
     }
 
     //Creates a wolf companion
-    public void createWolfCompanion(Player player, String donorName, Plugin plugin) {
+    public void createWolfCompanion(Player player, String donorName, Plugin plugin)
+    {
         Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(), EntityType.WOLF);
         wolf.setTamed(true);
         wolf.setCustomName(McHelperClass.randomColor() + donorName);
         wolf.setCollarColor(McHelperClass.randomDyeColor());
         wolf.setOwner(player);
-        McHelperClass.sayText(donorName, " has spawned your new best friend", ChatColor.GOLD, McHelperClass.randomColor());
+        McHelperClass.sayText(donorName, " became a subscriber! and spawned your new best friend!", ChatColor.GOLD, ChatColor.WHITE);
     }
 
     //Teleport
@@ -753,20 +792,23 @@ public class eventHandler {
         Location newPosition = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-100, 300), player.getLocation().getY(), player.getLocation().getZ() - McHelperClass.generateRandomInt(-100, 300));
         newPosition = McHelperClass.findNonBlockY(newPosition, player);
         player.teleport(newPosition);
-        McHelperClass.sayText(donorName, " has send " + likes + " likes teleported you haha!", ChatColor.GREEN, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and teleported you haha!", ChatColor.GREEN, ChatColor.WHITE);
     }
 
     //Make it rain anvils
-    public void anvilRain(Player player, String donorName, Plugin plugin, Integer likes) {
+    public void anvilRain(Player player, String donorName, Plugin plugin, Integer likes)
+    {
         int timeInSeconds = 10;
         int interval = 10;
 
-        McHelperClass.sayText(donorName, " has send " + likes + " likes and made it rain anvils", ChatColor.LIGHT_PURPLE, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, " has send " + likes + " likes and made it rain anvils!", ChatColor.LIGHT_PURPLE, ChatColor.WHITE);
 
-        new BukkitRunnable() {
+        new BukkitRunnable()
+        {
             double time = 0;
 
-            public void run() {
+            public void run()
+            {
                 Block block = player.getWorld().getBlockAt(player.getLocation().add(McHelperClass.generateRandomInt(-3, 3),
                         McHelperClass.generateRandomInt(3, 5),
                         McHelperClass.generateRandomInt(-3, 3)));
@@ -782,7 +824,8 @@ public class eventHandler {
         }.runTaskTimer(plugin, 0, interval);
     }
 
-    public void test(Player player, String donorName, Plugin plugin) {
+    public void test(Player player, String donorName, Plugin plugin)
+    {
 
     }
 }
