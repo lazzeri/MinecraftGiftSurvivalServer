@@ -120,7 +120,7 @@ public class eventHandler
     }
 
     //Notes
-    public void magicNotes(Player player, String donorName, Plugin plugin, int interval)
+    public static  void magicNotes(Player player, String donorName, Plugin plugin, int interval)
     {
 
         new BukkitRunnable()
@@ -143,7 +143,7 @@ public class eventHandler
     }
 
     //TNT Rain
-    public void tntRain(Player player, String donorName, Plugin plugin, Integer likes)
+    public static void tntRain(Player player, String donorName, Plugin plugin, Integer likes)
     {
         McHelperClass.playSoundXTimes(player, Sound.ENTITY_CREEPER_PRIMED, 10F, 20);
 
@@ -196,7 +196,7 @@ public class eventHandler
 
 
     //Throws Exp Bottles on player
-    public void throwExpBottles(Player player, String donorName, Integer likes)
+    public static  void throwExpBottles(Player player, String donorName, Integer likes)
     {
         Location loc = player.getLocation();
         int fullExpSum = 0;
@@ -478,7 +478,7 @@ public class eventHandler
         McHelperClass.sendBigText(donorName, "spawned the 4 Horsemen!", "yellow", "white");
     }
 
-    public void netherAttack(Player player, String donorName, int likes)
+    public static  void netherAttack(Player player, String donorName, int likes)
     {
         player.getWorld().setTime(12000);
         EntityType[] entityTypes = {EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE, EntityType.SKELETON};
@@ -578,7 +578,7 @@ public class eventHandler
 
 
     //A Thunder shoots in random position next to player
-    public void createThunder(Player player, String donorName)
+    public static void createThunder(Player player, String donorName)
     {
         Location location = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-10, 10), player.getLocation().getY() + McHelperClass.generateRandomInt(-10, 10), player.getLocation().getZ());
         Location fixedYLocation = McHelperClass.findNonBlockY(location, player);
@@ -587,7 +587,7 @@ public class eventHandler
     }
 
     //Create a chicken companion
-    public void makeChickenCompanion(Player player, String donorName, Plugin plugin)
+    public static void makeChickenCompanion(Player player, String donorName, Plugin plugin)
     {
         for (int c = 0; c < 30; c++)
         {
@@ -608,7 +608,7 @@ public class eventHandler
     }
 
     //Task for teleporting him every x seconds
-    public void chickenPermanentFollower(Player player, Animals entity, Plugin plugin)
+    public static void chickenPermanentFollower(Player player, Animals entity, Plugin plugin)
     {
         BukkitTask task = new BukkitRunnable()
         {
@@ -616,7 +616,7 @@ public class eventHandler
             public void run()
             {
                 if (!entity.isValid())
-                    cancel();
+                    this.cancel();
 
                 entity.teleport(player.getLocation());
                 entity.setTarget(player);
@@ -658,11 +658,11 @@ public class eventHandler
     public static void givePotionEffect(Player player, String donorName, String text, ChatColor chatColor, Integer likes, PotionEffectType potionEffect, Integer duration, Integer amplifier)
     {
         player.addPotionEffect(new PotionEffect(potionEffect, duration, amplifier));
-        McHelperClass.sayText(donorName, " has send " + likes + " likes and " + text, chatColor, ChatColor.WHITE);
+        McHelperClass.sayText(donorName, text, chatColor, ChatColor.WHITE);
     }
 
     //Gives slow potion effect
-    public void giveSlowPotion(Player player, String donorName, int likes)
+    public static  void giveSlowPotion(Player player, String donorName, int likes)
     {
         eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and made you gain 100 pounds", ChatColor.GREEN, likes, PotionEffectType.SLOW, 600, 2);
         player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
@@ -670,7 +670,7 @@ public class eventHandler
     }
 
     //Gives blindness potion
-    public void giveBlindnessPotion(Player player, String donorName, int likes)
+    public static  void giveBlindnessPotion(Player player, String donorName, int likes)
     {
         eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and blew out the candles!", ChatColor.GREEN, likes, PotionEffectType.BLINDNESS, 600, 2);
         player.playSound(player.getLocation(), Sound.AMBIENT_CAVE, 3, 10);
@@ -678,9 +678,10 @@ public class eventHandler
     }
 
     //Set down to 1 heart for 60sec
-    public void oneHeart(Player player, Plugin plugin, String donorName, int likes)
+    public static void oneHeart(Player player, Plugin plugin, String donorName, int likes)
     {
-        player.setMaxHealth(2); // Set the player's maximum health to 1 heart (2 HP)
+        player.setHealth(2);
+        player.setMaxHealth(2);// Set the player's maximum health to 1 heart (2 HP)
         McHelperClass.sayText(donorName, " has send " + likes + " likes and put you on 1 heart for a minute!", ChatColor.RED, ChatColor.WHITE);
 
         new BukkitRunnable()
@@ -688,14 +689,16 @@ public class eventHandler
             @Override
             public void run()
             {
-                player.setMaxHealth(20); // Restore the player's original max health
+                McHelperClass.sayText("Your hearts are back to normal!", "", ChatColor.RED, ChatColor.WHITE);
+                player.setMaxHealth(20);
                 player.setHealth(20); // Also restore their current health to avoid overhealing
+                this.cancel();
             }
         }.runTaskLater(plugin, 1200); // 20 ticks per second, so 60 seconds = 1200 ticks
     }
 
     //Gives 20 Hearts for 2 Minutes
-    public void twentyHeart(Player player, Plugin plugin, String donorName, int likes)
+    public static void twentyHeart(Player player, Plugin plugin, String donorName, int likes)
     {
         player.setMaxHealth(40);// Set the player's maximum health to 20 heart (40 HP)
         player.setHealth(40);
@@ -706,14 +709,15 @@ public class eventHandler
             @Override
             public void run()
             {
-                player.setMaxHealth(20); // Restore the player's original max health
+                McHelperClass.sayText("Your hearts are back to normal!", "", ChatColor.RED, ChatColor.WHITE);
                 player.setHealth(20); // Also restore their current health to avoid overhealing
+                this.cancel();
             }
         }.runTaskLater(plugin, 2400); // 20 ticks per second, so 120 seconds = 2400 ticks
     }
 
     //TPs to nether if< not in nether and vice versa
-    public void tpNetherOrOverworld(Player player, String donorName, int likes)
+    public static void tpNetherOrOverworld(Player player, String donorName, int likes)
     {
         if (player.getWorld().getEnvironment() == World.Environment.NETHER)
         {
@@ -729,7 +733,7 @@ public class eventHandler
         }
     }
 
-    public void tpWorld(Player player, String donorName, int likes, String worldName)
+    public static void tpWorld(Player player, String donorName, int likes, String worldName)
     {
         Location to = player.getLocation();
         Location netherLocation = new Location(Bukkit.getWorld(worldName), to.getX(), to.getY(), to.getZ());
@@ -738,7 +742,7 @@ public class eventHandler
         player.teleport(fixedPosition);
     }
 
-    public void opSword(Player player, String donorName, int likes)
+    public static void opSword(Player player, String donorName, int likes)
     {
         McHelperClass.sayText(donorName, " has send " + likes + " likes and sent you the sword of a thousand truths", ChatColor.BLUE, ChatColor.WHITE);
         ItemStack sword = new ItemStack(Material.NETHERITE_SWORD);
@@ -768,7 +772,7 @@ public class eventHandler
 
 
     //Gives health regen potion
-    public void giveRegenPotion(Player player, String donorName, int likes)
+    public static void giveRegenPotion(Player player, String donorName, int likes)
     {
         eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and regens your health!", ChatColor.GREEN, likes, PotionEffectType.REGENERATION, 120, 2);
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 3, 10);
@@ -776,7 +780,7 @@ public class eventHandler
     }
 
     //Creates a wolf companion
-    public void createWolfCompanion(Player player, String donorName, Plugin plugin)
+    public static void createWolfCompanion(Player player, String donorName, Plugin plugin)
     {
         Wolf wolf = (Wolf) player.getWorld().spawnEntity(player.getLocation(), EntityType.WOLF);
         wolf.setTamed(true);
@@ -787,7 +791,7 @@ public class eventHandler
     }
 
     //Teleport
-    public void randomTeleportPlayer(Player player, String donorName, Integer likes)
+    public static void randomTeleportPlayer(Player player, String donorName, Integer likes)
     {
         Location newPosition = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-100, 300), player.getLocation().getY(), player.getLocation().getZ() - McHelperClass.generateRandomInt(-100, 300));
         newPosition = McHelperClass.findNonBlockY(newPosition, player);
@@ -796,7 +800,7 @@ public class eventHandler
     }
 
     //Make it rain anvils
-    public void anvilRain(Player player, String donorName, Plugin plugin, Integer likes)
+    public static void anvilRain(Player player, String donorName, Plugin plugin, Integer likes)
     {
         int timeInSeconds = 10;
         int interval = 10;
@@ -816,7 +820,7 @@ public class eventHandler
 
                 time += (double) interval / 20;
                 if (time > timeInSeconds)
-                    cancel();
+                    this.cancel();
 
                 McHelperClass.wait(McHelperClass.generateRandomInt(50, 200));
             }
@@ -824,7 +828,7 @@ public class eventHandler
         }.runTaskTimer(plugin, 0, interval);
     }
 
-    public void test(Player player, String donorName, Plugin plugin)
+    public static void test(Player player, String donorName, Plugin plugin)
     {
 
     }

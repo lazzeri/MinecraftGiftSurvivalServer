@@ -65,16 +65,16 @@ public class onGiftDistributor
         likes = selectedLikes;
 
         if(likes == -3){
-            eventHandlerObj.makeChickenCompanion(player, donorName, plugin);
+            eventHandler.makeChickenCompanion(player, donorName, plugin);
             return;
         }
         if(likes == -2){
-            eventHandlerObj.createWolfCompanion(player, donorName, plugin);
+            eventHandler.createWolfCompanion(player, donorName, plugin);
             return;
         }
 
         if(likes == -1){
-            eventHandlerObj.createThunder(player, donorName);
+            eventHandler.createThunder(player, donorName);
             return;
         }
 
@@ -91,7 +91,7 @@ public class onGiftDistributor
                     eventHandler.loadedCreeperAttack(player,donorName,likes);
                     break;
                 case 3:
-                    eventHandlerObj.opSword(player, donorName, likes);
+                    eventHandler.opSword(player, donorName, likes);
                     break;
                 default:
                     // This case should not be reached, but you can handle it if needed
@@ -119,13 +119,13 @@ public class onGiftDistributor
                     );
                     break;
                 case 2:
-                    eventHandlerObj.netherAttack(player,donorName,likes);
+                    eventHandler.netherAttack(player,donorName,likes);
                     break;
                 case 3:
-                    eventHandlerObj.tntRain(player, donorName, plugin, likes);
+                    eventHandler.tntRain(player, donorName, plugin, likes);
                     break;
                 case 4:
-                    eventHandlerObj.tpNetherOrOverworld(player, donorName, likes);
+                    eventHandler.tpNetherOrOverworld(player, donorName, likes);
                     break;
                 default:
                     // This case should not be reached, but you can handle it if needed
@@ -144,10 +144,10 @@ public class onGiftDistributor
                     eventHandler.startValuableItemRain(player,donorName,likes,plugin);
                     break;
                 case 2:
-                    eventHandlerObj.oneHeart(player, plugin, donorName, likes);
+                    eventHandler.oneHeart(player, plugin, donorName, likes);
                     break;
                 case 3:
-                    eventHandlerObj.twentyHeart(player, plugin, donorName, likes);
+                    eventHandler.twentyHeart(player, plugin, donorName, likes);
                     break;
                 default:
                     // This case should not be reached, but you can handle it if needed
@@ -162,13 +162,13 @@ public class onGiftDistributor
                     eventHandler.farmTime(player,donorName,likes);
                     break;
                 case 1:
-                    eventHandlerObj.giveRegenPotion(player, donorName, likes);
+                    eventHandler.giveRegenPotion(player, donorName, likes);
                     break;
                 case 2:
                     eventHandler.zombieInvasion(player,donorName,likes);
                     break;
                 case 3:
-                    eventHandlerObj.anvilRain(player, donorName, plugin, likes);
+                    eventHandler.anvilRain(player, donorName, plugin, likes);
                     break;
                 default:
                     // This case should not be reached, but you can handle it if needed
@@ -183,19 +183,19 @@ public class onGiftDistributor
                 eventHandler.spawnRandomEntityWithNametag(player, donorName,likes);
                 break;
             case 1:
-                eventHandlerObj.throwExpBottles(player, donorName,likes);
+                eventHandler.throwExpBottles(player, donorName,likes);
                 break;
             case 2:
-                eventHandlerObj.randomTeleportPlayer(player,donorName,likes);
+                eventHandler.randomTeleportPlayer(player,donorName,likes);
                 break;
             case 3:
                 eventHandler.itemSnack(player,donorName,likes);
                 break;
             case 4:
-                eventHandlerObj.giveSlowPotion(player, donorName, likes);
+                eventHandler.giveSlowPotion(player, donorName, likes);
                 break;
             case 5:
-                eventHandlerObj.giveBlindnessPotion(player, donorName, likes);
+                eventHandler.giveBlindnessPotion(player, donorName, likes);
                 break;
             default:
                 // This case should not be reached, but you can handle it if needed
