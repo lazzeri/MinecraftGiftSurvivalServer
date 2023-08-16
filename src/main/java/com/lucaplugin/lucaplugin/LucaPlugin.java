@@ -246,9 +246,10 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 ItemStack netheriteChestplate = new ItemStack(Material.NETHERITE_CHESTPLATE);
                 ItemStack netheriteLeggings = new ItemStack(Material.NETHERITE_LEGGINGS);
                 ItemStack netheriteBoots = new ItemStack(Material.NETHERITE_BOOTS);
+                ItemStack elytra = new ItemStack(Material.ELYTRA);
 
                 player.getInventory().setHelmet(netheriteHelmet);
-                player.getInventory().setChestplate(netheriteChestplate);
+                player.getInventory().setChestplate(elytra);
                 player.getInventory().setLeggings(netheriteLeggings);
                 player.getInventory().setBoots(netheriteBoots);
 
@@ -261,10 +262,9 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 player.getInventory().addItem(netheriteSword);
 
                 // Give Elytra and rockets
-                ItemStack elytra = new ItemStack(Material.ELYTRA);
                 ItemStack rockets = new ItemStack(Material.FIREWORK_ROCKET, 64); // You can adjust the quantity
 
-                player.getInventory().addItem(elytra, rockets);
+                player.getInventory().addItem( rockets);
 
                 // Give steak
                 ItemStack steak = new ItemStack(Material.COOKED_BEEF, 64); // You can adjust the quantity
@@ -291,7 +291,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             if (sender instanceof Player)
             {
-                eventHandler.spawnRandomEntityWithNametag(((Player) sender).getPlayer(), "testName",123);
+                eventHandler.createThunder(((Player) sender).getPlayer(), "donorName");
             }
         }
     }

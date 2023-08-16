@@ -167,9 +167,9 @@ public class McHelperClass
 
     public static Location findNonBlockY(Location location, Player player)
     {
-        int x = (int) Math.round(player.getLocation().getX());
-        int y = (int) Math.round(player.getLocation().getY());
-        int z = (int) Math.round(player.getLocation().getZ());
+        int x = (int) Math.round(location.getX());
+        int y = (int) Math.round(location.getY());
+        int z = (int) Math.round(location.getZ());
 
 
         while (player.getWorld().getBlockAt(x, y, z).getType() == Material.AIR|| player.getWorld().getBlockAt(x, y, z).getType() == Material.LAVA)

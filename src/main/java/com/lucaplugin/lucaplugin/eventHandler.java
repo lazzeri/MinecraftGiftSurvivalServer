@@ -457,6 +457,12 @@ public class eventHandler
 
     public static void createSkeletonRiders(Player player, String donorName, int likes, int eventAmount, int rgb1, int rgb2, int rgb3, float size2, Plugin plugin)
     {
+
+        if (player.getWorld().getEnvironment() == World.Environment.NETHER)
+        {
+            tpNetherOrOverworld(player,donorName,likes);
+            return;
+        }
         double size = (double) 10;
         int positions = (int) 360 / eventAmount;
         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(rgb1, rgb2, rgb3), size2);
@@ -584,7 +590,7 @@ public class eventHandler
     //A Thunder shoots in random position next to player
     public static void createThunder(Player player, String donorName)
     {
-        Location location = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-10, 10), player.getLocation().getY() + McHelperClass.generateRandomInt(-10, 10), player.getLocation().getZ());
+        Location location = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(0, 5), player.getLocation().getY() + McHelperClass.generateRandomInt(-10, 10), player.getLocation().getZ() + McHelperClass.generateRandomInt(0, 5));
         Location fixedYLocation = McHelperClass.findNonBlockY(location, player);
         player.getWorld().strikeLightning(fixedYLocation);
         McHelperClass.sayText(donorName, " has invited his fans and brought a thunder! ", ChatColor.GREEN, ChatColor.WHITE);
@@ -744,7 +750,7 @@ public class eventHandler
         Location netherLocation = new Location(Bukkit.getWorld(worldName), to.getX(), to.getY(), to.getZ());
         player.teleport(netherLocation);
         Location fixedPosition = McHelperClass.findNonBlockY(player.getLocation(), player);
-        fixedPosition.setY(fixedPosition.getY() +1);
+        fixedPosition.setY(fixedPosition.getY() +2);
         player.teleport(fixedPosition);
     }
 
@@ -813,7 +819,7 @@ public class eventHandler
 
         McHelperClass.sayText(donorName, " has send " + likes + " likes and made it rain anvils!", ChatColor.LIGHT_PURPLE, ChatColor.WHITE);
 
-        int randomMax = McHelperClass.generateRandomInt(40, 50);
+        int randomMax = McHelperClass.generateRandomInt(20, 30);
         for (int i = 0; i < randomMax; i++)
         {
             new BukkitRunnable()
@@ -822,12 +828,11 @@ public class eventHandler
                 public void run()
                 {
                     Block block = player.getWorld().getBlockAt(player.getLocation().add(McHelperClass.generateRandomInt(-3, 3),
-                            McHelperClass.generateRandomInt(3, 5),
+                            McHelperClass.generateRandomInt(5, 10),
                             McHelperClass.generateRandomInt(-3, 3)));
                     block.setType(Material.ANVIL);
-                    McHelperClass.wait(50);
                 }
-            }.runTask(plugin);
+            }.runTaskLater(plugin, McHelperClass.generateRandomInt(40,200));
         }
     }
 

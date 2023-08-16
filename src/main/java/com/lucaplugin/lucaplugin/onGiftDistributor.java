@@ -107,7 +107,7 @@ public class onGiftDistributor
                     eventHandler.elytraAndRockets( player,  donorName,  likes);
                     break;
                 case 1:
-                    //Wont work in nether
+                    //TODO Wont work in nether
                     eventHandler.createSkeletonRiders(
                             player,
                             donorName,
@@ -170,8 +170,7 @@ public class onGiftDistributor
                     eventHandler.zombieInvasion(player,donorName,likes);
                     break;
                 case 3:
-                    McHelperClass.sayText("Anvil disabled","", ChatColor.RED,ChatColor.RED);
-                   // eventHandler.anvilRain(player, donorName, plugin, likes);
+                    eventHandler.anvilRain(player, donorName, plugin, likes);
                     break;
                 default:
                     // This case should not be reached, but you can handle it if needed
