@@ -77,8 +77,8 @@ public class eventHandler
         for (int i = 0; i < 360; i += positions)
         {
             double angle = (i * Math.PI / 180);
-            double x = size * Math.cos(angle);
-            double z = size * Math.sin(angle);
+            double x = (size - 10) * Math.cos(angle);
+            double z = (size - 10) * Math.sin(angle);
 
             //Creates spawner with particle and color of set particle
             McHelperClass.spawnEntityWithParticle(player, Particle.REDSTONE, dustOptions, EntityType.PILLAGER, (int) x, (int) z);
