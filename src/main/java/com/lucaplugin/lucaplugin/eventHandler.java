@@ -1,6 +1,8 @@
 package com.lucaplugin.lucaplugin;
 
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -158,7 +160,7 @@ public class eventHandler
                 @Override
                 public void run()
                 {
-                    TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(10, 20), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
+                    TNTPrimed tnt = (TNTPrimed) player.getWorld().spawnEntity(player.getLocation().add(McHelperClass.generateRandomInt(-20, 20), McHelperClass.generateRandomInt(5, 15), McHelperClass.generateRandomInt(-20, 20)), EntityType.PRIMED_TNT);
                     ((TNTPrimed) tnt).setFuseTicks(McHelperClass.generateRandomInt(50, 220));
                     McHelperClass.wait(50);
                 }
@@ -515,6 +517,8 @@ public class eventHandler
             double z = size * Math.sin(angle);
 
             Location spawnLocation = player.getLocation().clone().add(x, 0, z);
+            spawnLocation = McHelperClass.findNonBlockY(spawnLocation, player);
+
             Creeper creeper = (Creeper) player.getWorld().spawnEntity(spawnLocation, EntityType.CREEPER);
 
             if (random.nextBoolean())
@@ -680,8 +684,8 @@ public class eventHandler
     //Set down to 1 heart for 60sec
     public static void oneHeart(Player player, Plugin plugin, String donorName, int likes)
     {
-        player.setHealth(2);
-        player.setMaxHealth(2);// Set the player's maximum health to 1 heart (2 HP)
+        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        attribute.setBaseValue(2.0D);
         McHelperClass.sayText(donorName, " has send " + likes + " likes and put you on 1 heart for a minute!", ChatColor.RED, ChatColor.WHITE);
 
         new BukkitRunnable()
@@ -690,8 +694,8 @@ public class eventHandler
             public void run()
             {
                 McHelperClass.sayText("Your hearts are back to normal!", "", ChatColor.RED, ChatColor.WHITE);
-                player.setMaxHealth(20);
-                player.setHealth(20); // Also restore their current health to avoid overhealing
+                AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                attribute.setBaseValue(20.0D);
                 this.cancel();
             }
         }.runTaskLater(plugin, 1200); // 20 ticks per second, so 60 seconds = 1200 ticks
@@ -700,8 +704,8 @@ public class eventHandler
     //Gives 20 Hearts for 2 Minutes
     public static void twentyHeart(Player player, Plugin plugin, String donorName, int likes)
     {
-        player.setMaxHealth(40);// Set the player's maximum health to 20 heart (40 HP)
-        player.setHealth(40);
+        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        attribute.setBaseValue(40.0D);
         McHelperClass.sayText(donorName, " has send " + likes + " likes and gave you 20 hearts for 2 minutes", ChatColor.RED, ChatColor.WHITE);
 
         new BukkitRunnable()
@@ -710,7 +714,8 @@ public class eventHandler
             public void run()
             {
                 McHelperClass.sayText("Your hearts are back to normal!", "", ChatColor.RED, ChatColor.WHITE);
-                player.setHealth(20); // Also restore their current health to avoid overhealing
+                AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                attribute.setBaseValue(20.0D);
                 this.cancel();
             }
         }.runTaskLater(plugin, 2400); // 20 ticks per second, so 120 seconds = 2400 ticks
@@ -739,6 +744,7 @@ public class eventHandler
         Location netherLocation = new Location(Bukkit.getWorld(worldName), to.getX(), to.getY(), to.getZ());
         player.teleport(netherLocation);
         Location fixedPosition = McHelperClass.findNonBlockY(player.getLocation(), player);
+        fixedPosition.setY(fixedPosition.getY() +1);
         player.teleport(fixedPosition);
     }
 
@@ -807,25 +813,22 @@ public class eventHandler
 
         McHelperClass.sayText(donorName, " has send " + likes + " likes and made it rain anvils!", ChatColor.LIGHT_PURPLE, ChatColor.WHITE);
 
-        new BukkitRunnable()
+        int randomMax = McHelperClass.generateRandomInt(40, 50);
+        for (int i = 0; i < randomMax; i++)
         {
-            double time = 0;
-
-            public void run()
+            new BukkitRunnable()
             {
-                Block block = player.getWorld().getBlockAt(player.getLocation().add(McHelperClass.generateRandomInt(-3, 3),
-                        McHelperClass.generateRandomInt(3, 5),
-                        McHelperClass.generateRandomInt(-3, 3)));
-                block.setType(Material.ANVIL);
-
-                time += (double) interval / 20;
-                if (time > timeInSeconds)
-                    this.cancel();
-
-                McHelperClass.wait(McHelperClass.generateRandomInt(50, 200));
-            }
-
-        }.runTaskTimer(plugin, 0, interval);
+                @Override
+                public void run()
+                {
+                    Block block = player.getWorld().getBlockAt(player.getLocation().add(McHelperClass.generateRandomInt(-3, 3),
+                            McHelperClass.generateRandomInt(3, 5),
+                            McHelperClass.generateRandomInt(-3, 3)));
+                    block.setType(Material.ANVIL);
+                    McHelperClass.wait(50);
+                }
+            }.runTask(plugin);
+        }
     }
 
     public static void test(Player player, String donorName, Plugin plugin)

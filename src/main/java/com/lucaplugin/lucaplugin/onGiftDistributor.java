@@ -1,5 +1,6 @@
 package com.lucaplugin.lucaplugin;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.json.JSONArray;
@@ -106,6 +107,7 @@ public class onGiftDistributor
                     eventHandler.elytraAndRockets( player,  donorName,  likes);
                     break;
                 case 1:
+                    //Wont work in nether
                     eventHandler.createSkeletonRiders(
                             player,
                             donorName,
@@ -168,7 +170,8 @@ public class onGiftDistributor
                     eventHandler.zombieInvasion(player,donorName,likes);
                     break;
                 case 3:
-                    eventHandler.anvilRain(player, donorName, plugin, likes);
+                    McHelperClass.sayText("Anvil disabled","", ChatColor.RED,ChatColor.RED);
+                   // eventHandler.anvilRain(player, donorName, plugin, likes);
                     break;
                 default:
                     // This case should not be reached, but you can handle it if needed

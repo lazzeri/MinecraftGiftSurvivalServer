@@ -9,9 +9,12 @@ import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -22,6 +25,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -236,7 +240,41 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                eventHandlerObj.test(player, "TestName", this);
+
+                // Give full Netherite armor
+                ItemStack netheriteHelmet = new ItemStack(Material.NETHERITE_HELMET);
+                ItemStack netheriteChestplate = new ItemStack(Material.NETHERITE_CHESTPLATE);
+                ItemStack netheriteLeggings = new ItemStack(Material.NETHERITE_LEGGINGS);
+                ItemStack netheriteBoots = new ItemStack(Material.NETHERITE_BOOTS);
+
+                player.getInventory().setHelmet(netheriteHelmet);
+                player.getInventory().setChestplate(netheriteChestplate);
+                player.getInventory().setLeggings(netheriteLeggings);
+                player.getInventory().setBoots(netheriteBoots);
+
+                // Enchant a Netherite sword
+                ItemStack netheriteSword = new ItemStack(Material.NETHERITE_SWORD);
+                ItemMeta swordMeta = netheriteSword.getItemMeta();
+                swordMeta.addEnchant(Enchantment.DAMAGE_ALL, 5, true);
+                netheriteSword.setItemMeta(swordMeta);
+
+                player.getInventory().addItem(netheriteSword);
+
+                // Give Elytra and rockets
+                ItemStack elytra = new ItemStack(Material.ELYTRA);
+                ItemStack rockets = new ItemStack(Material.FIREWORK_ROCKET, 64); // You can adjust the quantity
+
+                player.getInventory().addItem(elytra, rockets);
+
+                // Give steak
+                ItemStack steak = new ItemStack(Material.COOKED_BEEF, 64); // You can adjust the quantity
+
+                player.getInventory().addItem(steak);
+                player.getInventory().addItem(steak);
+                AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                attribute.setBaseValue(40.0D);
+
+
             }
         }
 
