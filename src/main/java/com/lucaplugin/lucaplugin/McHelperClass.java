@@ -172,7 +172,7 @@ public class McHelperClass
         int z = (int) Math.round(location.getZ());
 
 
-        while (player.getWorld().getBlockAt(x, y, z).getType() == Material.AIR|| player.getWorld().getBlockAt(x, y, z).getType() == Material.LAVA)
+        while (player.getWorld().getBlockAt(x, y, z).getType() == Material.AIR || player.getWorld().getBlockAt(x, y, z).getType() == Material.LAVA)
         {
             if(player.getWorld().getBlockAt(x, y, z).getType() == Material.LAVA)
             {
@@ -183,7 +183,7 @@ public class McHelperClass
 
             y--;
         }
-        return new Location(player.getWorld(), x, y + 1, z);
+        return new Location(player.getWorld(), Math.round(x), y + 1, Math.round(z));
     }
 
 

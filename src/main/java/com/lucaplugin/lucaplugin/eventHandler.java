@@ -68,31 +68,31 @@ public class eventHandler
 
 
     //Villager Raid on Raid
-    public static void createVillagerCircle(Player player, String donorName, int raidAmount, int likes)
+    public static void createRaid(Player player, String donorName, int likes)
     {
-        double size = (double) raidAmount;
-        int positions = (int) 360 / raidAmount;
-
-        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(48, 25, 52), 3.0F);
-        for (int i = 0; i < 360; i += positions)
-        {
-            double angle = (i * Math.PI / 180);
-            double x = (size - 10) * Math.cos(angle);
-            double z = (size - 10) * Math.sin(angle);
-
-            //Creates spawner with particle and color of set particle
-            McHelperClass.spawnEntityWithParticle(player, Particle.REDSTONE, dustOptions, EntityType.PILLAGER, (int) x, (int) z);
-        }
         //Creates Redstone Particles in blue
+        EntityType[] entityTypes = {EntityType.PILLAGER, EntityType.RAVAGER, EntityType.EVOKER, EntityType.VINDICATOR};
+
+        createEntityAttack(
+                player,
+                donorName,
+                likes,
+                25,
+                153,
+                11,
+                163,
+                3.0F,
+                ChatColor.RED,
+                "spawned a Pillager Raid!",
+                false,
+                "gold",
+                entityTypes
+        );
 
         //Sets sound
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
-
-
-        //Set Message
-        McHelperClass.sayText(donorName, " has send " + likes + " likes and spawned a Pillager Raid!", ChatColor.RED, ChatColor.WHITE);
     }
 
 
@@ -524,6 +524,8 @@ public class eventHandler
 
             Location spawnLocation = player.getLocation().clone().add(x, 0, z);
             spawnLocation = McHelperClass.findNonBlockY(spawnLocation, player);
+            spawnLocation.setY(spawnLocation.getY() + 4.0);
+
 
             Creeper creeper = (Creeper) player.getWorld().spawnEntity(spawnLocation, EntityType.CREEPER);
 

@@ -122,7 +122,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         //Check For Event Commands
-        testEventCommands(label, sender);
+        testEventCommands(label, sender,args);
         return false;
     }
 
@@ -132,6 +132,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         public void onPlayerChat(AsyncPlayerChatEvent event)
         {
             Player player = event.getPlayer();
+
             UUID playerUUID = player.getUniqueId();
             System.out.println("On Chat triggered");
             System.out.println(questions);
@@ -147,6 +148,8 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 connectNewPlayerToWebsocket(event.getMessage(), player);
         }
     }
+
+
 
     public void connectNewPlayerToWebsocket(String message, Player player)
     {
@@ -214,7 +217,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         return color;
     }
 
-    public void testEventCommands(String label, CommandSender sender)
+    public void testEventCommands(String label, CommandSender sender, String[] args)
     {
         //Register Commands
         if (label.equalsIgnoreCase("startgame"))
@@ -230,6 +233,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
         if (label.equalsIgnoreCase("cancelTasks"))
         {
+
             McHelperClass.stopTasks(this);
         }
 
@@ -283,7 +287,13 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                onGiftDistributor.triggerEvents(123,player,"donorname!");
+                try {
+                    int num = Integer.parseInt(args[0]);
+                    onGiftDistributor.triggerEvent(num, player, "DonorName",123);
+                } catch (NumberFormatException e) {
+                    // Handle the case where input cannot be converted to an integer
+                    // You might want to log an error or take some other action here
+                }
             }
         }
 
@@ -295,7 +305,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             }
         }
     }
-
 
 
     public void startWebsocket()
