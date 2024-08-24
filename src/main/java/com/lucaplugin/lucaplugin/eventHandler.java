@@ -119,7 +119,7 @@ public class eventHandler
     }
 
     //Notes
-    public static  void magicNotes(Player player, String donorName, Plugin plugin, int interval)
+    public static void magicNotes(Player player, String donorName, Plugin plugin, int interval)
     {
 
         new BukkitRunnable()
@@ -195,7 +195,7 @@ public class eventHandler
 
 
     //Throws Exp Bottles on player
-    public static  void throwExpBottles(Player player, String donorName, Integer likes)
+    public static void throwExpBottles(Player player, String donorName, Integer likes)
     {
         Location loc = player.getLocation();
         int fullExpSum = 0;
@@ -457,7 +457,7 @@ public class eventHandler
 
         if (player.getWorld().getEnvironment() == World.Environment.NETHER)
         {
-            tpNetherOrOverworld(player,donorName,likes);
+            tpNetherOrOverworld(player, donorName, likes);
             return;
         }
         double size = (double) 10;
@@ -483,7 +483,7 @@ public class eventHandler
         McHelperClass.sendBigText(donorName, "spawned the 4 Horsemen!", "yellow", "white");
     }
 
-    public static  void netherAttack(Player player, String donorName, int likes)
+    public static void netherAttack(Player player, String donorName, int likes)
     {
         player.getWorld().setTime(12000);
         EntityType[] entityTypes = {EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE, EntityType.SKELETON};
@@ -671,7 +671,7 @@ public class eventHandler
     }
 
     //Gives slow potion effect
-    public static  void giveSlowPotion(Player player, String donorName, int likes)
+    public static void giveSlowPotion(Player player, String donorName, int likes)
     {
         eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and made you gain 100 pounds", ChatColor.GREEN, likes, PotionEffectType.SLOW, 600, 2);
         player.playSound(player.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, 3, 10);
@@ -742,7 +742,7 @@ public class eventHandler
         Location netherLocation = new Location(Bukkit.getWorld(worldName), to.getX(), to.getY(), to.getZ());
         player.teleport(netherLocation);
         Location fixedPosition = McHelperClass.findNonBlockY(player.getLocation(), player);
-        fixedPosition.setY(fixedPosition.getY() +2);
+        fixedPosition.setY(fixedPosition.getY() + 2);
         player.teleport(fixedPosition);
     }
 
@@ -774,6 +774,43 @@ public class eventHandler
         player.getWorld().playSound(dropLocation, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
     }
 
+    public static void setLava(Player player, Plugin plugin) {
+        int xRange = 20;
+        int yRange = 20;
+        World world = player.getWorld();
+        int playerX = player.getLocation().getBlockX() - 1;
+        int playerY = player.getLocation().getBlockY() - 1;
+        int playerZ = player.getLocation().getBlockZ() - 1;
+
+        // Loop through the specified ranges around and below the player
+        for (int x = -xRange; x <= xRange; x++) {
+            for (int y = -50; y <= yRange; y++) { // 50 blocks below the player
+                for (int z = -xRange; z <= xRange; z++) {
+                    Block block = world.getBlockAt(playerX + x, playerY + y, playerZ + z);
+                    if (block.getType() != Material.AIR) {
+                        block.setType(Material.MAGMA_BLOCK); // Set to hot stone material
+                    }
+                }
+            }
+        }
+
+        // Schedule a task to run 10 seconds later to change the blocks to lava
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int x = -xRange; x <= xRange; x++) {
+                    for (int y = -50; y <= yRange; y++) {
+                        for (int z = -xRange; z <= xRange; z++) {
+                            Block block = world.getBlockAt(playerX + x, playerY + y, playerZ + z);
+                            if (block.getType() != Material.AIR) {
+                                block.setType(Material.LAVA); // Change to lava
+                            }
+                        }
+                    }
+                }
+            }
+        }.runTaskLater(plugin, 200L); // 200 ticks = 10 seconds
+    }
 
     //Gives health regen potion
     public static void giveRegenPotion(Player player, String donorName, int likes)
@@ -824,7 +861,7 @@ public class eventHandler
                             McHelperClass.generateRandomInt(-3, 3)));
                     block.setType(Material.ANVIL);
                 }
-            }.runTaskLater(plugin, McHelperClass.generateRandomInt(40,200));
+            }.runTaskLater(plugin, McHelperClass.generateRandomInt(40, 200));
         }
     }
 

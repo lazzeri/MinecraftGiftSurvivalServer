@@ -123,7 +123,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
     {
         //Check For Event Commands
-        testEventCommands(label, sender,args);
+        testEventCommands(label, sender, args);
         return false;
     }
 
@@ -149,7 +149,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 connectNewPlayerToWebsocket(event.getMessage(), player);
         }
     }
-
 
 
     public void connectNewPlayerToWebsocket(String message, Player player)
@@ -239,7 +238,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         }
 
 
-
         if (label.equalsIgnoreCase("test"))
         {
             if (sender instanceof Player)
@@ -269,7 +267,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 // Give Elytra and rockets
                 ItemStack rockets = new ItemStack(Material.FIREWORK_ROCKET, 64); // You can adjust the quantity
 
-                player.getInventory().addItem( rockets);
+                player.getInventory().addItem(rockets);
 
                 // Give steak
                 ItemStack steak = new ItemStack(Material.COOKED_BEEF, 64); // You can adjust the quantity
@@ -288,10 +286,12 @@ public final class LucaPlugin extends JavaPlugin implements Listener
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
-                try {
+                try
+                {
                     int num = Integer.parseInt(args[0]);
-                    onGiftDistributor.triggerEvent(num, player, "DonorName",123);
-                } catch (NumberFormatException e) {
+                    onGiftDistributor.triggerEvent(num, player, "DonorName", 123);
+                } catch (NumberFormatException e)
+                {
                     // Handle the case where input cannot be converted to an integer
                     // You might want to log an error or take some other action here
                 }
@@ -302,7 +302,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             if (sender instanceof Player)
             {
-                eventHandler.createThunder(((Player) sender).getPlayer(), "donorName");
+                eventHandler.setLava(((Player) sender).getPlayer(), this);
             }
         }
     }
