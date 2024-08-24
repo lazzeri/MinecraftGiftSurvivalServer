@@ -73,6 +73,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
     @Override
     public void onEnable()
     {
+        System.out.println("Started Server");
         McHelperClass mcClass = new McHelperClass();
         /*setupWebsocket();*/
         getServer().getPluginManager().registerEvents(new ListenerClass(eventHandlerObj, this), this);

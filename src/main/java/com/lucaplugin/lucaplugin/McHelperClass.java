@@ -171,6 +171,25 @@ public class McHelperClass
         int y = (int) Math.round(location.getY());
         int z = (int) Math.round(location.getZ());
 
+        while (player.getWorld().getBlockAt(x, y, z).getType() == Material.AIR || player.getWorld().getBlockAt(x, y, z).getType() == Material.LAVA)
+        {
+            if(player.getWorld().getBlockAt(x, y, z).getType() == Material.LAVA)
+            {
+                x+=10;
+                z+=10;
+                y = 100;
+            }
+
+            y--;
+        }
+        return new Location(player.getWorld(), Math.round(x), y + 1, Math.round(z));
+    }
+
+    public static Location findNonBlockYFromTop(Location location, Player player)
+    {
+        int x = (int) Math.round(location.getX());
+        int y = 155;
+        int z = (int) Math.round(location.getZ());
 
         while (player.getWorld().getBlockAt(x, y, z).getType() == Material.AIR || player.getWorld().getBlockAt(x, y, z).getType() == Material.LAVA)
         {

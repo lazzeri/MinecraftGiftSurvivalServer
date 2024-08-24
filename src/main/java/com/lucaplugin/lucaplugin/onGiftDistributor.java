@@ -210,7 +210,7 @@ public class onGiftDistributor
                 eventHandler.giveSlowPotion(player, donorName, likes);
                 break;
             case 5:
-                eventHandler.giveBlindnessPotion(player, donorName, likes);
+                eventHandler.adrenalinRush(player, donorName, likes);
                 break;
             default:
                 // This case should not be reached, but you can handle it if needed
@@ -298,7 +298,7 @@ public class onGiftDistributor
                 eventHandler.giveSlowPotion(player, donorName, likes);
                 break;
             case 25:
-                eventHandler.giveBlindnessPotion(player, donorName, likes);
+                eventHandler.adrenalinRush(player, donorName, likes);
                 break;
             default:
                 // Handle invalid input or default behavior

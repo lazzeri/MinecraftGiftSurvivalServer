@@ -104,19 +104,16 @@ public class eventHandler
         switch (McHelperClass.generateRandomInt(0, 2))
         {
             case 0:
-                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 600, 2));
                 McHelperClass.playSoundXTimes(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5F, 1);
-                McHelperClass.sayText("Jump jump! ", donorName + " has send " + likes + " likes and gave you Jump power", ChatColor.BLUE, ChatColor.WHITE);
+                eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and gave you Jump power!", ChatColor.GREEN, likes, PotionEffectType.JUMP, 1200, 2);
                 break;
             case 1:
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 600, 2));
                 McHelperClass.playSoundXTimes(player, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 5F, 8);
-                McHelperClass.sayText("Wanna see some real speed?? ", donorName + " has send " + likes + " likes and gave you a Speed boost!", ChatColor.BLUE, ChatColor.WHITE);
+                eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and gave you a Speed boost!", ChatColor.GREEN, likes, PotionEffectType.SPEED, 1200, 2);
                 break;
             case 2:
-                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 2));
                 McHelperClass.playSoundXTimes(player, Sound.BLOCK_SAND_HIT, 5F, 15);
-                McHelperClass.sayText("The little troll ", donorName + " has send " + likes + " likes and threw some sand in your eyes.. HA HA!", ChatColor.RED, ChatColor.RED);
+                eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and threw some sand in your eyes.. HA HA", ChatColor.GREEN, likes, PotionEffectType.BLINDNESS, 600, 2);
                 break;
         }
     }
@@ -681,13 +678,6 @@ public class eventHandler
         player.spawnParticle(Particle.DRIPPING_HONEY, player.getLocation(), 350, 10, 10, 10, -0.0005);
     }
 
-    //Gives blindness potion
-    public static  void giveBlindnessPotion(Player player, String donorName, int likes)
-    {
-        eventHandler.givePotionEffect(player, donorName, " has send " + likes + " likes and blew out the candles!", ChatColor.GREEN, likes, PotionEffectType.BLINDNESS, 600, 2);
-        player.playSound(player.getLocation(), Sound.AMBIENT_CAVE, 3, 10);
-        player.spawnParticle(Particle.ELECTRIC_SPARK, player.getLocation(), 350, 10, 10, 10, -0.0005);
-    }
 
     //Set down to 1 heart for 60sec
     public static void oneHeart(Player player, Plugin plugin, String donorName, int likes)
@@ -808,7 +798,7 @@ public class eventHandler
     public static void randomTeleportPlayer(Player player, String donorName, Integer likes)
     {
         Location newPosition = new Location(player.getWorld(), player.getLocation().getX() + McHelperClass.generateRandomInt(-100, 300), player.getLocation().getY(), player.getLocation().getZ() - McHelperClass.generateRandomInt(-100, 300));
-        newPosition = McHelperClass.findNonBlockY(newPosition, player);
+        newPosition = McHelperClass.findNonBlockYFromTop(newPosition, player);
         player.teleport(newPosition);
         McHelperClass.sayText(donorName, " has send " + likes + " likes and teleported you haha!", ChatColor.GREEN, ChatColor.WHITE);
     }
