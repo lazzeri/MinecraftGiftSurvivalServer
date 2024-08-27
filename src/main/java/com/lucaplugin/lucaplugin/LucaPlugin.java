@@ -283,6 +283,17 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
         if (label.equalsIgnoreCase("raid"))
         {
+            long seed = System.currentTimeMillis();
+
+            if (sender instanceof Player)
+            {
+                for (Player player : Bukkit.getServer().getOnlinePlayers())
+                {
+                    eventHandler.startLava(player, seed, this,3,3);
+                }
+            }
+
+            /*
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
@@ -296,15 +307,22 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                     // You might want to log an error or take some other action here
                 }
             }
+             */
         }
 
         if (label.equalsIgnoreCase("tntRain"))
         {
+            long seed = System.currentTimeMillis();
+
             if (sender instanceof Player)
             {
-                eventHandler.setLava(((Player) sender).getPlayer(), this);
+                for (Player player : Bukkit.getServer().getOnlinePlayers())
+                {
+                    eventHandler.startLava(player, seed, this,1,2);
+                }
             }
         }
+
     }
 
 

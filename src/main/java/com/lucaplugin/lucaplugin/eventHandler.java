@@ -774,20 +774,36 @@ public class eventHandler
         player.getWorld().playSound(dropLocation, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
     }
 
-    public static void setLava(Player player, Plugin plugin) {
+    public static int counter = 0;
+
+    public static void startLava(Player player, long seed, Plugin plugin, int minTimeInMin, int addTimeInMin)
+    {
+        McHelperClass.sendBigText("Welcome to the Lava game, good luck!", "", "green", "green");
+        counter = 0;
+
+        setLava(player, plugin, seed, minTimeInMin, addTimeInMin);
+    }
+
+    public static void setLava(Player player, Plugin plugin, long seed, int minTimeInMin, int addTimeInMin)
+    {
         int xRange = 20;
         int yRange = 20;
         World world = player.getWorld();
         int playerX = player.getLocation().getBlockX() - 1;
         int playerY = player.getLocation().getBlockY() - 1;
         int playerZ = player.getLocation().getBlockZ() - 1;
-
+        counter++;
+        McHelperClass.sendBigText("LAVA TIME!", "", "red", "red");
         // Loop through the specified ranges around and below the player
-        for (int x = -xRange; x <= xRange; x++) {
-            for (int y = -50; y <= yRange; y++) { // 50 blocks below the player
-                for (int z = -xRange; z <= xRange; z++) {
+        for (int x = -xRange; x <= xRange; x++)
+        {
+            for (int y = -50; y <= yRange; y++)
+            { // 50 blocks below the player
+                for (int z = -xRange; z <= xRange; z++)
+                {
                     Block block = world.getBlockAt(playerX + x, playerY + y, playerZ + z);
-                    if (block.getType() != Material.AIR) {
+                    if (block.getType() != Material.AIR)
+                    {
                         block.setType(Material.MAGMA_BLOCK); // Set to hot stone material
                     }
                 }
@@ -795,21 +811,56 @@ public class eventHandler
         }
 
         // Schedule a task to run 10 seconds later to change the blocks to lava
-        new BukkitRunnable() {
+        new BukkitRunnable()
+        {
             @Override
-            public void run() {
-                for (int x = -xRange; x <= xRange; x++) {
-                    for (int y = -50; y <= yRange; y++) {
-                        for (int z = -xRange; z <= xRange; z++) {
+            public void run()
+            {
+                for (int x = -xRange; x <= xRange; x++)
+                {
+                    for (int y = -50; y <= yRange; y++)
+                    {
+                        for (int z = -xRange; z <= xRange; z++)
+                        {
                             Block block = world.getBlockAt(playerX + x, playerY + y, playerZ + z);
-                            if (block.getType() != Material.AIR) {
+                            if (block.getType() != Material.AIR)
+                            {
                                 block.setType(Material.LAVA); // Change to lava
                             }
                         }
                     }
                 }
+
+                // Schedule the task again with a random delay
+                if (counter < 5)
+                    scheduleNextLavaSet(player, plugin, seed, minTimeInMin, addTimeInMin);
+                else
+                    System.out.println("Did 5 Rounds, we stop");
             }
-        }.runTaskLater(plugin, 200L); // 200 ticks = 10 seconds
+        }.runTaskLater(plugin, 100L); // 200 ticks = 10 seconds
+    }
+
+    private static void scheduleNextLavaSet(Player player, Plugin plugin, long seed, int minTimeInMin, int addTimeInMin)
+    {
+        Random random = new Random(seed);
+        long delay = 200L + random.nextInt(400); // 10 seconds + random value between 0 and 20 seconds
+        //long delay = 200L + random.nextInt(400); // 10 seconds + random value between 0 and 20 seconds
+        long second = 20L;
+        long minute = second * 60;
+        //2 Min
+        long minimumTimeInMinutes = minute * minTimeInMin;
+        long maxTimeToAddInMinutes = minute * random.nextInt(addTimeInMin);
+        long actualDelay = minimumTimeInMinutes + maxTimeToAddInMinutes;
+        System.out.println("New delay " + actualDelay);
+        //const minimumDelay
+        new BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                setLava(player, plugin, seed, minTimeInMin, addTimeInMin);
+            }
+        }.runTaskLater(plugin, actualDelay);
     }
 
     //Gives health regen potion
