@@ -85,18 +85,18 @@ password:
 
 # Restrictions that will apply for non-logged in players
 restrictions:
-  chat: false
-  commands: false
-  blockBreaking: false
-  blockPlacing: false
-  itemDrop: false # Can cause items to disappear if dropped from the inventory UI. Enable inventoryClick to prevent this
-  itemPickup: false # 1.12+ only
-  inventoryClick: false
+  chat: true
+  commands: true
+  blockBreaking: true
+  blockPlacing: true
+  itemDrop: true # Can cause items to disappear if dropped from the inventory UI. Enable inventoryClick to prevent this
+  itemPickup: true # 1.12+ only
+  inventoryClick: true
   damage:
-    attack: false
-    receive: false
+    attack: true
+    receive: true
   movement:
-    enabled: false
+    enabled: true
     warnFrequency: 20 # Message players every few ticks when they move. (-1 to disable)
 
 
