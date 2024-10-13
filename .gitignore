@@ -15,6 +15,10 @@ world/                 # If your world folder is named "world"
 world_nether/         # Nether world folder
 world_the_end/        # End world folder
 
+world2/                 # If your world folder is named "world"
+world_nether2/         # Nether world folder
+world_the_end2/        # End world folder
+
 # Plugin data (if using a modded server)
 plugins/               # Plugin directory
 *.jar                  # Plugin JAR files
