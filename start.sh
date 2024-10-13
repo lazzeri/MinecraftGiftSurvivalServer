@@ -12,7 +12,6 @@ start_server() {
 # Function to pull the latest updates from the git repository
 update_server_files() {
     echo "Pulling latest updates from the repository..."
-    git pull
     if [ $? -ne 0 ]; then
         echo "Git pull failed. Please check your network connection or repository settings."
         exit 1
@@ -29,7 +28,7 @@ stop_restart() {
 # Main loop to restart server if it crashes
 while true; do
     # Update the server files from git before starting the server
-    update_server_files
+    
     
     # Start the Minecraft server
     start_server
