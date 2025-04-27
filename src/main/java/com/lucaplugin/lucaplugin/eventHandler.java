@@ -1,15 +1,40 @@
 package com.lucaplugin.lucaplugin;
 
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -18,12 +43,10 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
+
 import xyz.xenondevs.particle.ParticleBuilder;
 import xyz.xenondevs.particle.ParticleEffect;
 import xyz.xenondevs.particle.data.color.NoteColor;
-import xyz.xenondevs.particle.data.color.RegularColor;
-
-import java.util.*;
 
 public class eventHandler
 {
@@ -66,6 +89,75 @@ public class eventHandler
 
     }
 
+    // Zombiemode
+    public static void spawnZombieCircle(String playerName, Plugin plugin) {
+        // Find player by name
+        Player targetPlayer = Bukkit.getPlayer(playerName);
+        
+        if (targetPlayer == null || !targetPlayer.isOnline()) {
+            // Player not found or not online
+            System.out.println("Player " + playerName + " not found or not online");
+            return;
+        }
+        
+        Location playerLocation = targetPlayer.getLocation();
+        World world = targetPlayer.getWorld();
+        
+        // Spawn 10 zombies in a circle
+        int zombieCount = 10;
+        double radius = 5.0; // The radius of the circle around the player
+        
+        for (int i = 0; i < zombieCount; i++) {
+            // Calculate position in the circle
+            double angle = 2 * Math.PI * i / zombieCount;
+            double x = radius * Math.cos(angle);
+            double z = radius * Math.sin(angle);
+            
+            // Create spawn location
+            Location spawnLocation = playerLocation.clone().add(x, 0, z);
+            spawnLocation = McHelperClass.findNonBlockY(spawnLocation, targetPlayer);
+            
+            // Spawn zombie
+            Zombie zombie = (Zombie) world.spawnEntity(spawnLocation, EntityType.ZOMBIE);
+            
+            // Make zombies follow the player
+            zombie.setTarget(targetPlayer);
+            
+            // Add some customization to make them more noticeable
+            zombie.setCustomName(ChatColor.RED + "Zombie Mode");
+            zombie.setCustomNameVisible(true);
+            
+            // Visual effects
+            world.spawnParticle(Particle.SMOKE_NORMAL, spawnLocation, 20, 0.5, 1, 0.5, 0.05);
+        }
+        
+        // Add sound and message effects
+        world.playSound(playerLocation, Sound.ENTITY_ZOMBIE_AMBIENT, 2.0F, 0.5F);
+        world.playSound(playerLocation, Sound.ENTITY_ZOMBIE_AMBIENT, 2.0F, 0.5F);
+        
+        McHelperClass.sendBigText("Zombie Mode", "activated for " + playerName + "!", "dark_green", "white");
+        McHelperClass.sayText("Zombie Mode activated for " + playerName + "!", "", ChatColor.DARK_GREEN, ChatColor.WHITE);
+        
+        // Extra particles around the player
+        new BukkitRunnable() {
+            int count = 0;
+            
+            @Override
+            public void run() {
+                if (count >= 3 || !targetPlayer.isOnline()) {
+                    this.cancel();
+                    return;
+                }
+                
+                new ParticleBuilder(ParticleEffect.SMOKE_LARGE, targetPlayer.getLocation().add(0, 1, 0))
+                        .setOffset(new Vector(1.5, 0.5, 1.5))
+                        .setAmount(40)
+                        .display();
+                
+                count++;
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
+    }
 
     //Villager Raid on Raid
     public static void createRaid(Player player, String donorName, int likes)
@@ -95,6 +187,7 @@ public class eventHandler
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
     }
 
+    
 
     //Adrenalin Rush = Health Regen + Jump | Speed | Blindness
     public static void adrenalinRush(Player player, String donorName, int likes)
@@ -919,5 +1012,126 @@ public class eventHandler
     public static void test(Player player, String donorName, Plugin plugin)
     {
 
+    }
+
+    public static void spawnTemporaryWither(Player player, String donorName, Plugin plugin, int likes) {
+        System.out.println("Wither spawn method started for player: " + player.getName());
+        World world = player.getWorld();
+        Location spawnLocation = player.getLocation().add(0, 10, 0); // Spawn above player
+        
+        // Spawn the wither
+        Wither wither = (Wither) world.spawnEntity(spawnLocation, EntityType.WITHER);
+        System.out.println("Wither spawned successfully at: " + spawnLocation.toString());
+        
+        // Customize the wither
+        wither.setCustomName(ChatColor.DARK_PURPLE + donorName + "'s Wither");
+        wither.setCustomNameVisible(true);
+        
+        // Visual and sound effects
+        world.strikeLightningEffect(spawnLocation);
+        world.playSound(spawnLocation, Sound.ENTITY_WITHER_SPAWN, 3.0F, 0.5F);
+        
+        // Particle effects
+        world.spawnParticle(Particle.EXPLOSION_HUGE, spawnLocation, 100, 3, 3, 3, 0.1);
+        
+        // Message
+        McHelperClass.sendBigText(donorName, "summoned the Wither!", "dark_purple", "white");
+        
+        // Remove the wither after 15 seconds
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (wither != null && !wither.isDead()) {
+                    System.out.println("Removing wither after 15 seconds");
+                    // Particle effect before removal
+                    world.spawnParticle(Particle.EXPLOSION_HUGE, wither.getLocation(), 20, 3, 3, 3, 0.1);
+                    world.playSound(wither.getLocation(), Sound.ENTITY_WITHER_DEATH, 3.0F, 1.0F);
+                    
+                    wither.remove();
+                    
+                    McHelperClass.sayText(donorName + "'s", " wither has vanished!", ChatColor.DARK_PURPLE, ChatColor.WHITE);
+                } else {
+                    System.out.println("Wither already removed or dead when trying to remove after 15 seconds");
+                }
+            }
+        }.runTaskLater(plugin, 20L * 15); // 20 ticks * 15 seconds = 15 seconds
+    }
+
+    public static void spawnZombieArmy(Player player, String donorName, Plugin plugin, int likes) {
+        System.out.println("Zombie Army spawn method started for player: " + player.getName());
+        World world = player.getWorld();
+        List<Entity> zombieArmy = new ArrayList<>();
+        
+        // Spawn 2 large zombies instead of Giants (since Giants aren't available in newer versions)
+        for (int i = 0; i < 2; i++) {
+            Location zombieLocation = player.getLocation().add(
+                (Math.random() - 0.5) * 10,  // Random X offset
+                2,                           // Height above ground
+                (Math.random() - 0.5) * 10   // Random Z offset
+            );
+            
+            Zombie bigZombie = (Zombie) world.spawnEntity(zombieLocation, EntityType.ZOMBIE);
+            bigZombie.setCustomName(ChatColor.DARK_RED + donorName + "'s Giant Zombie");
+            bigZombie.setCustomNameVisible(true);
+            bigZombie.setBaby(false);
+            // Make the zombie more powerful
+            bigZombie.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(40.0);
+            bigZombie.setHealth(40.0);
+            bigZombie.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(8.0);
+            zombieArmy.add(bigZombie);
+            
+            // Visual effects for big zombies
+            world.strikeLightningEffect(zombieLocation);
+            System.out.println("Big zombie spawned at: " + zombieLocation.toString());
+        }
+        
+        // Spawn 50 regular zombies in a circle formation
+        double radius = 15.0;
+        for (int i = 0; i < 50; i++) {
+            double angle = (2 * Math.PI * i) / 50;
+            double x = radius * Math.cos(angle);
+            double z = radius * Math.sin(angle);
+            
+            Location zombieLocation = player.getLocation().add(x, 1, z);
+            Zombie zombie = (Zombie) world.spawnEntity(zombieLocation, EntityType.ZOMBIE);
+            zombie.setCustomName(ChatColor.RED + donorName + "'s Minion");
+            zombie.setCustomNameVisible(true);
+            
+            // Make zombies more dangerous
+            zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.3); // Faster movement
+            zombie.getAttribute(Attribute.GENERIC_FOLLOW_RANGE).setBaseValue(40.0); // Longer follow range
+            
+            zombieArmy.add(zombie);
+            System.out.println("Regular zombie spawned at: " + zombieLocation.toString());
+        }
+        
+        // Visual and sound effects
+        world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 3.0F, 0.5F);
+        world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_DEATH, 3.0F, 0.5F);
+        world.spawnParticle(Particle.SMOKE_LARGE, player.getLocation(), 500, 10, 1, 10, 0.1);
+        
+        // Message
+        McHelperClass.sendBigText(donorName, "summoned a Zombie Army!", "dark_red", "white");
+        McHelperClass.sayText(donorName, " has sent " + likes + " likes and unleashed the undead!", ChatColor.DARK_RED, ChatColor.WHITE);
+        
+        // Remove all zombies after 30 seconds
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                System.out.println("Removing zombie army after 30 seconds");
+                
+                // Remove each zombie with effects
+                for (Entity zombie : zombieArmy) {
+                    if (zombie != null && !zombie.isDead()) {
+                        Location loc = zombie.getLocation();
+                        world.spawnParticle(Particle.SMOKE_LARGE, loc, 20, 0.5, 1, 0.5, 0.1);
+                        world.playSound(loc, Sound.ENTITY_ZOMBIE_DEATH, 1.0F, 1.0F);
+                        zombie.remove();
+                    }
+                }
+                
+                McHelperClass.sayText(donorName + "'s", " zombie army has crumbled to dust!", ChatColor.DARK_RED, ChatColor.WHITE);
+            }
+        }.runTaskLater(plugin, 20L * 30); // 30 seconds
     }
 }
