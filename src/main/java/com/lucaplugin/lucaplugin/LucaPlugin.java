@@ -35,6 +35,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.w3c.dom.ls.LSOutput;
+import java.net.URISyntaxException;
 
 import java.sql.Array;
 import java.util.*;
@@ -83,6 +84,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         getServer().getPluginManager().registerEvents(new onDeathHandler(this), this);
         startWebsocket();
         onChatDistributor.setPlayerList(playersList);
+        onGiftDistributor.setPlayerList(playersList);
         onGiftDistributor.setPlugin(this);
     }
 
@@ -144,36 +146,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 playersList.removeIf(playerItem -> playerItem.getUsername().equals(player.getName()));
                 return;
             }
-
-            if (questions.containsKey(playerUUID))
-                connectNewPlayerToWebsocket(event.getMessage(), player);
-        }
-    }
-
-
-    public void connectNewPlayerToWebsocket(String message, Player player)
-    {
-        if (message.trim().isEmpty())
-        {
-            questions.remove(player.getUniqueId());
-            player.sendMessage("Didnt enter anything, have fun!");
-            return;
-        }
-
-        //Check if message is an integer, if not, return, if yes, parse to int
-        try
-        {
-            int userId = Integer.parseInt(message);
-
-            // Setup Websocket for the player
-            connectWebsocketForUserId(userId);
-            // Add player to the players map
-            playersList.add(new YouNowPlayer(player.getName(), player, userId));
-            player.sendMessage("Connected to userId :)");
-            questions.remove(player.getUniqueId());
-        } catch (NumberFormatException e)
-        {
-            player.sendMessage("You didn't insert a valid userId sorry. Try again");
         }
     }
 
@@ -205,16 +177,6 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                 }
             }
         }
-    }
-
-
-    private ChatColor getRandomColor()
-    {
-        Random random = new Random();
-        int index = random.nextInt(validColors.size());
-        ChatColor color = validColors.get(index);
-        validColors.remove(index);
-        return color;
     }
 
     public void testEventCommands(String label, CommandSender sender, String[] args)
@@ -285,15 +247,15 @@ public final class LucaPlugin extends JavaPlugin implements Listener
         {
             long seed = System.currentTimeMillis();
 
-            if (sender instanceof Player)
+           /* if (sender instanceof Player)
             {
                 for (Player player : Bukkit.getServer().getOnlinePlayers())
                 {
                     eventHandler.startLava(player, seed, this,3,3);
                 }
-            }
+            }*/
 
-            /*
+        
             if (sender instanceof Player)
             {
                 Player player = (Player) sender;
@@ -307,7 +269,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener
                     // You might want to log an error or take some other action here
                 }
             }
-             */
+             
         }
 
         if (label.equalsIgnoreCase("tntRain"))
@@ -325,69 +287,15 @@ public final class LucaPlugin extends JavaPlugin implements Listener
 
     }
 
-
     public void startWebsocket()
     {
-        PusherOptions options = new PusherOptions().setCluster("mt1");
-        pusher = new Pusher("42a54e2785b3c81ee7b3", options);
-        pusher.connect(new ConnectionEventListener()
-                       {
-                           @Override
-                           public void onConnectionStateChange(ConnectionStateChange change)
-                           {
-                               System.out.println("State changed to " + change.getCurrentState() + " from " + change.getPreviousState());
-                           }
-
-                           @Override
-                           public void onError(String message, String code, Exception e)
-                           {
-                               System.out.println(message);
-                               System.out.println(code);
-                               System.out.println("There was a problem connecting!");
-                           }
-                       },
-                ConnectionState.ALL);
-    }
-
-    private static ArrayList<Integer> connectedList = new ArrayList<>();
-
-    public void connectWebsocketForUserId(int userId)
-    {
-        //Check if we already connected to the player
-        if (connectedList.contains(userId))
-        {
-            System.out.println(": Someone is already connected to this userId, which is fine, have fun!");
-            return;
+        try {
+            YouNowWebSocketClient client = new YouNowWebSocketClient("61651035");
+            client.connect();
+            System.out.println("Connected to YouNow WebSocket!");
+        } catch (URISyntaxException e) {
+            System.out.println("Failed to create WebSocket connection: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        connectedList.add(userId);
-        System.out.println(": New connection to userId: " + userId);
-        Channel channel = pusher.subscribe("public-channel_" + userId);
-
-        // Bind to listen for events called "my-event" sent to "my-channel"
-        channel.bind("onGift", new SubscriptionEventListener()
-        {
-            @Override
-            public void onEvent(PusherEvent event)
-            {
-                System.out.println("Received event with data: " + event.toString());
-                onGiftDistributor.triggerEventForGift(event.toString(), userId);
-            }
-        });
-
-        //Bind chat for invite moment and fan events
-        channel.bind("onChat", new SubscriptionEventListener()
-        {
-            @Override
-            public void onEvent(PusherEvent event)
-            {
-                System.out.println("Received event with data: " + event.toString());
-                onChatDistributor.triggerEventForChat(event.toString(), userId);
-            }
-        });
-
-
-        // Reconnect, with all channel subscriptions and event bindings automatically recreated
-        pusher.connect();
     }
 }
