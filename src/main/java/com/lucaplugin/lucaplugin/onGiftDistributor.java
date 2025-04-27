@@ -287,6 +287,9 @@ public class onGiftDistributor {
             case 25:
                 eventHandler.adrenalinRush(player, donorName, likes);
                 break;
+            case 26:
+                eventHandler.spawnZombieArmy(player, donorName, plugin, likes);
+                break;
             default:
                 // Handle invalid input or default behavior
                 break;
