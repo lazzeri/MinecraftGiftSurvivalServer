@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.lucaplugin</groupId>
@@ -60,8 +60,9 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy file="${project.build.directory}/${project.build.finalName}.jar"
-                                      tofile="C:\Users\lucal\OneDrive\Documents\Coding Projects\MinecraftGiftSurvivalServer\plugins\${project.build.finalName}.jar" />
+                                <copy
+                                    file="${project.build.directory}/${project.build.finalName}.jar"
+                                    tofile="C:\Users\lucal\OneDrive\Documents\Coding Projects\MinecraftGiftSurvivalServer\plugins\${project.build.finalName}.jar" />
                             </target>
                         </configuration>
                     </execution>
@@ -110,6 +111,11 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20180130</version>
+        </dependency>
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.5.3</version>
         </dependency>
     </dependencies>
 </project>

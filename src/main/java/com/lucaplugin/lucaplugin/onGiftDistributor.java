@@ -1,64 +1,65 @@
 package com.lucaplugin.lucaplugin;
 
-import org.bukkit.ChatColor;
+import java.util.ArrayList;
+import java.util.Random;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Random;
+public class onGiftDistributor {
 
-public class onGiftDistributor
-{
     private static ArrayList<YouNowPlayer> playersList;
     private static final eventHandler eventHandlerObj = new eventHandler();
 
-
-    public static void setPlugin(Plugin plugin)
-    {
+    public static void setPlugin(Plugin plugin) {
         onGiftDistributor.plugin = plugin;
     }
 
     public static Plugin plugin;
 
-    public static void setPlayerList(ArrayList<YouNowPlayer> playerList)
-    {
+    public static void setPlayerList(ArrayList<YouNowPlayer> playerList) {
         playersList = playerList;
     }
 
-    public static void triggerEventForGift(String eventInString, int broadcasterId)
-    {
-        JSONObject obj = new JSONObject(eventInString.replace("{event=onGift, data=", "").replace(", channel=public-channel_" + broadcasterId + "}", ""));
-        JSONArray jsonArray = obj.getJSONObject("message").getJSONArray("stageGifts");
-        System.out.println(jsonArray);
-        for (int i = 0; i < jsonArray.length(); i++)
-        {
-            //Trigger here objects for gifts
-            System.out.println(jsonArray.getJSONObject(i).toString());
-            String skuName = jsonArray.getJSONObject(i).getString("SKU");
-            String donorName = jsonArray.getJSONObject(i).getString("name");
-            String likes = jsonArray.getJSONObject(i).getJSONObject("extraData").getString("likes");
-            triggerGiftEventWithLikes(likes, donorName, broadcasterId);
+    public static void triggerEventForGift(String jsonString, int broadcasterId) {
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            String data = obj.getString("data");
+            JSONObject dataObj = new JSONObject(data);
+            JSONArray stageGifts = dataObj.getJSONObject("message").getJSONArray("stageGifts");
+
+            for (int i = 0; i < stageGifts.length(); i++) {
+                JSONObject gift = stageGifts.getJSONObject(i);
+                String username = gift.getString("name");
+                String skuName = gift.getString("SKU");
+                int value = gift.getInt("value"); // pearls
+                String likes = gift.getJSONObject("extraData").getString("likes");
+
+                System.out.println("Gift_from:" + username + "_SKU:" + skuName + "_Pearls:" + value + "_Likes:" + likes);
+                triggerGiftEventWithLikes(likes, username, broadcasterId);
+            }
+        } catch (Exception e) {
+            System.out.println("Error parsing gift event: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    public static void triggerGiftEventWithLikes(String likes, String donorName, int broadcasterId)
-    {
+    public static void triggerGiftEventWithLikes(String likes, String donorName, int broadcasterId) {
         //We trigger the event for each user connected to the userId
-        for (YouNowPlayer playerItem : playersList)
-        {
-            if (playerItem.getUserId() == broadcasterId)
+        for (YouNowPlayer playerItem : playersList) {
+            int likesInt = Integer.parseInt(likes);
+            triggerEvents(likesInt, playerItem.getPlayer(), donorName);
+            /*     if (playerItem.getUserId() == broadcasterId)
             {
                 int likesInt = Integer.parseInt(likes);
-                triggerEvents(likesInt, playerItem.getPlayer(), donorName);
-            }
+               
+            }*/
         }
     }
 
-
-    public static void triggerEvents(int likes, Player player, String donorName)
-    {
+    public static void triggerEvents(int likes, Player player, String donorName) {
         int[] possibleLikes = {-3, -2, -1, 20, 51, 401, 1111, 5000};
 
         Random random = new Random();
@@ -66,28 +67,23 @@ public class onGiftDistributor
         int selectedLikes = possibleLikes[randomIndex];
         likes = selectedLikes;
 
-        if (likes == -3)
-        {
+        if (likes == -3) {
             eventHandler.makeChickenCompanion(player, donorName, plugin);
             return;
         }
-        if (likes == -2)
-        {
+        if (likes == -2) {
             eventHandler.createWolfCompanion(player, donorName, plugin);
             return;
         }
 
-        if (likes == -1)
-        {
+        if (likes == -1) {
             eventHandler.createThunder(player, donorName);
             return;
         }
 
-        if (likes >= 4500)
-        {
+        if (likes >= 4500) {
             int randomNumber = random.nextInt(4); // Generates a random number between 0 and 3
-            switch (randomNumber)
-            {
+            switch (randomNumber) {
                 case 0:
                     eventHandler.spawnWithers(player, donorName, likes);
                     break;
@@ -106,11 +102,9 @@ public class onGiftDistributor
             }
             return;
         }
-        if (likes >= 1100)
-        {
+        if (likes >= 1100) {
             int randomNumber = random.nextInt(5); // Generates a random number between 0 and 3
-            switch (randomNumber)
-            {
+            switch (randomNumber) {
                 case 0:
                     eventHandler.elytraAndRockets(player, donorName, likes);
                     break;
@@ -144,11 +138,9 @@ public class onGiftDistributor
             return;
 
         }
-        if (likes >= 400)
-        {
+        if (likes >= 400) {
             int randomNumber = random.nextInt(4); // Generates a random number between 0 and 3
-            switch (randomNumber)
-            {
+            switch (randomNumber) {
                 case 0:
                     eventHandler.createRaid(player, donorName, likes);
                     break;
@@ -167,11 +159,9 @@ public class onGiftDistributor
             }
             return;
         }
-        if (likes >= 50)
-        {
+        if (likes >= 50) {
             int randomNumber = random.nextInt(4); // Generates a random number between 0 and 3
-            switch (randomNumber)
-            {
+            switch (randomNumber) {
                 case 0:
                     eventHandler.farmTime(player, donorName, likes);
                     break;
@@ -192,8 +182,7 @@ public class onGiftDistributor
         }
 
         int randomNumber = random.nextInt(6); // Generates a random number between 0 and 3
-        switch (randomNumber)
-        {
+        switch (randomNumber) {
             case 0:
                 eventHandler.spawnRandomEntityWithNametag(player, donorName, likes);
                 break;
@@ -218,10 +207,8 @@ public class onGiftDistributor
         }
     }
 
-    public static void triggerEvent(int num, Player player, String donorName, int likes)
-    {
-        switch (num)
-        {
+    public static void triggerEvent(int num, Player player, String donorName, int likes) {
+        switch (num) {
             case 0:
                 eventHandler.makeChickenCompanion(player, donorName, plugin);
                 break;
@@ -306,16 +293,11 @@ public class onGiftDistributor
         }
     }
 
-
-    public static void triggerGiftEvent(String skuName, String donorName, int broadcasterId)
-    {
+    public static void triggerGiftEvent(String skuName, String donorName, int broadcasterId) {
         //We trigger the event for each user connected to the userId
-        for (YouNowPlayer playerItem : playersList)
-        {
-            if (playerItem.getUserId() == broadcasterId)
-            {
-                switch (skuName)
-                {
+        for (YouNowPlayer playerItem : playersList) {
+            if (playerItem.getUserId() == broadcasterId) {
+                switch (skuName) {
                     case "50_LIKES_2":
                         //Here Comes the command then in
                         break;
