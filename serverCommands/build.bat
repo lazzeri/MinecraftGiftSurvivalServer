@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0.."
 
 REM Build the project with Maven
 echo Building project with Maven...

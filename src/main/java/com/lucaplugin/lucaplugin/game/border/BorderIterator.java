@@ -1,33 +1,30 @@
-package com.lucaplugin.lucaplugin;
+package com.lucaplugin.lucaplugin.game.border;
 
+import com.lucaplugin.lucaplugin.util.McUtils;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-public class BorderIterator extends BukkitRunnable
-{
+public class BorderIterator extends BukkitRunnable {
+    
+    private static final int MIN_BORDER_SIZE = 100;
     private final Plugin plugin;
     private BukkitTask bukkitTask;
 
-    public BorderIterator(Plugin plugin)
-    {
+    public BorderIterator(Plugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public void run()
-    {
-        int MIN_BORDER_SIZE = 100;
-        if (McHelperClass.getWorld().getWorldBorder().getSize() == MIN_BORDER_SIZE)
-        { // Check if condition is met
-            System.out.println("Found minimimum Size so stop");
+    public void run() {
+        if (McUtils.getWorld().getWorldBorder().getSize() == MIN_BORDER_SIZE) {
+            System.out.println("Found minimum Size so stop");
             BorderShrinkTask.getBossBar().setTitle("Border Complete. Time to fight!");
-            this.cancel(); // Stop running task
+            this.cancel();
             return;
         }
 
-        if (bukkitTask != null)
-        {
+        if (bukkitTask != null) {
             bukkitTask.cancel();
             System.out.println("Canceled" + bukkitTask);
         }

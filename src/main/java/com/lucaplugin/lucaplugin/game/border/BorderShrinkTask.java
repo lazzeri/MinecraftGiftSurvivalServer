@@ -1,8 +1,8 @@
-package com.lucaplugin.lucaplugin;
+package com.lucaplugin.lucaplugin.game.border;
 
+import com.lucaplugin.lucaplugin.util.McUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -10,37 +10,31 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class BorderShrinkTask extends BukkitRunnable
-{
-    private final WorldBorder border;
-    private int timeUntilShrink;
+public class BorderShrinkTask extends BukkitRunnable {
+    
     private static final int MAX_TIME_TO_SHRINK = 10;
     private static final int SHRINK_AMOUNT = 10;
     private static final int SHRINK_TIME = 10;
-
-    public static BossBar getBossBar()
-    {
-        return bossBar;
-    }
-
     private static BossBar bossBar;
+    
+    private final WorldBorder border;
+    private int timeUntilShrink;
 
-    public BorderShrinkTask(int timeTillShrink)
-    {
-        this.border = McHelperClass.getWorld().getWorldBorder();
+    public BorderShrinkTask(int timeTillShrink) {
+        this.border = McUtils.getWorld().getWorldBorder();
         this.timeUntilShrink = timeTillShrink;
     }
 
+    public static BossBar getBossBar() {
+        return bossBar;
+    }
+
     @Override
-    public void run()
-    {
-        // Decrement the time until the next shrink every second
-        if (timeUntilShrink > 0)
-        {
+    public void run() {
+        if (timeUntilShrink > 0) {
             setBossBar(timeUntilShrink);
             timeUntilShrink--;
-        } else
-        {
+        } else {
             System.out.println("Finished Shrinked");
             setBossBar(timeUntilShrink);
             border.setSize(border.getSize() - SHRINK_AMOUNT, SHRINK_TIME);
@@ -48,34 +42,29 @@ public class BorderShrinkTask extends BukkitRunnable
         }
     }
 
-    public void setBossBar(int timeUntilShrink)
-    {
+    public void setBossBar(int timeUntilShrink) {
         double progress;
         String message;
 
-        if (timeUntilShrink == 0)
-        {
+        if (timeUntilShrink == 0) {
             message = ChatColor.RED + "The world border is shrinking!";
             progress = 1;
-        } else
-        {
+        } else {
             message = ChatColor.GREEN + "The world border is shrinking in " + timeUntilShrink + " seconds!";
             progress = (double) timeUntilShrink / MAX_TIME_TO_SHRINK;
         }
 
-        if (bossBar != null)
-        {
+        if (bossBar != null) {
             bossBar.setProgress(progress);
             bossBar.setTitle(message);
-        } else
-        {
+        } else {
             bossBar = Bukkit.createBossBar(message, BarColor.RED, BarStyle.SOLID);
             bossBar.setProgress(progress);
             bossBar.setVisible(true);
-            for (Player player : Bukkit.getOnlinePlayers())
-            {
+            for (Player player : Bukkit.getOnlinePlayers()) {
                 bossBar.addPlayer(player);
             }
         }
     }
 }
+
