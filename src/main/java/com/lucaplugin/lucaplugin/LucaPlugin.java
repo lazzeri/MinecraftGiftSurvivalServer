@@ -84,11 +84,19 @@ public final class LucaPlugin extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             try {
                 pollLiveChat(API_KEY, liveChatId);
-            } catch (IOException e) {
+            } catch (IOException e) {\
                 e.printStackTrace();
             }
         }, 0L, 100L); // Every 5 seconds (100 ticks)
     }
+
+    public void handleLiveChatMessage(String author, String message, Player player) {
+        player.sendMessage(ChatColor.YELLOW + "[YouTube] " + author + ": " + ChatColor.WHITE + message);
+        System.out.println("Received message from " + author + ": " + message);
+    }
+
+
+    
 
     @Override
     public void onEnable() {
@@ -118,7 +126,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new PlayerChatListener(), this);
         getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
         getServer().getPluginManager().registerEvents(new onDeathHandler(this), this);
-        startWebsocket();
+        // No Younow Websocket for now startWebsocket();
         onChatDistributor.setPlayerList(playersList);
         onGiftDistributor.setPlayerList(playersList);
         onGiftDistributor.setPlugin(this);
@@ -415,7 +423,7 @@ public final class LucaPlugin extends JavaPlugin implements Listener {
 
             // Send message to all online players in Minecraft
             for (Player player : Bukkit.getOnlinePlayers()) {
-                player.sendMessage(ChatColor.YELLOW + "[YouTube] " + authorName + ": " + ChatColor.WHITE + message);
+                handleLiveChatMessage(authorName, message, player);
             }
         }
     }
