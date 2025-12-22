@@ -61,12 +61,22 @@ public class McUtils {
         return DyeColor.WHITE;
     }
 
-    public static void sayText(String name, String text2, ChatColor color1, ChatColor color2) {
-        Bukkit.broadcastMessage(color1 + name + color2 + text2);
-    }
+    public static void showBroadcasterMessage(String platformType, String username, String message) {
+        String prefix;
+        ChatColor usernameColor;
 
-    public static void sayTextSimple(String text) {
-        Bukkit.broadcastMessage(text);
+        switch (platformType.toUpperCase()) {
+            case "YOUTUBE":
+                prefix = ChatColor.RED + "[YT]";
+                usernameColor = ChatColor.WHITE;
+                break;
+            default:
+                prefix = ChatColor.GRAY + "[???]";
+                usernameColor = ChatColor.WHITE;
+                break;
+        }
+
+        Bukkit.broadcastMessage(prefix + " " + usernameColor + username + ": " + ChatColor.RESET + message);
     }
 
     public static void playSound(Player player, Sound sound, float volume) {
@@ -213,5 +223,208 @@ public class McUtils {
             System.out.println(e);
         }
     }
+
+    /**
+     * Represents a text segment with customizable styling.
+     */
+    public static class TextSegment {
+        private final String text;
+        private final String color;
+        private boolean bold = false;
+        private boolean italic = false;
+        private boolean underlined = false;
+        private boolean strikethrough = false;
+        private boolean obfuscated = false;
+
+        public TextSegment(String text, String color) {
+            this.text = text;
+            this.color = color;
+        }
+
+        public TextSegment bold() { this.bold = true; return this; }
+        public TextSegment italic() { this.italic = true; return this; }
+        public TextSegment underlined() { this.underlined = true; return this; }
+        public TextSegment strikethrough() { this.strikethrough = true; return this; }
+        public TextSegment obfuscated() { this.obfuscated = true; return this; }
+
+        public TextSegment bold(boolean value) { this.bold = value; return this; }
+        public TextSegment italic(boolean value) { this.italic = value; return this; }
+        public TextSegment underlined(boolean value) { this.underlined = value; return this; }
+        public TextSegment strikethrough(boolean value) { this.strikethrough = value; return this; }
+        public TextSegment obfuscated(boolean value) { this.obfuscated = value; return this; }
+
+        public String toJson() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{\"text\":\"").append(text).append("\"");
+            sb.append(",\"color\":\"").append(color).append("\"");
+            if (bold) sb.append(",\"bold\":true");
+            if (italic) sb.append(",\"italic\":true");
+            if (underlined) sb.append(",\"underlined\":true");
+            if (strikethrough) sb.append(",\"strikethrough\":true");
+            if (obfuscated) sb.append(",\"obfuscated\":true");
+            sb.append("}");
+            return sb.toString();
+        }
+    }
+
+    /**
+     * Builder for creating styled title/subtitle displays.
+     * Supports chaining up to 5 text segments for both title and subtitle.
+     */
+    public static class TitleBuilder {
+        private final java.util.List<TextSegment> titleSegments = new java.util.ArrayList<>();
+        private final java.util.List<TextSegment> subtitleSegments = new java.util.ArrayList<>();
+        private int fadeIn = 10;
+        private int stay = 70;
+        private int fadeOut = 20;
+
+        public TitleBuilder addTitle(String text, String color) {
+            if (titleSegments.size() < 5) {
+                titleSegments.add(new TextSegment(text, color));
+            }
+            return this;
+        }
+
+        public TitleBuilder addTitle(TextSegment segment) {
+            if (titleSegments.size() < 5) {
+                titleSegments.add(segment);
+            }
+            return this;
+        }
+
+        public TitleBuilder addSubtitle(String text, String color) {
+            if (subtitleSegments.size() < 5) {
+                subtitleSegments.add(new TextSegment(text, color));
+            }
+            return this;
+        }
+
+        public TitleBuilder addSubtitle(TextSegment segment) {
+            if (subtitleSegments.size() < 5) {
+                subtitleSegments.add(segment);
+            }
+            return this;
+        }
+
+        public TitleBuilder times(int fadeIn, int stay, int fadeOut) {
+            this.fadeIn = fadeIn;
+            this.stay = stay;
+            this.fadeOut = fadeOut;
+            return this;
+        }
+
+        private String buildJsonArray(java.util.List<TextSegment> segments) {
+            if (segments.isEmpty()) {
+                return "{\"text\":\"\"}";
+            }
+            if (segments.size() == 1) {
+                return segments.get(0).toJson();
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.append("[{\"text\":\"\"}");
+            for (TextSegment seg : segments) {
+                sb.append(",").append(seg.toJson());
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+
+        /**
+         * Send the title to a specific player by username.
+         */
+        public void sendTo(String playerName) {
+            try {
+                sendConsoleCommand("title " + playerName + " times " + fadeIn + " " + stay + " " + fadeOut);
+                if (!subtitleSegments.isEmpty()) {
+                    sendConsoleCommand("title " + playerName + " subtitle " + buildJsonArray(subtitleSegments));
+                }
+                if (!titleSegments.isEmpty()) {
+                    sendConsoleCommand("title " + playerName + " title " + buildJsonArray(titleSegments));
+                }
+            } catch (Exception e) {
+                System.out.println("Error sending title: " + e);
+            }
+        }
+
+        /**
+         * Send the title to a specific player.
+         */
+        public void sendTo(Player player) {
+            sendTo(player.getName());
+        }
+
+        /**
+         * Send the title to all players.
+         */
+        public void sendToAll() {
+            sendTo("@a");
+        }
+    }
+
+    /**
+     * Create a new TextSegment for use with TitleBuilder.
+     * @param text The text content
+     * @param color The color (minecraft color name like "red", "gold", "aqua" or hex like "#FF5555")
+     */
+    public static TextSegment text(String text, String color) {
+        return new TextSegment(text, color);
+    }
+
+    /**
+     * Create a new TitleBuilder for building styled titles.
+     */
+    public static TitleBuilder titleBuilder() {
+        return new TitleBuilder();
+    }
+
+    /**
+     * Send a styled chat message to a player using tellraw command.
+     * @param playerName The player name or selector (e.g., "@a" for all players)
+     * @param segments List of text segments to send
+     */
+    public static void sendStyledChat(String playerName, java.util.List<TextSegment> segments) {
+        if (segments == null || segments.isEmpty()) {
+            return;
+        }
+        String json = buildJsonArray(segments);
+        sendConsoleCommand("tellraw " + playerName + " " + json);
+    }
+
+    /**
+     * Send a styled chat message to a specific player.
+     * @param player The player to send the message to
+     * @param segments List of text segments to send
+     */
+    public static void sendStyledChat(Player player, java.util.List<TextSegment> segments) {
+        sendStyledChat(player.getName(), segments);
+    }
+
+    /**
+     * Send a styled chat message to all players.
+     * @param segments List of text segments to send
+     */
+    public static void sendStyledChatToAll(java.util.List<TextSegment> segments) {
+        sendStyledChat("@a", segments);
+    }
+
+    /**
+     * Build a JSON array string from a list of text segments.
+     */
+    private static String buildJsonArray(java.util.List<TextSegment> segments) {
+        if (segments.isEmpty()) {
+            return "{\"text\":\"\"}";
+        }
+        if (segments.size() == 1) {
+            return segments.get(0).toJson();
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("[{\"text\":\"\"}");
+        for (TextSegment seg : segments) {
+            sb.append(",").append(seg.toJson());
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
 }
 

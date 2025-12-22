@@ -1,127 +1,188 @@
 package com.lucaplugin.lucaplugin.commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import com.lucaplugin.lucaplugin.LucaPlugin;
 import com.lucaplugin.lucaplugin.events.GameEventHandler;
 import com.lucaplugin.lucaplugin.game.spawn.PlayerWrapper;
-import com.lucaplugin.lucaplugin.util.McUtils;
 
 public class CommandHandler {
 
-    private final Plugin plugin;
+    private final LucaPlugin plugin;
     private final PlayerWrapper selectedUser;
     private final GameEventHandler eventHandlerObj;
 
-    public CommandHandler(Plugin plugin, PlayerWrapper selectedUser, GameEventHandler eventHandlerObj) {
+    public CommandHandler(LucaPlugin plugin, PlayerWrapper selectedUser, GameEventHandler eventHandlerObj) {
         this.plugin = plugin;
         this.selectedUser = selectedUser;
         this.eventHandlerObj = eventHandlerObj;
     }
 
-    public boolean handleCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (label.equalsIgnoreCase("startgame")) {
-            return handleStartGame(sender);
+    public void handleCommand(Player player, String[] args) {
+        String donorName = player.getName();
+        if (args.length == 0) {
+            player.sendMessage("§eUsage: test <command>");
+            player.sendMessage("§7Type 'test help' for a list of commands.");
+            return;
         }
 
-        if (label.equalsIgnoreCase("cancelTasks")) {
-            return handleCancelTasks();
-        }
+        String subCommand = args[0].toLowerCase();
 
-        if (label.equalsIgnoreCase("test")) {
-            return handleTest(sender);
+        switch (subCommand) {
+            case "help":
+                sendHelpMessage(player);
+                break;
+            case "ping":
+                player.sendMessage("Pong!");
+                break;
+            case "wsconnect":
+                if (plugin.isWebSocketConnected()) {
+                    player.sendMessage("§eWebSocket is already connected.");
+                } else {
+                    player.sendMessage("§aConnecting to WebSocket server...");
+                    plugin.connectToBackend();
+                    if (plugin.isWebSocketConnected()) {
+                        player.sendMessage("§aWebSocket connected successfully!");
+                    } else {
+                        player.sendMessage("§cFailed to connect to WebSocket server.");
+                    }
+                }
+                break;
+            case "wsdisconnect":
+                if (!plugin.isWebSocketConnected()) {
+                    player.sendMessage("§eWebSocket is not connected.");
+                } else {
+                    plugin.disconnectFromBackend();
+                    player.sendMessage("§cWebSocket disconnected.");
+                }
+                break;
+            case "wsstatus":
+                if (plugin.isWebSocketConnected()) {
+                    player.sendMessage("§aWebSocket status: Connected");
+                } else {
+                    player.sendMessage("§cWebSocket status: Disconnected");
+                }
+                break;
+            case "spawnwithers":
+                GameEventHandler.spawnWithers(player, donorName);
+                break;
+            case "spawnzombiearmy":
+                GameEventHandler.spawnZombieArmy(player, donorName, plugin);
+                break;
+            case "spawntemporarywither":
+                GameEventHandler.spawnTemporaryWither(player, donorName, plugin);
+                break;
+            case "spawnzombieccircle":
+                GameEventHandler.spawnZombieCircle(player.getName(), plugin);
+                break;
+            case "createraid":
+                GameEventHandler.createRaid(player, donorName);
+                break;
+            case "adrenalinrush":
+                GameEventHandler.adrenalinRush(player, donorName);
+                break;
+            case "magicnotes":
+                GameEventHandler.magicNotes(player, donorName, plugin, 20);
+                break;
+            case "tntrain":
+                GameEventHandler.tntRain(player, donorName, plugin);
+                break;
+            case "itemsnack":
+                GameEventHandler.itemSnack(player, donorName);
+                break;
+            case "throwexpbottles":
+                GameEventHandler.throwExpBottles(player, donorName);
+                break;
+            case "spawnarmorstand":
+                GameEventHandler.spawnEnchantedDiamondArmorStandInFrontOfPlayer(player, donorName);
+                break;
+            case "elytraandrockets":
+                GameEventHandler.elytraAndRockets(player, donorName);
+                break;
+            case "netherattack":
+                GameEventHandler.netherAttack(player, donorName);
+                break;
+            case "loadedcreeperattack":
+                GameEventHandler.loadedCreeperAttack(player, donorName);
+                break;
+            case "zombieinvasion":
+                GameEventHandler.zombieInvasion(player, donorName);
+                break;
+            case "farmtime":
+                GameEventHandler.farmTime(player, donorName);
+                break;
+            case "createthunder":
+                GameEventHandler.createThunder(player, donorName);
+                break;
+            case "giveslowpotion":
+                GameEventHandler.giveSlowPotion(player, donorName);
+                break;
+            case "giveregenpotion":
+                GameEventHandler.giveRegenPotion(player, donorName);
+                break;
+            case "randomteleport":
+                GameEventHandler.randomTeleportPlayer(player, donorName);
+                break;
+            case "anvilrain":
+                GameEventHandler.anvilRain(player, donorName, plugin);
+                break;
+            case "opsword":
+                GameEventHandler.opSword(player, donorName);
+                break;
+            case "tpnetheroroverworld":
+                GameEventHandler.tpNetherOrOverworld(player, donorName);
+                break;
+            case "startlava":
+                GameEventHandler.startLava(player, System.currentTimeMillis(), plugin, 1, 2);
+                break;
+            case "spawnrandommob":
+                GameEventHandler.spawnRandomEntityWithNametag(player, donorName);
+                break;
+            case "skeletonriders":
+                GameEventHandler.createSkeletonRiders(player, donorName, 25, 153, 11, 163, 3.0F, plugin);
+                break;
+            case "chickencompanion":
+                GameEventHandler.makeChickenCompanion(player, donorName, plugin);
+                break;
+            case "oneheart":
+                GameEventHandler.oneHeart(player, plugin, donorName);
+                break;
+            case "twentyheart":
+                GameEventHandler.twentyHeart(player, plugin, donorName);
+                break;
+            case "wolfcompanion":
+                GameEventHandler.createWolfCompanion(player, donorName, plugin);
+                break;
+            default:
+                player.sendMessage("§cUnknown subcommand: " + subCommand);
+                player.sendMessage("§7Type 'test help' for a list of commands.");
+                break;
         }
-
-        if (label.equalsIgnoreCase("raid")) {
-            return handleRaid(sender);
-        }
-
-        if (label.equalsIgnoreCase("tntRain")) {
-            return handleTntRain(sender);
-        }
-
-        return false;
     }
 
-    private boolean handleStartGame(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            player.sendMessage("Starting Game!");
-            selectedUser.setPlayer(player);
-            LucaPlugin.gameStarted = true;
-        }
-        return true;
-    }
-
-    private boolean handleCancelTasks() {
-        McUtils.stopTasks(plugin);
-        return true;
-    }
-
-    private boolean handleTest(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-
-            // Give full Netherite armor
-            ItemStack netheriteHelmet = new ItemStack(Material.NETHERITE_HELMET);
-            ItemStack netheriteChestplate = new ItemStack(Material.NETHERITE_CHESTPLATE);
-            ItemStack netheriteLeggings = new ItemStack(Material.NETHERITE_LEGGINGS);
-            ItemStack netheriteBoots = new ItemStack(Material.NETHERITE_BOOTS);
-            ItemStack elytra = new ItemStack(Material.ELYTRA);
-
-            player.getInventory().setHelmet(netheriteHelmet);
-            player.getInventory().setChestplate(elytra);
-            player.getInventory().setLeggings(netheriteLeggings);
-            player.getInventory().setBoots(netheriteBoots);
-
-            // Enchant a Netherite sword
-            ItemStack netheriteSword = new ItemStack(Material.NETHERITE_SWORD);
-            ItemMeta swordMeta = netheriteSword.getItemMeta();
-            swordMeta.addEnchant(Enchantment.DAMAGE_ALL, 5, true);
-            netheriteSword.setItemMeta(swordMeta);
-
-            player.getInventory().addItem(netheriteSword);
-
-            // Give Elytra and rockets
-            ItemStack rockets = new ItemStack(Material.FIREWORK_ROCKET, 64);
-            player.getInventory().addItem(rockets);
-
-            // Give steak
-            ItemStack steak = new ItemStack(Material.COOKED_BEEF, 64);
-            player.getInventory().addItem(steak);
-            player.getInventory().addItem(steak);
-            
-            AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-            attribute.setBaseValue(40.0D);
-        }
-        return true;
-    }
-
-    private boolean handleRaid(CommandSender sender) {
-        long seed = System.currentTimeMillis();
-        // Raid logic commented out in original
-        return true;
-    }
-
-    private boolean handleTntRain(CommandSender sender) {
-        long seed = System.currentTimeMillis();
-
-        if (sender instanceof Player) {
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                GameEventHandler.startLava(player, seed, plugin, 1, 2);
-            }
-        }
-        return true;
+    private void sendHelpMessage(Player player) {
+        player.sendMessage("§6=== LucaPlugin Commands ===");
+        player.sendMessage("§7Type 'test <command>' in chat to execute");
+        player.sendMessage("§eping §7- Verification command");
+        player.sendMessage("§ewsconnect §7- Connect to WebSocket");
+        player.sendMessage("§ewsdisconnect §7- Disconnect from WebSocket");
+        player.sendMessage("§ewsstatus §7- Check WebSocket status");
+        player.sendMessage("§6--- Mob Spawning ---");
+        player.sendMessage("§espawnwithers, spawnzombiearmy, spawntemporarywither");
+        player.sendMessage("§espawnzombieccircle, spawnrandommob, createraid");
+        player.sendMessage("§enetherattack, loadedcreeperattack, zombieinvasion");
+        player.sendMessage("§efarmtime, skeletonriders");
+        player.sendMessage("§6--- Companions ---");
+        player.sendMessage("§echickencompanion, wolfcompanion");
+        player.sendMessage("§6--- Items ---");
+        player.sendMessage("§espawnarmorstand, elytraandrockets, opsword, itemsnack");
+        player.sendMessage("§6--- Effects ---");
+        player.sendMessage("§eadrenalinrush, giveslowpotion, giveregenpotion");
+        player.sendMessage("§eoneheart, twentyheart, throwexpbottles");
+        player.sendMessage("§6--- Environment ---");
+        player.sendMessage("§ecreatethunder, tntrain, anvilrain, startlava, magicnotes");
+        player.sendMessage("§6--- Teleport ---");
+        player.sendMessage("§erandomteleport, tpnetheroroverworld");
     }
 }
 
