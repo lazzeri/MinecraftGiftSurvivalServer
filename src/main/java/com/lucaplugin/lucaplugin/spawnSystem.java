@@ -8,12 +8,12 @@ import java.util.Objects;
 
 public class spawnSystem
 {
-    public ArrayList<YouNowPlayer> getPlayersList()
+    public ArrayList<player> getPlayersList()
     {
         return playersList;
     }
 
-    ArrayList<YouNowPlayer> playersList = new ArrayList<YouNowPlayer>();
+    ArrayList<player> playersList = new ArrayList<player>();
 
     public void emptyPlayerList()
     {
