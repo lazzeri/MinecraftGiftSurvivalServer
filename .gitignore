@@ -26,12 +26,6 @@ world_nether2/         # Nether world folder
 world_the_end2/        # End world folder
 
 # Plugin data (if using a modded server)
-plugins/ResourceWorld
-/plugins/resource_world
-
-plugins/               # Plugin directory
-*.jar                  # Plugin JAR files
-!plugins/lucaPlugin.jar  # Track this specific plugin
 
 # Operating system files
 .DS_Store              # macOS
@@ -67,7 +61,6 @@ out/
 *.ctxt
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
@@ -192,7 +185,6 @@ run/
 /libraries/org/codeartisans/codeartisans-parent/6/codeartisans-parent-6.pom
 /libraries/org/codeartisans/codeartisans-parent/6/codeartisans-parent-6.pom.sha1
 /commands.yml
-/plugins/PluginMetrics/config.yml
 /crash-reports/crash-2024-08-22_19.12.27-server.txt
 /crash-reports/crash-2024-08-22_19.16.04-server.txt
 /libraries/com/google/code/gson/gson/2.2.2/gson-2.2.2.jar.sha1
@@ -266,7 +258,8 @@ run/
 .gitignore
 resource_world/entities/r.0.1.mca
 resource_world/
-plugins/bStats/config.yml
 world_nether/*
 world_the_end/*
 temp_world/*
+/bundler/
+/libraries/
