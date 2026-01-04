@@ -62,7 +62,7 @@
                             <target>
                                 <copy
                                     file="${project.build.directory}/${project.build.finalName}.jar"
-                                    tofile="C:\Users\lucal\OneDrive\Documents\Coding Projects\MinecraftGiftSurvivalServer\plugins\${project.build.finalName}.jar" />
+                                    tofile="C:\Users\lucal\Documents\Coding Projects\MinecraftGiftSurvivalServer\plugins\${project.build.finalName}.jar" />
                             </target>
                         </configuration>
                     </execution>

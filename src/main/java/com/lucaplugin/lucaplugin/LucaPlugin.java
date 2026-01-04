@@ -88,5 +88,6 @@ public final class LucaPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerChatListener(this, commandHandler), this);
         getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        getServer().getPluginManager().registerEvents(new com.lucaplugin.lucaplugin.listeners.PortalListener(), this);
     }
 }

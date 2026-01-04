@@ -153,6 +153,18 @@ public class CommandHandler {
             case "wolfcompanion":
                 GameEventHandler.createWolfCompanion(player, donorName, plugin);
                 break;
+            case "resetworld":
+                if (args.length < 2) {
+                    player.sendMessage("§cUsage: test resetworld <seed>");
+                    return;
+                }
+                try {
+                    long seed = Long.parseLong(args[1]);
+                    GameEventHandler.resetWorld(player, donorName, plugin, seed);
+                } catch (NumberFormatException e) {
+                    player.sendMessage("§cInvalid seed! Please provide a valid number.");
+                }
+                break;
             default:
                 player.sendMessage("§cUnknown subcommand: " + subCommand);
                 player.sendMessage("§7Type 'test help' for a list of commands.");
@@ -183,6 +195,8 @@ public class CommandHandler {
         player.sendMessage("§ecreatethunder, tntrain, anvilrain, startlava, magicnotes");
         player.sendMessage("§6--- Teleport ---");
         player.sendMessage("§erandomteleport, tpnetheroroverworld");
+        player.sendMessage("§6--- World Management ---");
+        player.sendMessage("§eresetworld <seed> §7- Reset world with new seed");
     }
 }
 
