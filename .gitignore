@@ -269,13 +269,3 @@ plugins/bStats/config.yml
 world_nether/*
 world_the_end/*
 temp_world/*
-world_nether/DIM-1/entities/r.0.0.mca
-world_nether/DIM-1/entities/r.0.0.mca
-world_nether/DIM-1/region/r.0.-1.mca
-world_nether/DIM-1/region/r.0.0.mca
-world_the_end/DIM1/entities/r.-1.-1.mca
-world_the_end/DIM1/entities/r.-1.0.mca
-world_the_end/DIM1/entities/r.0.-1.mca
-world_the_end/DIM1/entities/r.0.0.mca
-world_the_end/DIM1/region/r.0.-1.mca
-world_the_end/DIM1/region/r.0.0.mca
