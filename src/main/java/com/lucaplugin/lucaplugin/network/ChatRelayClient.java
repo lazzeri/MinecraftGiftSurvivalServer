@@ -109,7 +109,7 @@ public class ChatRelayClient extends WebSocketClient {
         if (donationAmount != null && !donationAmount.isEmpty()) {
             logger.info("DONATION: " + username + " donated " + donationAmount + " - Message: " + content);
         }
-        McUtils.showBroadcasterMessage(platform, username, logMessage.toString());
+        McUtils.showBroadcasterMessage(platform, username, content, isModerator, isSubscriber);
         System.out.println("[ChatRelay] " + logMessage.toString());
     }
 
