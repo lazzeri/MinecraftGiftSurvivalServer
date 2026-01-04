@@ -38,7 +38,7 @@ public class ActionHandler {
         public boolean obfuscated;
 
         public TitleSegment(String text, String color, boolean bold, boolean italic,
-                           boolean underlined, boolean strikethrough, boolean obfuscated) {
+                boolean underlined, boolean strikethrough, boolean obfuscated) {
             this.text = text;
             this.color = color;
             this.bold = bold;
@@ -52,9 +52,11 @@ public class ActionHandler {
     /**
      * Execute an action command on target players.
      *
-     * @param command The command to execute (e.g., "spawnwithers", "tntrain")
-     * @param targetUsernames List of target usernames. If null or empty, targets all online players.
-     * @param donorName The name to display as the donor/trigger source
+     * @param command         The command to execute (e.g., "spawnwithers",
+     *                        "tntrain")
+     * @param targetUsernames List of target usernames. If null or empty, targets
+     *                        all online players.
+     * @param donorName       The name to display as the donor/trigger source
      */
     public void executeAction(String command, List<String> targetUsernames, String donorName) {
         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -65,7 +67,8 @@ public class ActionHandler {
                 return;
             }
 
-            logger.info("Executing action '" + command + "' from " + donorName + " on " + targetPlayers.size() + " player(s)");
+            logger.info("Executing action '" + command + "' from " + donorName + " on " + targetPlayers.size()
+                    + " player(s)");
 
             for (Player player : targetPlayers) {
                 executeCommandOnPlayer(player, command, donorName);
@@ -76,15 +79,16 @@ public class ActionHandler {
     /**
      * Execute a sendtitle action with custom styled title/subtitle segments.
      *
-     * @param titleSegments List of title segments (up to 5)
+     * @param titleSegments    List of title segments (up to 5)
      * @param subtitleSegments List of subtitle segments (up to 5)
-     * @param targetUsernames List of target usernames. If null or empty, targets all online players.
-     * @param fadeIn Fade in time in ticks
-     * @param stay Stay time in ticks
-     * @param fadeOut Fade out time in ticks
+     * @param targetUsernames  List of target usernames. If null or empty, targets
+     *                         all online players.
+     * @param fadeIn           Fade in time in ticks
+     * @param stay             Stay time in ticks
+     * @param fadeOut          Fade out time in ticks
      */
     public void executeSendTitle(List<TitleSegment> titleSegments, List<TitleSegment> subtitleSegments,
-                                  List<String> targetUsernames, int fadeIn, int stay, int fadeOut) {
+            List<String> targetUsernames, int fadeIn, int stay, int fadeOut) {
         Bukkit.getScheduler().runTask(plugin, () -> {
             Collection<? extends Player> targetPlayers = getTargetPlayers(targetUsernames);
 
@@ -103,11 +107,11 @@ public class ActionHandler {
                 for (int i = 0; i < Math.min(titleSegments.size(), 5); i++) {
                     TitleSegment seg = titleSegments.get(i);
                     McUtils.TextSegment textSeg = McUtils.text(seg.text, seg.color)
-                        .bold(seg.bold)
-                        .italic(seg.italic)
-                        .underlined(seg.underlined)
-                        .strikethrough(seg.strikethrough)
-                        .obfuscated(seg.obfuscated);
+                            .bold(seg.bold)
+                            .italic(seg.italic)
+                            .underlined(seg.underlined)
+                            .strikethrough(seg.strikethrough)
+                            .obfuscated(seg.obfuscated);
                     builder.addTitle(textSeg);
                 }
             }
@@ -117,11 +121,11 @@ public class ActionHandler {
                 for (int i = 0; i < Math.min(subtitleSegments.size(), 5); i++) {
                     TitleSegment seg = subtitleSegments.get(i);
                     McUtils.TextSegment textSeg = McUtils.text(seg.text, seg.color)
-                        .bold(seg.bold)
-                        .italic(seg.italic)
-                        .underlined(seg.underlined)
-                        .strikethrough(seg.strikethrough)
-                        .obfuscated(seg.obfuscated);
+                            .bold(seg.bold)
+                            .italic(seg.italic)
+                            .underlined(seg.underlined)
+                            .strikethrough(seg.strikethrough)
+                            .obfuscated(seg.obfuscated);
                     builder.addSubtitle(textSeg);
                 }
             }
@@ -136,8 +140,9 @@ public class ActionHandler {
     /**
      * Execute a sendchat action with custom styled chat segments.
      *
-     * @param chatSegments List of chat segments (up to 10)
-     * @param targetUsernames List of target usernames. If null or empty, targets all online players.
+     * @param chatSegments    List of chat segments (up to 10)
+     * @param targetUsernames List of target usernames. If null or empty, targets
+     *                        all online players.
      */
     public void executeSendChat(List<TitleSegment> chatSegments, List<String> targetUsernames) {
         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -160,11 +165,11 @@ public class ActionHandler {
             for (int i = 0; i < Math.min(chatSegments.size(), 10); i++) {
                 TitleSegment seg = chatSegments.get(i);
                 McUtils.TextSegment textSeg = McUtils.text(seg.text, seg.color)
-                    .bold(seg.bold)
-                    .italic(seg.italic)
-                    .underlined(seg.underlined)
-                    .strikethrough(seg.strikethrough)
-                    .obfuscated(seg.obfuscated);
+                        .bold(seg.bold)
+                        .italic(seg.italic)
+                        .underlined(seg.underlined)
+                        .strikethrough(seg.strikethrough)
+                        .obfuscated(seg.obfuscated);
                 textSegments.add(textSeg);
             }
 
@@ -291,9 +296,23 @@ public class ActionHandler {
                 GameEventHandler.createWolfCompanion(player, donorName, plugin);
                 break;
             default:
-                logger.warning("Unknown action command: " + command);
+                // Check if it's a resetworld command with seed parameter
+                if (cmd.startsWith("resetworld")) {
+                    String[] parts = command.split(" ");
+                    if (parts.length >= 2) {
+                        try {
+                            long seed = Long.parseLong(parts[1]);
+                            GameEventHandler.resetWorld(player, donorName, plugin, seed);
+                        } catch (NumberFormatException e) {
+                            logger.warning("Invalid seed for resetworld command: " + parts[1]);
+                        }
+                    } else {
+                        logger.warning("resetworld command requires a seed parameter");
+                    }
+                } else {
+                    logger.warning("Unknown action command: " + command);
+                }
                 break;
         }
     }
 }
-

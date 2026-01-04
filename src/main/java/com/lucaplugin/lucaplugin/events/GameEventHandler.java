@@ -1,5 +1,6 @@
 package com.lucaplugin.lucaplugin.events;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -12,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creeper;
@@ -36,10 +38,10 @@ import xyz.xenondevs.particle.ParticleEffect;
 import xyz.xenondevs.particle.data.color.NoteColor;
 
 public class GameEventHandler {
-    
+
     public static boolean dirtOnFire = false;
 
-    public static Location[] teamSpawnPoints = new Location[]{
+    public static Location[] teamSpawnPoints = new Location[] {
             new Location(McUtils.getWorld(), 100, 100, 100),
             new Location(McUtils.getWorld(), 200, 200, 200),
             // ... and so on for each team
@@ -67,69 +69,66 @@ public class GameEventHandler {
             wither.setCustomNameVisible(true);
         }
 
-
         player.getWorld().playSound(player.getLocation(), Sound.AMBIENT_CAVE, 5.0F, 0.5F);
 
     }
 
     public static void spawnZombieCircle(String playerName, Plugin plugin) {
         Player targetPlayer = Bukkit.getPlayer(playerName);
-        
+
         if (targetPlayer == null || !targetPlayer.isOnline()) {
             System.out.println("Player " + playerName + " not found or not online");
             return;
         }
-        
+
         Location playerLocation = targetPlayer.getLocation();
         World world = targetPlayer.getWorld();
-        
+
         int zombieCount = 10;
         double radius = 5.0;
-        
+
         for (int i = 0; i < zombieCount; i++) {
             double angle = 2 * Math.PI * i / zombieCount;
             double x = radius * Math.cos(angle);
             double z = radius * Math.sin(angle);
-            
+
             Location spawnLocation = playerLocation.clone().add(x, 0, z);
             spawnLocation = McUtils.findNonBlockY(spawnLocation, targetPlayer);
-            
+
             Zombie zombie = (Zombie) world.spawnEntity(spawnLocation, EntityType.ZOMBIE);
             zombie.setTarget(targetPlayer);
             zombie.setCustomName(ChatColor.RED + "Zombie Mode");
             zombie.setCustomNameVisible(true);
-            
+
             world.spawnParticle(Particle.SMOKE_NORMAL, spawnLocation, 20, 0.5, 1, 0.5, 0.05);
         }
-        
+
         world.playSound(playerLocation, Sound.ENTITY_ZOMBIE_AMBIENT, 2.0F, 0.5F);
         world.playSound(playerLocation, Sound.ENTITY_ZOMBIE_AMBIENT, 2.0F, 0.5F);
-        
 
-
-        
         new BukkitRunnable() {
             int count = 0;
-            
+
             @Override
             public void run() {
                 if (count >= 3 || !targetPlayer.isOnline()) {
                     this.cancel();
                     return;
                 }
-                
+
                 new ParticleBuilder(ParticleEffect.SMOKE_LARGE, targetPlayer.getLocation().add(0, 1, 0))
                         .setOffset(new Vector(1.5, 0.5, 1.5))
                         .setAmount(40)
                         .display();
-                
+
                 count++;
             }
         }.runTaskTimer(plugin, 0L, 20L);
     }
 
     public static void createRaid(Player player, String donorName) {
-        EntityType[] entityTypes = {EntityType.PILLAGER, EntityType.RAVAGER, EntityType.EVOKER, EntityType.VINDICATOR};
+        EntityType[] entityTypes = { EntityType.PILLAGER, EntityType.RAVAGER, EntityType.EVOKER,
+                EntityType.VINDICATOR };
 
         createEntityAttack(player, donorName, 25, 153, 11, 163, 3.0F, entityTypes);
 
@@ -239,7 +238,8 @@ public class GameEventHandler {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BELL_USE, 5.0F, 0.5F);
     }
 
-    public static void givePotionEffect(Player player, String donorName, PotionEffectType potionEffect, Integer duration, Integer amplifier) {
+    public static void givePotionEffect(Player player, String donorName, PotionEffectType potionEffect,
+            Integer duration, Integer amplifier) {
         player.addPotionEffect(new PotionEffect(potionEffect, duration, amplifier));
     }
 
@@ -248,7 +248,8 @@ public class GameEventHandler {
         Location spawnLocation = playerLocation.add(playerLocation.getDirection().multiply(2));
         spawnLocation.setY(spawnLocation.getY() + 1);
 
-        ArmorStand armorStand = (ArmorStand) spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.ARMOR_STAND);
+        ArmorStand armorStand = (ArmorStand) spawnLocation.getWorld().spawnEntity(spawnLocation,
+                EntityType.ARMOR_STAND);
         armorStand.setVisible(false);
         armorStand.setSmall(true);
         armorStand.setInvulnerable(true);
@@ -308,7 +309,6 @@ public class GameEventHandler {
         Location location = player.getLocation();
         location.setY(location.getY() + 5);
 
-
         new BukkitRunnable() {
             final List<Material> valuableItems = Arrays.asList(
                     Material.DIAMOND, Material.EMERALD, Material.IRON_INGOT, Material.COAL, Material.GOLD_INGOT);
@@ -335,7 +335,8 @@ public class GameEventHandler {
 
     public static void netherAttack(Player player, String donorName) {
         player.getWorld().setTime(12000);
-        EntityType[] entityTypes = {EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE, EntityType.SKELETON};
+        EntityType[] entityTypes = { EntityType.WITHER_SKELETON, EntityType.SKELETON, EntityType.BLAZE,
+                EntityType.SKELETON };
         createEntityAttack(player, donorName, 20, 255, 0, 0, 3.0F, entityTypes);
     }
 
@@ -365,20 +366,18 @@ public class GameEventHandler {
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 5.0F, 0.5F);
 
-       
-
-
     }
 
     public static void zombieInvasion(Player player, String donorName) {
         player.getWorld().setTime(12000);
-        EntityType[] entityTypes = {EntityType.GIANT, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER, EntityType.ZOMBIE_HORSE};
+        EntityType[] entityTypes = { EntityType.GIANT, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER,
+                EntityType.ZOMBIE_HORSE };
         createEntityAttack(player, donorName, 40, 255, 0, 0, 3.0F, entityTypes);
     }
 
     public static void farmTime(Player player, String donorName) {
-        EntityType[] entityTypes = {EntityType.COW, EntityType.CHICKEN, EntityType.HORSE, EntityType.PIG,
-                EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA};
+        EntityType[] entityTypes = { EntityType.COW, EntityType.CHICKEN, EntityType.HORSE, EntityType.PIG,
+                EntityType.DONKEY, EntityType.PANDA, EntityType.LLAMA };
         createEntityAttack(player, donorName, 25, 220, 170, 255, 3.0F, entityTypes);
     }
 
@@ -488,7 +487,6 @@ public class GameEventHandler {
         int playerZ = player.getLocation().getBlockZ() - 1;
         counter++;
 
-
         for (int x = -xRange; x <= xRange; x++) {
             for (int y = -50; y <= yRange; y++) {
                 for (int z = -xRange; z <= xRange; z++) {
@@ -521,7 +519,8 @@ public class GameEventHandler {
         }.runTaskLater(plugin, 100L);
     }
 
-    private static void scheduleNextLavaSet(Player player, Plugin plugin, long seed, int minTimeInMin, int addTimeInMin) {
+    private static void scheduleNextLavaSet(Player player, Plugin plugin, long seed, int minTimeInMin,
+            int addTimeInMin) {
         Random random = new Random(seed);
         long second = 20L;
         long minute = second * 60;
@@ -575,7 +574,8 @@ public class GameEventHandler {
             double x = size * Math.cos(angle);
             double z = size * Math.sin(angle);
             plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                    "summon skeleton_horse " + x + " " + player.getLocation().getY() + " " + z + " " + "{SkeletonTrap:1}");
+                    "summon skeleton_horse " + x + " " + player.getLocation().getY() + " " + z + " "
+                            + "{SkeletonTrap:1}");
         }
 
         player.getWorld().setTime(12000);
@@ -588,11 +588,11 @@ public class GameEventHandler {
         Location chickenPosition = McUtils.findNonBlockY(player.getLocation().add(2, 3, 1), player);
         chickenPosition.add(0, 3, 0);
 
-        org.bukkit.entity.Chicken chicken = (org.bukkit.entity.Chicken) player.getWorld().spawnEntity(chickenPosition, EntityType.CHICKEN);
+        org.bukkit.entity.Chicken chicken = (org.bukkit.entity.Chicken) player.getWorld().spawnEntity(chickenPosition,
+                EntityType.CHICKEN);
         chicken.setCustomName(McUtils.randomColor() + donorName);
         chicken.setBaby();
         player.getWorld().playEffect(chicken.getLocation(), org.bukkit.Effect.ANVIL_BREAK, 20);
-
 
         chickenPermanentFollower(player, chicken, plugin);
     }
@@ -610,15 +610,16 @@ public class GameEventHandler {
     }
 
     public static void oneHeart(Player player, Plugin plugin, String donorName) {
-        org.bukkit.attribute.AttributeInstance attribute = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
+        org.bukkit.attribute.AttributeInstance attribute = player
+                .getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
         attribute.setBaseValue(2.0D);
-
 
         new BukkitRunnable() {
             @Override
             public void run() {
 
-                org.bukkit.attribute.AttributeInstance attribute = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
+                org.bukkit.attribute.AttributeInstance attribute = player
+                        .getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
                 attribute.setBaseValue(20.0D);
                 this.cancel();
             }
@@ -626,15 +627,16 @@ public class GameEventHandler {
     }
 
     public static void twentyHeart(Player player, Plugin plugin, String donorName) {
-        org.bukkit.attribute.AttributeInstance attribute = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
+        org.bukkit.attribute.AttributeInstance attribute = player
+                .getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
         attribute.setBaseValue(40.0D);
-
 
         new BukkitRunnable() {
             @Override
             public void run() {
 
-                org.bukkit.attribute.AttributeInstance attribute = player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
+                org.bukkit.attribute.AttributeInstance attribute = player
+                        .getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH);
                 attribute.setBaseValue(20.0D);
                 this.cancel();
             }
@@ -642,7 +644,8 @@ public class GameEventHandler {
     }
 
     public static void createWolfCompanion(Player player, String donorName, Plugin plugin) {
-        org.bukkit.entity.Wolf wolf = (org.bukkit.entity.Wolf) player.getWorld().spawnEntity(player.getLocation(), EntityType.WOLF);
+        org.bukkit.entity.Wolf wolf = (org.bukkit.entity.Wolf) player.getWorld().spawnEntity(player.getLocation(),
+                EntityType.WOLF);
         wolf.setTamed(true);
         wolf.setCustomName(McUtils.randomColor() + donorName);
         wolf.setCollarColor(McUtils.randomDyeColor());
@@ -665,8 +668,6 @@ public class GameEventHandler {
         world.playSound(spawnLocation, Sound.ENTITY_WITHER_SPAWN, 3.0F, 0.5F);
         world.spawnParticle(Particle.EXPLOSION_HUGE, spawnLocation, 100, 3, 3, 3, 0.1);
 
-
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -688,7 +689,7 @@ public class GameEventHandler {
 
         for (int i = 0; i < 2; i++) {
             Location zombieLocation = player.getLocation().add(
-                (Math.random() - 0.5) * 10, 2, (Math.random() - 0.5) * 10);
+                    (Math.random() - 0.5) * 10, 2, (Math.random() - 0.5) * 10);
 
             Zombie bigZombie = (Zombie) world.spawnEntity(zombieLocation, EntityType.ZOMBIE);
             bigZombie.setCustomName(ChatColor.DARK_RED + donorName + "'s Giant Zombie");
@@ -720,9 +721,6 @@ public class GameEventHandler {
         world.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_DEATH, 3.0F, 0.5F);
         world.spawnParticle(Particle.SMOKE_LARGE, player.getLocation(), 500, 10, 1, 10, 0.1);
 
-
-
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -739,5 +737,151 @@ public class GameEventHandler {
             }
         }.runTaskLater(plugin, 20L * 30);
     }
-}
 
+    public static void resetWorld(Player player, String donorName, Plugin plugin, long seed) {
+        String tempWorldName = "temp_world";
+        String mainWorldName = "world";
+
+        // Step 1: Get the main world and teleport all players there
+        World mainWorld = Bukkit.getWorld(mainWorldName);
+        if (mainWorld == null) {
+            player.sendMessage(ChatColor.RED + "Main world not found!");
+            return;
+        }
+
+        // Teleport all players to main world
+        Location mainSpawn = mainWorld.getSpawnLocation().add(0, 1, 0);
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            onlinePlayer.setInvulnerable(true);
+            onlinePlayer.teleport(mainSpawn);
+            onlinePlayer.sendMessage(ChatColor.YELLOW + "World reset in progress... Please wait.");
+        }
+
+        // Wait a bit for teleports to complete before unloading/deleting temp_world
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                // Step 2: Unload and delete "temp_world" and its dimensions (nether, end)
+                String[] worldsToDelete = {
+                    tempWorldName, tempWorldName + "_nether", tempWorldName + "_the_end",
+                    mainWorldName + "_nether", mainWorldName + "_the_end"
+                };
+
+                for (String worldName : worldsToDelete) {
+                    World oldWorld = Bukkit.getWorld(worldName);
+                    if (oldWorld != null) {
+                        System.out.println("[ResetWorld] Unloading " + worldName + "...");
+                        boolean unloaded = Bukkit.unloadWorld(oldWorld, false);
+                        if (!unloaded) {
+                            System.out.println("[ResetWorld] ERROR: Failed to unload " + worldName + "!");
+                            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                onlinePlayer.setInvulnerable(false);
+                                onlinePlayer.sendMessage(ChatColor.RED + "Failed to unload " + worldName + " for reset!");
+                            }
+                            return;
+                        }
+                        System.out.println("[ResetWorld] " + worldName + " unloaded successfully.");
+                    }
+
+                    File worldFolder = new File(Bukkit.getWorldContainer(), worldName);
+                    if (worldFolder.exists()) {
+                        System.out.println("[ResetWorld] Deleting " + worldName + " folder: " + worldFolder.getAbsolutePath());
+                        boolean deleted = deleteDirectory(worldFolder);
+                        if (!deleted || worldFolder.exists()) {
+                            System.out.println("[ResetWorld] ERROR: Failed to delete " + worldName + " folder! Still exists: " + worldFolder.exists());
+                            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                onlinePlayer.setInvulnerable(false);
+                                onlinePlayer.sendMessage(ChatColor.RED + "Failed to delete " + worldName + " folder!");
+                            }
+                            return;
+                        }
+                        System.out.println("[ResetWorld] " + worldName + " folder deleted successfully.");
+                    }
+                }
+
+                // Step 3: Create new temp_world with seed
+                System.out.println("[ResetWorld] Creating new temp_world with seed: " + seed);
+                World newTempWorld = Bukkit.createWorld(WorldCreator.name(tempWorldName).seed(seed));
+
+                if (newTempWorld == null) {
+                    for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                        onlinePlayer.setInvulnerable(false);
+                        onlinePlayer.sendMessage(ChatColor.RED + "Failed to create new temp_world!");
+                    }
+                    return;
+                }
+
+                // Step 3b: Regenerate main world's nether and end
+                System.out.println("[ResetWorld] Creating new world_nether with seed: " + seed);
+                World newNether = Bukkit.createWorld(WorldCreator.name(mainWorldName + "_nether")
+                        .environment(World.Environment.NETHER)
+                        .seed(seed));
+                if (newNether == null) {
+                    System.out.println("[ResetWorld] WARNING: Failed to create world_nether!");
+                }
+
+                System.out.println("[ResetWorld] Creating new world_the_end with seed: " + seed);
+                World newEnd = Bukkit.createWorld(WorldCreator.name(mainWorldName + "_the_end")
+                        .environment(World.Environment.THE_END)
+                        .seed(seed));
+                if (newEnd == null) {
+                    System.out.println("[ResetWorld] WARNING: Failed to create world_the_end!");
+                }
+
+                // Step 4: Teleport all players to the new temp_world
+                Location newSpawn = newTempWorld.getSpawnLocation().add(0, 1, 0);
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    onlinePlayer.teleport(newSpawn);
+                    onlinePlayer.setInvulnerable(false);
+                    onlinePlayer.sendMessage(ChatColor.GREEN + "World has been reset by " + donorName + " with seed: " + seed);
+                }
+
+                // Play effects
+                newTempWorld.playSound(newSpawn, Sound.ENTITY_ENDER_DRAGON_GROWL, 5.0F, 1.0F);
+                newTempWorld.spawnParticle(Particle.EXPLOSION_HUGE, newSpawn, 100, 10, 10, 10, 0.1);
+
+                System.out.println("[ResetWorld] temp_world reset completed successfully!");
+            }
+        }.runTaskLater(plugin, 40L); // Wait 2 seconds for teleports to complete
+    }
+
+    // Helper method to recursively delete a directory
+    private static boolean deleteDirectory(File directory) {
+        if (!directory.exists()) {
+            return true;
+        }
+
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    if (!deleteDirectory(file)) {
+                        System.out.println("[ResetWorld] Failed to delete subdirectory: " + file.getAbsolutePath());
+                        return false;
+                    }
+                } else {
+                    if (!file.delete()) {
+                        System.out.println("[ResetWorld] Failed to delete file: " + file.getAbsolutePath());
+                        // Try to force garbage collection and retry
+                        System.gc();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            // Ignore
+                        }
+                        if (!file.delete()) {
+                            System.out.println("[ResetWorld] Retry failed for file: " + file.getAbsolutePath());
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        boolean deleted = directory.delete();
+        if (!deleted) {
+            System.out.println("[ResetWorld] Failed to delete directory: " + directory.getAbsolutePath());
+        }
+        return deleted;
+    }
+}

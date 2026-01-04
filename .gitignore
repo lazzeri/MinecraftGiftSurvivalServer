@@ -26,6 +26,9 @@ world_nether2/         # Nether world folder
 world_the_end2/        # End world folder
 
 # Plugin data (if using a modded server)
+plugins/ResourceWorld
+/plugins/resource_world
+
 plugins/               # Plugin directory
 *.jar                  # Plugin JAR files
 
@@ -259,3 +262,20 @@ run/
 /world/
 /world_nether/
 /world_the_end/
+.gitignore
+resource_world/entities/r.0.1.mca
+resource_world/
+plugins/bStats/config.yml
+world_nether/*
+world_the_end/*
+temp_world/*
+world_nether/DIM-1/entities/r.0.0.mca
+world_nether/DIM-1/entities/r.0.0.mca
+world_nether/DIM-1/region/r.0.-1.mca
+world_nether/DIM-1/region/r.0.0.mca
+world_the_end/DIM1/entities/r.-1.-1.mca
+world_the_end/DIM1/entities/r.-1.0.mca
+world_the_end/DIM1/entities/r.0.-1.mca
+world_the_end/DIM1/entities/r.0.0.mca
+world_the_end/DIM1/region/r.0.-1.mca
+world_the_end/DIM1/region/r.0.0.mca
