@@ -31,6 +31,7 @@ plugins/ResourceWorld
 
 plugins/               # Plugin directory
 *.jar                  # Plugin JAR files
+!plugins/lucaPlugin.jar  # Track this specific plugin
 
 # Operating system files
 .DS_Store              # macOS
