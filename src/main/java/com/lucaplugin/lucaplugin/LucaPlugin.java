@@ -18,7 +18,7 @@ import com.lucaplugin.lucaplugin.network.ChatRelayClient;
 public final class LucaPlugin extends JavaPlugin {
 
     // Configuration
-    private static final String WEBSOCKET_URL = "ws://localhost:3001/ws";
+    private static final String WEBSOCKET_URL = "ws://localhost:3005/ws";
 
     // Game state
     public static double xBorderCenter = 0;
