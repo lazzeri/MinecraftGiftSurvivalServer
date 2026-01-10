@@ -66,7 +66,7 @@ public class McUtils {
     }
 
     public static void showBroadcasterMessage(String platformType, String username, String message, boolean isModerator, boolean isSubscriber) {
-        String prefix;
+        String prefix;  
         ChatColor usernameColor;
 
         switch (platformType.toUpperCase()) {

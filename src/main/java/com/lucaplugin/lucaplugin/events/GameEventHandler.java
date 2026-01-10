@@ -151,7 +151,7 @@ public class GameEventHandler {
                 break;
             case 2:
                 McUtils.playSoundXTimes(player, Sound.BLOCK_SAND_HIT, 5F, 15);
-                givePotionEffect(player, donorName, PotionEffectType.BLINDNESS, 600, 2);
+                givePotionEffect(player, donorName, PotionEffectType.BLINDNESS, 300, 2);
                 break;
         }
     }
